@@ -10,9 +10,9 @@ module.exports = function (api) {
         "module-resolver",
         {
           alias: {
-            // "@Navigation": "./src/navigation",
-            // "@Components": "./src/components",
-            // "@Screens": "./src/screens",
+            "@navigation": "./src/navigation",
+            "@components": "./src/components",
+            "@screens": "./src/screens",
             "@assets": "./assets",
           },
           root: ["./src"],
