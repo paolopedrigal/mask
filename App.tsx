@@ -1,23 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { StatusBar } from "expo-status-bar";
-import * as SplashScreen from "expo-splash-screen";
 import { useFonts } from "expo-font";
 import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import * as SplashScreen from "expo-splash-screen";
+import Navigation from "@navigation/Navigation";
 
 SplashScreen.preventAutoHideAsync(); // Show splash scren while fetching resources
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  test: {
-    fontFamily: "Inter-Bold",
-    fontSize: 32,
-  },
-});
 
 export default function App() {
   const [isAppReady, setIsAppReady] = useState(false);
@@ -35,7 +24,7 @@ export default function App() {
         const sleep = (ms: number) =>
           new Promise((resolve) => setTimeout(resolve, ms));
 
-        await sleep(5000); // Sleep 5 seconds
+        await sleep(5000); // TODO: Delete this; Sleep 5 seconds
       } catch (e) {
         console.warn(e);
       } finally {
@@ -62,10 +51,9 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <Text style={styles.test}> Hot reload!!</Text>
+    <SafeAreaProvider onLayout={onLayoutRootView}>
+      <Navigation />
       <StatusBar style="light" />
-    </View>
+    </SafeAreaProvider>
   );
 }
