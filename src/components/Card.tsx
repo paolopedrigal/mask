@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 const styles = StyleSheet.create({
   card: {
-    width: "100%",
+    width: 350,
     height: 500,
     borderRadius: 15,
     paddingLeft: 25,
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 interface CardProps {
   backgroundColorStyle: string;
   text?: string;
-  image?: string; // TODO: Not sure if this should be a string
+  image?: string; // TODO: Not sure if this should be a string or some image prop
   authorText: string;
   authorImage?: string;
 }

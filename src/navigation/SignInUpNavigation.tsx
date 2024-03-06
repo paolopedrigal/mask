@@ -1,19 +1,25 @@
+import { KeyboardTypeOptions } from "react-native";
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
-import SignInUpScreen from "@screens/SignInUpScreen";
+import SignInUpMenuScreen from "@screens/SignInUpMenuScreen";
 // import SignInScreen from "@screens/SignInScreen";
-import SignUpScreen from "@screens/SignUpScreen";
+import SignInUpScreen from "@screens/SignInUpScreen";
+import SignInUpBackButton from "@components/SignInUpBackButton";
 
 // Route names for the stack navigator
-type SignInUpStackRouteNames = {
-  SignInUp: undefined; // No parameters signed to SignInUp route
-  // SignIn: undefined; // No parameters passed to SignIn route
-  SignUp: undefined; // No parameters passed to SignUp route
+type SignInUpStackRouteParams = {
+  Menu: undefined; // No parameters signed to SignInUp route
+  SignInUp: {
+    isSignUp: boolean;
+    question: string;
+    textInputPlaceholderText: string;
+    textInputKeyboardType: KeyboardTypeOptions;
+  };
 };
 
-const SignInUpStack = createNativeStackNavigator<SignInUpStackRouteNames>(); // Stack Navigator just for the Sign In/Up Screens
+const SignInUpStack = createNativeStackNavigator<SignInUpStackRouteParams>(); // Stack Navigator just for the Sign In/Up Screens
 
 export default function SignInLayout() {
   const options = {
@@ -26,25 +32,20 @@ export default function SignInLayout() {
     },
     headerTitleAlign: "center",
     headerStyle: { backgroundColor: "#0C0B44" },
+    headerLeft: () => <SignInUpBackButton />,
     headerBackTitleVisible: false,
-    headerTintColor: "white",
     headerShadowVisible: false,
   } as NativeStackNavigationOptions;
   return (
-    <SignInUpStack.Navigator initialRouteName="SignInUp">
+    <SignInUpStack.Navigator initialRouteName="Menu">
       <SignInUpStack.Screen
-        name="SignInUp"
-        component={SignInUpScreen}
+        name="Menu"
+        component={SignInUpMenuScreen}
         options={{ headerShown: false }}
       />
-      {/* <SignInStack.Screen
-        name="SignIn" // Route name
-        component={SignInScreen}
-        options={options}
-      /> */}
       <SignInUpStack.Screen
-        name="SignUp" // Route name
-        component={SignUpScreen}
+        name="SignInUp" // Route name
+        component={SignInUpScreen}
         options={options}
       />
     </SignInUpStack.Navigator>
