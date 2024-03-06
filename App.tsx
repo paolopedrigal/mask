@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
-import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { Provider } from "react-redux";
 import * as SplashScreen from "expo-splash-screen";
 import Navigation from "@navigation/Navigation";
+import { store } from "@redux/store";
 
 SplashScreen.preventAutoHideAsync(); // Show splash scren while fetching resources
 
@@ -51,9 +52,11 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider onLayout={onLayoutRootView}>
-      <Navigation />
-      <StatusBar style="light" />
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider onLayout={onLayoutRootView}>
+        <Navigation />
+        <StatusBar style="light" />
+      </SafeAreaProvider>
+    </Provider>
   );
 }
