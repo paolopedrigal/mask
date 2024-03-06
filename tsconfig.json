@@ -17,7 +17,8 @@
       "@navigation/*": ["./src/navigation/*"],
       "@components/*": ["./src/components/*"],
       "@screens/*": ["./src/screens/*"],
-      "@assets/*": ["./assets/*"]
+      "@assets/*": ["./assets/*"],
+      "@redux/*": ["./src/redux/*"]
     }
   },
   "exclude": ["node_modules"],
