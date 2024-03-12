@@ -18,7 +18,8 @@
       "@components/*": ["./src/components/*"],
       "@screens/*": ["./src/screens/*"],
       "@assets/*": ["./assets/*"],
-      "@redux/*": ["./src/redux/*"]
+      "@redux/*": ["./src/redux/*"],
+      "@contexts/*": ["./src/contexts/*"]
     }
   },
   "exclude": ["node_modules"],
