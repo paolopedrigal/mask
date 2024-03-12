@@ -3,25 +3,25 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
-import SignInUpMenuScreen from "@screens/SignInUpMenuScreen";
-// import SignInScreen from "@screens/SignInScreen";
+import AuthMenuScreen from "@screens/AuthMenuScreen";
 import SignInUpScreen from "@screens/SignInUpScreen";
-import SignInUpBackButton from "@components/SignInUpBackButton";
+// import SignInUpBackButton from "@components/SignInUpBackButton";
 
 // Route names for the stack navigator
-type SignInUpStackRouteParams = {
+type AuthRouteParams = {
   Menu: undefined; // No parameters signed to SignInUp route
   SignInUp: {
     isSignUp: boolean;
+    screenNumber: number;
     question: string;
     textInputPlaceholderText: string;
     textInputKeyboardType: KeyboardTypeOptions;
   };
 };
 
-const SignInUpStack = createNativeStackNavigator<SignInUpStackRouteParams>(); // Stack Navigator just for the Sign In/Up Screens
+const AuthStack = createNativeStackNavigator<AuthRouteParams>(); // Stack Navigator just for the Sign In/Up Screens
 
-export default function SignInLayout() {
+export default function AuthNavigation() {
   const options = {
     headerShown: true,
     title: "Mask",
@@ -32,22 +32,23 @@ export default function SignInLayout() {
     },
     headerTitleAlign: "center",
     headerStyle: { backgroundColor: "#0C0B44" },
-    headerLeft: () => <SignInUpBackButton />,
+    // headerLeft: () => <SignInUpBackButton />,
+    headerTintColor: "white",
     headerBackTitleVisible: false,
     headerShadowVisible: false,
   } as NativeStackNavigationOptions;
   return (
-    <SignInUpStack.Navigator initialRouteName="Menu">
-      <SignInUpStack.Screen
+    <AuthStack.Navigator initialRouteName="Menu">
+      <AuthStack.Screen
         name="Menu"
-        component={SignInUpMenuScreen}
+        component={AuthMenuScreen}
         options={{ headerShown: false }}
       />
-      <SignInUpStack.Screen
+      <AuthStack.Screen
         name="SignInUp" // Route name
         component={SignInUpScreen}
         options={options}
       />
-    </SignInUpStack.Navigator>
+    </AuthStack.Navigator>
   );
 }

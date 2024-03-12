@@ -14,17 +14,18 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 // Route names for the stack navigator
-type SignInUpStackRouteParams = {
+type AuthRouteParams = {
   Menu: undefined; // No parameters signed to SignInUp route
   SignInUp: {
     isSignUp: boolean;
+    screenNumber: number;
     question: string;
     textInputPlaceholderText: string;
     textInputKeyboardType: KeyboardTypeOptions;
   };
 };
 
-type Props = NativeStackScreenProps<SignInUpStackRouteParams, "Menu">; // Get props from "SignIn" route (i.e. undefined in this case)
+type Props = NativeStackScreenProps<AuthRouteParams, "Menu">; // Get props from "SignIn" route (i.e. undefined in this case)
 // Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
 // Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
 
@@ -100,13 +101,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function SignInUpMenuScreen({ navigation }: Props) {
+export default function AuthMenuScreen({ navigation }: Props) {
   const insets = useSafeAreaInsets();
-  const [showPassword, setShowPassword] = useState(false);
-
-  const togglePasswordVisibility = () => {
-    return showPassword ? setShowPassword(false) : setShowPassword(true);
-  };
 
   return (
     <View
@@ -135,6 +131,7 @@ export default function SignInUpMenuScreen({ navigation }: Props) {
                 onPress={() =>
                   navigation.navigate("SignInUp", {
                     isSignUp: false,
+                    screenNumber: 1,
                     question: "What's your email?",
                     textInputPlaceholderText: "Your email",
                     textInputKeyboardType: "email-address",
@@ -149,6 +146,7 @@ export default function SignInUpMenuScreen({ navigation }: Props) {
                 onPress={() =>
                   navigation.navigate("SignInUp", {
                     isSignUp: true,
+                    screenNumber: 1,
                     question: "What's your email?",
                     textInputPlaceholderText: "Your email",
                     textInputKeyboardType: "email-address",

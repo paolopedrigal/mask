@@ -11,29 +11,33 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  selectSignInUpScreen,
-  setSubmit,
-  incrementSignInUpScreen,
-  selectIsTyped,
-} from "@redux/authSlice";
+// import { useDispatch, useSelector } from "react-redux";
+// import {
+//   selectSignInUpScreen,
+//   setPressed,
+//   incrementSignInUpScreen,
+//   selectIsTyped,
+//   selectIsSubmitted,
+//   setSubmitted,
+// } from "@redux/authSlice";
 import Card from "@components/Card";
 import SignInUpTextInput from "@components/SignInUpTextInput";
-import { useEffect } from "react";
+import { useContext } from "react";
+import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
 
 // Route names for the stack navigator
-type SignInUpStackRouteParams = {
+type AuthRouteParams = {
   Menu: undefined; // No parameters signed to SignInUp route
   SignInUp: {
     isSignUp: boolean;
+    screenNumber: number;
     question: string;
     textInputPlaceholderText: string;
     textInputKeyboardType: KeyboardTypeOptions;
   };
 };
 
-type Props = NativeStackScreenProps<SignInUpStackRouteParams, "SignInUp">; // Get props from "SignIn" route (i.e. undefined in this case)
+type Props = NativeStackScreenProps<AuthRouteParams, "SignInUp">; // Get props from "SignIn" route (i.e. undefined in this case)
 // Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
 // Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
 
@@ -124,12 +128,12 @@ const placeholderTexts: placeholderTextsInterface = {
 
 export default function SignInUpScreen({ navigation, route }: Props) {
   const insets = useSafeAreaInsets();
-  const dispatch = useDispatch();
   const keyboardVerticalOffset = Platform.OS === "ios" ? 100 : 0;
-  const signInUpScreen: number = useSelector(selectSignInUpScreen); // Screen number for Sign Up (i.e. 1-4)
-  const isTyped: boolean = useSelector(selectIsTyped);
+  const { isTyped, setIsSubmitted, isCreateUserError }: AuthContextStates =
+    useContext(AuthContext) as AuthContextStates;
   const {
     isSignUp,
+    screenNumber,
     question,
     textInputPlaceholderText,
     textInputKeyboardType,
@@ -137,9 +141,9 @@ export default function SignInUpScreen({ navigation, route }: Props) {
 
   // Text for Pressable button
   let pressableText: string;
-  if (isSignUp && signInUpScreen == 4) {
+  if (isSignUp && screenNumber == 4) {
     pressableText = "Finish";
-  } else if (!isSignUp && signInUpScreen == 2) {
+  } else if (!isSignUp && screenNumber == 2) {
     pressableText = "Log back in";
   } else {
     pressableText = "Continue";
@@ -147,33 +151,28 @@ export default function SignInUpScreen({ navigation, route }: Props) {
 
   // Text for card text
   const authorText: string = isSignUp
-    ? "Sign Up (" + signInUpScreen + " of 4)"
-    : "Sign In (" + signInUpScreen + " of 2)";
+    ? "Sign Up (" + screenNumber + " of 4)"
+    : "Sign In (" + screenNumber + " of 2)";
 
-  // Submit logic
   const submit = () => {
-    dispatch(setSubmit(true)); // Notify other components that Pressable is submitted
-    dispatch(incrementSignInUpScreen()); // Moving to next Sign In/Up screen if not last screen
-    dispatch(setSubmit(false)); // Reset `isSubmit` state to false for new screen
+    setIsSubmitted(true); // Update `isSubmitted` state within AuthContext
 
     Keyboard.dismiss(); // Dismiss keyboard (if user didn't dissmiss it themselves)
 
     // Navigate to next screen
-    if (
-      (isSignUp && signInUpScreen == 4) ||
-      (!isSignUp && signInUpScreen == 2)
-    ) {
+    if ((isSignUp && screenNumber == 4) || (!isSignUp && screenNumber == 2)) {
       // Navigate to Home
       console.log("Navigate to bottomscreen navigation");
     } else {
       navigation.push("SignInUp", {
         isSignUp: isSignUp,
+        screenNumber: screenNumber + 1,
         question: isSignUp
-          ? signUpQuestions[signInUpScreen + 1]
-          : signInQuestions[signInUpScreen + 1],
-        textInputPlaceholderText: placeholderTexts[signInUpScreen + 1],
+          ? signUpQuestions[screenNumber + 1]
+          : signInQuestions[screenNumber + 1],
+        textInputPlaceholderText: placeholderTexts[screenNumber + 1],
         textInputKeyboardType:
-          isSignUp && signInUpScreen == 3 ? "numeric" : "default",
+          isSignUp && screenNumber == 3 ? "numeric" : "default",
       });
     }
   };
@@ -204,7 +203,7 @@ export default function SignInUpScreen({ navigation, route }: Props) {
             <SignInUpTextInput
               keyboardType={textInputKeyboardType}
               placeholderText={textInputPlaceholderText}
-              signInUpScreen={signInUpScreen}
+              signInUpScreen={screenNumber}
             />
           </View>
           <View style={styles.pressableView}>
@@ -220,6 +219,13 @@ export default function SignInUpScreen({ navigation, route }: Props) {
               <Text style={styles.signUpText}>{pressableText}</Text>
             </Pressable>
           </View>
+          {isCreateUserError ? (
+            <></>
+          ) : (
+            <View>
+              <Text>Sorry, invalid email/password.</Text>
+            </View>
+          )}
         </KeyboardAvoidingView>
       </TouchableWithoutFeedback>
     </View>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   KeyboardTypeOptions,
   ScrollView,
@@ -6,14 +6,10 @@ import {
   TextInput,
 } from "react-native";
 import MaskInput from "react-native-mask-input";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  selectIsSubmit,
-  setBirthday,
-  setEmail,
-  setName,
-  setTyped,
-} from "@redux/authSlice";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
+import SignInUpScreen from "@screens/SignInUpScreen";
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -38,32 +34,55 @@ interface SignInUpTextInputProps {
 
 export default function SignInUpTextInput(props: SignInUpTextInputProps) {
   const [text, setText] = useState<string>("");
-  const isSubmit: boolean = useSelector(selectIsSubmit);
-  const dispatch = useDispatch();
+  const { keyboardType, placeholderText, signInUpScreen } = props;
+  const {
+    email,
+    isSubmitted,
+    setIsCreateUserError,
+    setEmail,
+    setIsSubmitted,
+    setIsTyped,
+    setIsSignedUp,
+    isSignedUp,
+    isCreateUserError,
+  }: AuthContextStates = useContext(AuthContext) as AuthContextStates;
 
-  // If Pressable (outside of this scope) is pressed, dispatch action respective to sign in/up screen page from `text`
+  // If Pressable (outside of this scope) is submitted, dispatch action respective to sign in/up screen page from `text`
   useEffect(() => {
-    if (isSubmit) {
-      if (props.signInUpScreen == 1) dispatch(setEmail(text));
-      else if (props.signInUpScreen == 3) dispatch(setName(text));
-      else if (props.signInUpScreen == 4) dispatch(setBirthday(text));
+    console.log("Detects changes in isSubmitted:", isSubmitted);
+
+    if (isSubmitted && text != "") {
+      if (signInUpScreen == 1) setEmail(text);
+      else if (signInUpScreen == 2 && !isSignedUp && !isCreateUserError) {
+        createUserWithEmailAndPassword(FIREBASE_AUTH, email, text)
+          .then(() => {
+            console.log("Create user");
+            setIsSignedUp(false);
+          })
+          .catch((error) => {
+            console.log("Error code:", error.code);
+            console.log("Error message:", error.message);
+            setIsCreateUserError(true);
+          });
+      }
+      setIsSubmitted(false); // Update `isSubmitted` state within AuthContext
     }
-  });
+  }, [isSubmitted]);
 
   // Detects if user start typing
   useEffect(() => {
-    if (text != "") dispatch(setTyped(true));
-    else dispatch(setTyped(false));
+    if (text != "") setIsTyped(true);
+    else setIsTyped(false);
   }, [text]);
 
   if (props.keyboardType == "numeric") {
     return (
       <MaskInput
-        placeholder={props.placeholderText}
+        placeholder={placeholderText}
         value={text}
         onChangeText={(masked, unmasked) => setText(unmasked)}
         mask={[/\d/, /\d/, " ", /\d/, /\d/, " ", /\d/, /\d/, /\d/, /\d/]}
-        keyboardType={props.keyboardType}
+        keyboardType={keyboardType}
         placeholderTextColor="#24245E"
         selectionColor={"#6767D9"}
         style={styles.textInput}
@@ -77,10 +96,10 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
         showsHorizontalScrollIndicator={false}
       >
         <TextInput
-          placeholder={props.placeholderText}
+          placeholder={placeholderText}
           value={text}
           onChangeText={setText}
-          keyboardType={props.keyboardType}
+          keyboardType={keyboardType}
           autoCapitalize="none"
           placeholderTextColor="#24245E"
           selectionColor={"#6767D9"}
