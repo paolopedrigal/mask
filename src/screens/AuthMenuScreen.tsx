@@ -23,7 +23,7 @@ type AuthRouteParams = {
   };
 };
 
-type Props = NativeStackScreenProps<AuthRouteParams, "Menu">; // Get props from "SignIn" route (i.e. undefined in this case)
+type Props = NativeStackScreenProps<AuthRouteParams, "Menu">; // Get props from "SignInUp" route
 // Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
 // Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
 
