@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Image,
   Keyboard,
@@ -18,7 +17,6 @@ type AuthRouteParams = {
   Menu: undefined; // No parameters signed to SignInUp route
   SignInUp: {
     isSignUp: boolean;
-    screenNumber: number;
     question: string;
     textInputPlaceholderText: string;
     textInputKeyboardType: KeyboardTypeOptions;
@@ -131,7 +129,6 @@ export default function AuthMenuScreen({ navigation }: Props) {
                 onPress={() =>
                   navigation.navigate("SignInUp", {
                     isSignUp: false,
-                    screenNumber: 1,
                     question: "What's your email?",
                     textInputPlaceholderText: "Your email",
                     textInputKeyboardType: "email-address",
@@ -146,7 +143,6 @@ export default function AuthMenuScreen({ navigation }: Props) {
                 onPress={() =>
                   navigation.navigate("SignInUp", {
                     isSignUp: true,
-                    screenNumber: 1,
                     question: "What's your email?",
                     textInputPlaceholderText: "Your email",
                     textInputKeyboardType: "email-address",
