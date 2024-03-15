@@ -1,21 +1,41 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationOptions,
+  createNativeStackNavigator,
+} from "@react-navigation/native-stack";
 import AuthNavigation from "@navigation/AuthNavigation";
+import MainNavigation from "./MainNavigation";
 import AuthProvider from "@contexts/AuthProvider";
-// import HomeScreen from "@screens/HomeScreen";
+
+// Route names for Parent Native Stack Navigator
+type AppRouteParams = {
+  AuthenticationNavigation: undefined;
+  MainNavigation: undefined;
+};
 
 // Create stack for navigation
-const Stack = createNativeStackNavigator();
+const AppStack = createNativeStackNavigator<AppRouteParams>();
+
+function AuthenticationNavigation() {
+  return (
+    <AuthProvider>
+      <AuthNavigation />
+    </AuthProvider>
+  );
+}
 
 export default function Navigation() {
+  const options = { headerShown: false } as NativeStackNavigationOptions;
+
   return (
     <NavigationContainer>
-      <AuthProvider>
-        <AuthNavigation />
-      </AuthProvider>
-      {/* <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} options={options} />
-      </Stack.Navigator> */}
+      <AppStack.Navigator screenOptions={options}>
+        <AppStack.Screen
+          name="AuthenticationNavigation"
+          component={AuthenticationNavigation}
+        />
+        <AppStack.Screen name="MainNavigation" component={MainNavigation} />
+      </AppStack.Navigator>
     </NavigationContainer>
   );
 }

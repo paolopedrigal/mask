@@ -12,7 +12,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
 import { StackActions, useNavigation } from "@react-navigation/native";
 
-// Route names for the stack navigator
+// Route names for the AuthNavigation stack navigator
 type AuthRouteParams = {
   Menu: undefined; // No parameters signed to SignInUp route
   SignInUp: {
@@ -23,11 +23,22 @@ type AuthRouteParams = {
   };
 };
 
-type Props = NativeStackScreenProps<AuthRouteParams, "SignInUp">; // Get props from "SignIn" route (i.e. undefined in this case)
+// Route names for Parent Native Stack Navigator
+type AppRouteParams = {
+  AuthenticationNavigation: undefined;
+  MainNavigation: undefined;
+};
+
+type AppProps = NativeStackScreenProps<AppRouteParams, "MainNavigation">; // Get props from "MainNavigation" route from parent native stack navigator
 // Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
 // Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
 
-type SignInUpScreenNavigationProp = Props["navigation"];
+type AuthProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">; // Get props from "SignInUp" route
+// Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
+// Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
+
+type SignInUpScreenNavigationProp = AuthProps["navigation"];
+type AppNavigationProp = AppProps["navigation"];
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -71,7 +82,8 @@ interface SignInUpTextInputProps {
 
 export default function SignInUpTextInput(props: SignInUpTextInputProps) {
   const [text, setText] = useState<string>("");
-  const navigation = useNavigation<SignInUpScreenNavigationProp>();
+  const authNavigation = useNavigation<SignInUpScreenNavigationProp>();
+  const appNavigation = useNavigation<AppNavigationProp>();
   const { keyboardType, placeholderText, isSignUp } = props;
   const {
     email,
@@ -99,8 +111,9 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
     ) {
       // Navigate to Home
       console.log("Navigate to bottomscreen navigation");
+      appNavigation.navigate("MainNavigation");
     } else {
-      navigation.dispatch(
+      authNavigation.dispatch(
         // Using `replace` to prevent multiple `SignInUp` components to access the same states
         StackActions.replace("SignInUp", {
           isSignUp: isSignUp,
