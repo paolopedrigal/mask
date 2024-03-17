@@ -9,12 +9,13 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { useContext, useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
 import Card from "@components/Card";
 import SignInUpTextInput from "@components/SignInUpTextInput";
-import { useContext, useEffect, useState } from "react";
-import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
+import ErrorMessage from "@components/ErrorMessage";
 
 // Route names for the stack navigator
 type AuthRouteParams = {
@@ -76,6 +77,7 @@ export default function SignInUpScreen({ route }: Props) {
     setIsSubmitted,
     signInUpScreen,
     isCreateUserError,
+    setIsCreateUserError,
   }: AuthContextStates = useContext(AuthContext) as AuthContextStates;
   const {
     isSignUp,
@@ -109,7 +111,8 @@ export default function SignInUpScreen({ route }: Props) {
   useEffect(() => {
     if (isCreateUserError) {
       setShowErrorMessage(true);
-      setTimeout(() => setShowErrorMessage(false), 5000);
+      setTimeout(() => setShowErrorMessage(false), 3000);
+      setIsCreateUserError(false);
     }
   }, [isCreateUserError]);
 
@@ -163,11 +166,7 @@ export default function SignInUpScreen({ route }: Props) {
             </Pressable>
           </View>
           {showErrorMessage ? (
-            <View>
-              <Text style={{ color: "white" }}>
-                Sorry, invalid email/password.
-              </Text>
-            </View>
+            <ErrorMessage message="Invalid username/password" />
           ) : (
             <></>
           )}
