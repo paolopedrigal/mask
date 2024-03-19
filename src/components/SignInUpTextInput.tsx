@@ -7,10 +7,16 @@ import {
 } from "react-native";
 import MaskInput from "react-native-mask-input";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-// import { createUserWithEmailAndPassword } from "firebase/auth";
-// import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
 import { StackActions, useNavigation } from "@react-navigation/native";
+import {
+  browserLocalPersistence,
+  createUserWithEmailAndPassword,
+  setPersistence,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { UserCredential } from "firebase/auth";
 
 // Route names for the AuthNavigation stack navigator
 type AuthRouteParams = {
@@ -144,22 +150,31 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
       if (signInUpScreen == 1) {
         setEmail(text);
         navigateToNextSignInUpScreen();
-      } else if (signInUpScreen == 2 && !isUserCreated && !isCreateUserError) {
-        // createUserWithEmailAndPassword(FIREBASE_AUTH, email, text)
-        //   .then(() => {
-        //     console.log("Create user");
-        //     setIsUserCreated(true);
-        //     console.log("Navigating to next screen??");
-        //     navigateToNextSignInUpScreen();
-        //   })
-        //   .catch((error) => {
-        //     console.log("Error code:", error.code);
-        //     console.log("Error message:", error.message);
-        //     setIsCreateUserError(true);
-        //   });
-        console.log("Create user");
-        setIsUserCreated(true);
-        navigateToNextSignInUpScreen();
+      } else if (signInUpScreen == 2) {
+        if (isSignUp) {
+          // && !isUserCreated && !isCreateUserError) {
+          createUserWithEmailAndPassword(FIREBASE_AUTH, email, text)
+            .then((userCredential: UserCredential) => {
+              // setIsUserCreated(true);
+              console.log("Navigating to next screen??");
+              navigateToNextSignInUpScreen();
+            })
+            .catch((error) => {
+              console.log("Error code:", error.code);
+              console.log("Error message:", error.message);
+              setIsCreateUserError(true);
+            });
+        } else {
+          signInWithEmailAndPassword(FIREBASE_AUTH, email, text)
+            .then((userCredential: UserCredential) => {
+              navigateToNextSignInUpScreen();
+            })
+            .catch((error) => {
+              console.log("Error code:", error.code);
+              console.log("Error message:", error.message);
+              setIsCreateUserError(true);
+            });
+        }
       } else if (signInUpScreen == 3) {
         setName(text);
         navigateToNextSignInUpScreen();
