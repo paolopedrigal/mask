@@ -47,12 +47,12 @@ export default function Navigation() {
     <NavigationContainer>
       <AppStack.Navigator screenOptions={options}>
         {isSignedIn ? (
+          <></>
+        ) : (
           <AppStack.Screen
             name="AuthenticationNavigation"
             component={AuthenticationNavigation}
           />
-        ) : (
-          <></>
         )}
         <AppStack.Screen name="MainNavigation" component={MainNavigation} />
       </AppStack.Navigator>
