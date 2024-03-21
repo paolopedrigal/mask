@@ -8,12 +8,15 @@ import {
 import MaskInput from "react-native-mask-input";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
-import { StackActions, useNavigation } from "@react-navigation/native";
 import {
-  browserLocalPersistence,
+  NavigatorScreenParams,
+  StackActions,
+  useNavigation,
+} from "@react-navigation/native";
+import {
   createUserWithEmailAndPassword,
-  setPersistence,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { UserCredential } from "firebase/auth";
@@ -29,10 +32,16 @@ type AuthRouteParams = {
   };
 };
 
+// Route params for bottom tab navigator
+type MainRouteParams = {
+  Home: undefined;
+  ProfileNavigation: undefined;
+};
+
 // Route names for Parent Native Stack Navigator
 type AppRouteParams = {
   AuthenticationNavigation: undefined;
-  MainNavigation: undefined;
+  MainNavigation: NavigatorScreenParams<MainRouteParams>;
 };
 
 type AppProps = NativeStackScreenProps<AppRouteParams, "MainNavigation">; // Get props from "MainNavigation" route from parent native stack navigator
@@ -64,7 +73,8 @@ const styles = StyleSheet.create({
 type SignInUpKeys =
   | "sign-up-questions"
   | "sign-in-questions"
-  | "place-holder-texts";
+  | "sign-up-place-holder-texts"
+  | "sign-in-place-holder-texts";
 
 interface signInUpValues {
   [index: string]: string;
@@ -78,7 +88,10 @@ type signInUpJSONType = {
 const signInUpJSON: signInUpJSONType = require("@assets/json/sign-in-up.json");
 const signUpQuestions: signInUpValues = signInUpJSON["sign-up-questions"];
 const signInQuestions: signInUpValues = signInUpJSON["sign-in-questions"];
-const placeholderTexts: signInUpValues = signInUpJSON["place-holder-texts"];
+const signUpPlaceholderTexts: signInUpValues =
+  signInUpJSON["sign-up-place-holder-texts"];
+const signInPlaceholderTexts: signInUpValues =
+  signInUpJSON["sign-in-place-holder-texts"];
 
 interface SignInUpTextInputProps {
   keyboardType: KeyboardTypeOptions;
@@ -92,12 +105,11 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
   const appNavigation = useNavigation<AppNavigationProp>();
   const { keyboardType, placeholderText, isSignUp } = props;
   const {
+    birthday,
     email,
     name,
     incrementSignInUpScreen,
-    isCreateUserError,
     isSubmitted,
-    isUserCreated,
     signInUpScreen,
     setBirthday,
     setEmail,
@@ -105,19 +117,15 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
     setIsPush,
     setIsSubmitted,
     setIsTyped,
-    setIsUserCreated,
     setName,
   }: AuthContextStates = useContext(AuthContext) as AuthContextStates;
 
   const navigateToNextSignInUpScreen = () => {
-    console.log("Navigating... from screen", signInUpScreen);
     if (
       (isSignUp && signInUpScreen == 4) ||
       (!isSignUp && signInUpScreen == 2)
     ) {
-      // Navigate to Home
-      console.log("Navigate to bottomscreen navigation");
-      appNavigation.navigate("MainNavigation");
+      appNavigation.navigate("MainNavigation", { screen: "Home" });
     } else {
       authNavigation.dispatch(
         // Using `replace` to prevent multiple `SignInUp` components to access the same states
@@ -126,9 +134,10 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
           question: isSignUp
             ? signUpQuestions[signInUpScreen + 1]
             : signInQuestions[signInUpScreen + 1],
-          textInputPlaceholderText: placeholderTexts[signInUpScreen + 1],
-          textInputKeyboardType:
-            isSignUp && signInUpScreen == 3 ? "numeric" : "default",
+          textInputPlaceholderText: isSignUp
+            ? signUpPlaceholderTexts[signInUpScreen + 1]
+            : signInPlaceholderTexts[signInUpScreen + 1],
+          textInputKeyboardType: "default",
         })
       );
       incrementSignInUpScreen();
@@ -137,8 +146,10 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
 
   // Change default text if already filled out when navigating to previous screen
   useEffect(() => {
-    if (signInUpScreen == 1 && email != "") setText(email);
-    else if (signInUpScreen == 3 && name != "") setText(name);
+    if (isSignUp && signInUpScreen == 1 && birthday != "") setText(birthday);
+    else if (!isSignUp && signInUpScreen == 1 && email != "") setText(email);
+    else if (signInUpScreen == 2 && name != "") setText(name);
+    else if (signInUpScreen == 3 && email != "") setText(email);
   }, [signInUpScreen]);
 
   // If Pressable (outside of this scope) is submitted, dispatch action respective to sign in/up screen page from `text`
@@ -147,39 +158,40 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
       setIsPush(true);
       setIsSubmitted(false); // Reset isSubmitted back to not being presssed/submitted
       setIsTyped(false); // Prevent user from spamming "Continue" button
-      if (signInUpScreen == 1) {
+      if (isSignUp && signInUpScreen == 1) {
+        setBirthday(text);
+        navigateToNextSignInUpScreen();
+      } else if (
+        (signInUpScreen == 1 && !isSignUp) ||
+        (signInUpScreen == 3 && isSignUp)
+      ) {
         setEmail(text);
         navigateToNextSignInUpScreen();
-      } else if (signInUpScreen == 2) {
-        if (isSignUp) {
-          // && !isUserCreated && !isCreateUserError) {
-          createUserWithEmailAndPassword(FIREBASE_AUTH, email, text)
-            .then((userCredential: UserCredential) => {
-              // setIsUserCreated(true);
-              console.log("Navigating to next screen??");
-              navigateToNextSignInUpScreen();
-            })
-            .catch((error) => {
-              console.log("Error code:", error.code);
-              console.log("Error message:", error.message);
-              setIsCreateUserError(true);
-            });
-        } else {
-          signInWithEmailAndPassword(FIREBASE_AUTH, email, text)
-            .then((userCredential: UserCredential) => {
-              navigateToNextSignInUpScreen();
-            })
-            .catch((error) => {
-              console.log("Error code:", error.code);
-              console.log("Error message:", error.message);
-              setIsCreateUserError(true);
-            });
-        }
-      } else if (signInUpScreen == 3) {
-        setName(text);
-        navigateToNextSignInUpScreen();
+      } else if (signInUpScreen == 2 && !isSignUp) {
+        signInWithEmailAndPassword(FIREBASE_AUTH, email, text)
+          .then(() => {
+            navigateToNextSignInUpScreen();
+          })
+          .catch((error) => {
+            console.log("Error code:", error.code);
+            console.log("Error message:", error.message);
+            setIsCreateUserError(true);
+          });
+      } else if (signInUpScreen == 4 && isSignUp) {
+        // && !isUserCreated && !isCreateUserError) {
+        createUserWithEmailAndPassword(FIREBASE_AUTH, email, text)
+          .then((userCredential: UserCredential) => {
+            updateProfile(userCredential.user, { displayName: name });
+            navigateToNextSignInUpScreen();
+          })
+          .catch((error) => {
+            console.log("Error code:", error.code);
+            console.log("Error message:", error.message);
+            setIsCreateUserError(true);
+          });
       } else {
-        setBirthday(text);
+        // Should be (isSignUp && signInUpScreen == 2)
+        setName(text);
         navigateToNextSignInUpScreen();
       }
     }
@@ -215,6 +227,7 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
           placeholder={placeholderText}
           value={text}
           onChangeText={setText}
+          maxLength={signInUpScreen == 2 && isSignUp ? 35 : undefined}
           keyboardType={keyboardType}
           autoCapitalize="none"
           placeholderTextColor="#24245E"

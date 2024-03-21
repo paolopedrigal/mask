@@ -25,7 +25,8 @@ type SignInUpScreenNavigationProp = Props["navigation"];
 type SignInUpKeys =
   | "sign-up-questions"
   | "sign-in-questions"
-  | "place-holder-texts";
+  | "sign-up-place-holder-texts"
+  | "sign-in-place-holder-texts";
 
 interface signInUpValues {
   [index: string]: string;
@@ -39,7 +40,10 @@ type signInUpJSONType = {
 const signInUpJSON: signInUpJSONType = require("@assets/json/sign-in-up.json");
 const signUpQuestions: signInUpValues = signInUpJSON["sign-up-questions"];
 const signInQuestions: signInUpValues = signInUpJSON["sign-in-questions"];
-const placeholderTexts: signInUpValues = signInUpJSON["place-holder-texts"];
+const signUpPlaceholderTexts: signInUpValues =
+  signInUpJSON["sign-up-place-holder-texts"];
+const signInPlaceholderTexts: signInUpValues =
+  signInUpJSON["sign-in-place-holder-texts"];
 
 export default function SignInUpBackButton() {
   const navigation = useNavigation<SignInUpScreenNavigationProp>();
@@ -55,13 +59,16 @@ export default function SignInUpBackButton() {
 
   const navigateToPrevSignInUpScreen = () => {
     if (signInUpScreen == 1) {
-      setEmail("");
+      if (isSignUpState) setBirthday("");
+      else setEmail("");
       navigation.goBack();
     } else {
       setIsPush(false);
 
-      if (signInUpScreen == 3) setName("");
-      else if (signInUpScreen == 4) setBirthday("");
+      if (isSignUpState) {
+        if (signInUpScreen == 2) setName("");
+        if (signInUpScreen == 3) setEmail("");
+      }
 
       navigation.dispatch(
         StackActions.replace("SignInUp", {
@@ -69,8 +76,11 @@ export default function SignInUpBackButton() {
           question: isSignUpState
             ? signUpQuestions[signInUpScreen - 1]
             : signInQuestions[signInUpScreen - 1],
-          textInputPlaceholderText: placeholderTexts[signInUpScreen - 1],
-          textInputKeyboardType: "default",
+          textInputPlaceholderText: isSignUpState
+            ? signUpPlaceholderTexts[signInUpScreen - 1]
+            : signInPlaceholderTexts[signInUpScreen - 1],
+          textInputKeyboardType:
+            isSignUpState && signInUpScreen == 2 ? "numeric" : "default",
         })
       );
       decrementSignInUpScreen();

@@ -143,9 +143,9 @@ export default function AuthMenuScreen({ navigation }: Props) {
                 onPress={() =>
                   navigation.navigate("SignInUp", {
                     isSignUp: true,
-                    question: "What's your email?",
-                    textInputPlaceholderText: "Your email",
-                    textInputKeyboardType: "email-address",
+                    question: "When is your brithday?",
+                    textInputPlaceholderText: "MM DD YYYY",
+                    textInputKeyboardType: "numeric",
                   })
                 }
                 style={styles.signUpPressable}

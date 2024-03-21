@@ -1,18 +1,22 @@
 {
   "sign-up-questions": {
-    "1": "What's your email?",
-    "2": "What will be your password?",
-    "3": "Your name?",
-    "4": "Birthday? Last question, we promise."
+    "1": "When is your birthday?",
+    "2": "What's your name?",
+    "3": "Your email?",
+    "4": "What will be your password?"
   },
   "sign-in-questions": {
     "1": "What's your email?",
     "2": "And password?"
   },
-  "place-holder-texts": {
+  "sign-up-place-holder-texts": {
+    "1": "MM DD YYYY",
+    "2": "Your name",
+    "3": "Your email",
+    "4": "Your password"
+  },
+  "sign-in-place-holder-texts": {
     "1": "Your email",
-    "2": "Your password",
-    "3": "Your name",
-    "4": "MM DD YYYY"
+    "2": "Your password"
   }
 }
