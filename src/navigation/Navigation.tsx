@@ -8,7 +8,7 @@ import MainNavigation from "./MainNavigation";
 import AuthProvider from "@contexts/AuthProvider";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
+import { User, onAuthStateChanged } from "firebase/auth";
 
 // Route names for Parent Native Stack Navigator
 type AppRouteParams = {
@@ -29,32 +29,33 @@ function AuthenticationNavigation() {
 
 export default function Navigation() {
   const options = { headerShown: false } as NativeStackNavigationOptions;
-  const [isSignedIn, setIsSignedIn] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<User | null>(
+    FIREBASE_AUTH.currentUser
+  );
 
   useEffect(() => {
     onAuthStateChanged(FIREBASE_AUTH, (user) => {
       if (user) {
-        setIsSignedIn(true);
         console.log("Still signed in or recently signed in.");
+        console.log(user.displayName);
       } else {
-        setIsSignedIn(false);
         console.log("Not signed in");
       }
+      setCurrentUser(user);
     });
-  }, [isSignedIn]);
+  }, [currentUser]);
 
   return (
     <NavigationContainer>
       <AppStack.Navigator screenOptions={options}>
-        {isSignedIn ? (
-          <></>
+        {currentUser ? (
+          <AppStack.Screen name="MainNavigation" component={MainNavigation} />
         ) : (
           <AppStack.Screen
             name="AuthenticationNavigation"
             component={AuthenticationNavigation}
           />
         )}
-        <AppStack.Screen name="MainNavigation" component={MainNavigation} />
       </AppStack.Navigator>
     </NavigationContainer>
   );
