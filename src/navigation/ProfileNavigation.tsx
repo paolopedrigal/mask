@@ -13,6 +13,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { signOut } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { KeyboardTypeOptions } from "react-native";
+import { useEffect } from "react";
 
 // Route names for Profile Navigator
 type ProfileRouteParams = {
@@ -69,8 +70,12 @@ export default function ProfileNavigation() {
   };
   const navigateToAuthMenu = () => {
     appNavigation.navigate("AuthenticationNavigation");
-    profileNavigation.dispatch(DrawerActions.closeDrawer());
   };
+
+  // Ensure drawer is closed when rendered for first time
+  useEffect(() => {
+    profileNavigation.dispatch(DrawerActions.closeDrawer());
+  }, []);
 
   return (
     <ProfileDrawer.Navigator
