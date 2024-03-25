@@ -10,12 +10,14 @@ module.exports = function (api) {
         "module-resolver",
         {
           alias: {
+            firebaseConfig: "./firebaseConfig.js",
             "@navigation": "./src/navigation",
             "@components": "./src/components",
             "@screens": "./src/screens",
             "@assets": "./assets",
             "@redux": "./src/redux",
             "@contexts": "./src/contexts",
+            "@_types": "./src/types", // added the underscore to differntiate from @types in node_modules
           },
           root: ["./src"],
           extensions: [".js", ".jsx", ".ts", ".tsx"],
