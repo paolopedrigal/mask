@@ -1,4 +1,3 @@
-import { KeyboardTypeOptions } from "react-native";
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
@@ -8,17 +7,7 @@ import SignInUpScreen from "@screens/SignInUpScreen";
 import SignInUpBackButton from "@components/SignInUpBackButton";
 import { useContext } from "react";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
-
-// Route names for the stack navigator
-type AuthRouteParams = {
-  Menu: undefined; // No parameters signed to SignInUp route
-  SignInUp: {
-    isSignUp: boolean;
-    question: string;
-    textInputPlaceholderText: string;
-    textInputKeyboardType: KeyboardTypeOptions;
-  };
-};
+import { AuthRouteParams } from "@_types/AuthTypes";
 
 const AuthStack = createNativeStackNavigator<AuthRouteParams>(); // Stack Navigator just for the Sign In/Up Screens
 

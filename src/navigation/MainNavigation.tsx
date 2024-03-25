@@ -1,12 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "@screens/HomeScreen";
 import ProfileNavigation from "./ProfileNavigation";
-
-// Route params for bottom tab navigator
-type MainRouteParams = {
-  Home: undefined;
-  ProfileNavigation: undefined;
-};
+import { MainRouteParams } from "@_types/AuthTypes";
 
 const BottomTab = createBottomTabNavigator<MainRouteParams>();
 

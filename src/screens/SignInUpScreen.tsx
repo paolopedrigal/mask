@@ -1,7 +1,6 @@
 import {
   Keyboard,
   KeyboardAvoidingView,
-  KeyboardTypeOptions,
   Platform,
   Pressable,
   StyleSheet,
@@ -11,26 +10,11 @@ import {
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
+import { SignInUpProps } from "@_types/AuthTypes";
 import Card from "@components/Card";
 import SignInUpTextInput from "@components/SignInUpTextInput";
 import ErrorMessage from "@components/ErrorMessage";
-
-// Route names for the stack navigator
-type AuthRouteParams = {
-  Menu: undefined; // No parameters signed to SignInUp route
-  SignInUp: {
-    isSignUp: boolean;
-    question: string;
-    textInputPlaceholderText: string;
-    textInputKeyboardType: KeyboardTypeOptions;
-  };
-};
-
-type Props = NativeStackScreenProps<AuthRouteParams, "SignInUp">; // Get props from "SignInUp" route
-// Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
-// Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
 
 const styles = StyleSheet.create({
   signUpContainer: {
@@ -67,7 +51,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function SignInUpScreen({ route }: Props) {
+export default function SignInUpScreen({ route }: SignInUpProps) {
   const insets = useSafeAreaInsets();
   const [showErrorMessage, setShowErrorMessage] = useState<boolean>(false);
   const keyboardVerticalOffset = Platform.OS === "ios" ? 100 : 0;

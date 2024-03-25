@@ -6,13 +6,8 @@ import {
   TextInput,
 } from "react-native";
 import MaskInput from "react-native-mask-input";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
-import {
-  NavigatorScreenParams,
-  StackActions,
-  useNavigation,
-} from "@react-navigation/native";
+import { StackActions, useNavigation } from "@react-navigation/native";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -20,40 +15,12 @@ import {
 } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../firebaseConfig";
 import { UserCredential } from "firebase/auth";
-
-// Route names for the AuthNavigation stack navigator
-type AuthRouteParams = {
-  Menu: undefined; // No parameters signed to SignInUp route
-  SignInUp: {
-    isSignUp: boolean;
-    question: string;
-    textInputPlaceholderText: string;
-    textInputKeyboardType: KeyboardTypeOptions;
-  };
-};
-
-// Route params for bottom tab navigator
-type MainRouteParams = {
-  Home: undefined;
-  ProfileNavigation: undefined;
-};
-
-// Route names for Parent Native Stack Navigator
-type AppRouteParams = {
-  AuthenticationNavigation: undefined;
-  MainNavigation: NavigatorScreenParams<MainRouteParams>;
-};
-
-type AppProps = NativeStackScreenProps<AppRouteParams, "MainNavigation">; // Get props from "MainNavigation" route from parent native stack navigator
-// Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
-// Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
-
-type AuthProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">; // Get props from "SignInUp" route
-// Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
-// Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
-
-type SignInUpScreenNavigationProp = AuthProps["navigation"];
-type AppNavigationProp = AppProps["navigation"];
+import {
+  MainNavigationProps,
+  SignInUpProps,
+  SignInUpJSONType,
+  SignInUpValues,
+} from "@_types/AuthTypes";
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -70,27 +37,13 @@ const styles = StyleSheet.create({
   },
 });
 
-type SignInUpKeys =
-  | "sign-up-questions"
-  | "sign-in-questions"
-  | "sign-up-place-holder-texts"
-  | "sign-in-place-holder-texts";
-
-interface signInUpValues {
-  [index: string]: string;
-}
-
-type signInUpJSONType = {
-  [key in SignInUpKeys]: signInUpValues;
-};
-
 // Get JSON data from "@assets/json/sign-in-up.json"
-const signInUpJSON: signInUpJSONType = require("@assets/json/sign-in-up.json");
-const signUpQuestions: signInUpValues = signInUpJSON["sign-up-questions"];
-const signInQuestions: signInUpValues = signInUpJSON["sign-in-questions"];
-const signUpPlaceholderTexts: signInUpValues =
+const signInUpJSON: SignInUpJSONType = require("@assets/json/sign-in-up.json");
+const signUpQuestions: SignInUpValues = signInUpJSON["sign-up-questions"];
+const signInQuestions: SignInUpValues = signInUpJSON["sign-in-questions"];
+const signUpPlaceholderTexts: SignInUpValues =
   signInUpJSON["sign-up-place-holder-texts"];
-const signInPlaceholderTexts: signInUpValues =
+const signInPlaceholderTexts: SignInUpValues =
   signInUpJSON["sign-in-place-holder-texts"];
 
 interface SignInUpTextInputProps {
@@ -101,8 +54,8 @@ interface SignInUpTextInputProps {
 
 export default function SignInUpTextInput(props: SignInUpTextInputProps) {
   const [text, setText] = useState<string>("");
-  const authNavigation = useNavigation<SignInUpScreenNavigationProp>();
-  const appNavigation = useNavigation<AppNavigationProp>();
+  const authNavigation = useNavigation<SignInUpProps["navigation"]>();
+  const mainNavigation = useNavigation<MainNavigationProps["navigation"]>();
   const { keyboardType, placeholderText, isSignUp } = props;
   const {
     birthday,
@@ -125,7 +78,7 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
       (isSignUp && signInUpScreen == 4) ||
       (!isSignUp && signInUpScreen == 2)
     ) {
-      appNavigation.navigate("MainNavigation", { screen: "Home" });
+      mainNavigation.navigate("MainNavigation", { screen: "Home" });
     } else {
       authNavigation.dispatch(
         // Using `replace` to prevent multiple `SignInUp` components to access the same states
