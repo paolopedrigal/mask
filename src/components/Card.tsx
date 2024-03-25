@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     fontSize: 32,
     color: "white",
     textAlign: "left",
+    width: "100%",
   },
   authorText: {
     fontFamily: "Inter-Bold",
