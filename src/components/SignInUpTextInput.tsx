@@ -13,7 +13,7 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
-import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIREBASE_AUTH } from "firebaseConfig";
 import { UserCredential } from "firebase/auth";
 import {
   MainNavigationProps,

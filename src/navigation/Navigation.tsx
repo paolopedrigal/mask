@@ -6,7 +6,7 @@ import {
 import AuthNavigation from "@navigation/AuthNavigation";
 import MainNavigation from "./MainNavigation";
 import AuthProvider from "@contexts/AuthProvider";
-import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIREBASE_AUTH } from "firebaseConfig";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { AppRouteParams } from "@_types/AuthTypes";

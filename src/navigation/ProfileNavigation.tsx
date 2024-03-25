@@ -10,7 +10,7 @@ import ProfileScreen from "@screens/ProfileScreen";
 import EditProfileScreen from "@screens/EditProfileScreen";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
-import { FIREBASE_AUTH } from "../../firebaseConfig";
+import { FIREBASE_AUTH } from "firebaseConfig";
 import { useEffect } from "react";
 import {
   ProfileRouteParams,
