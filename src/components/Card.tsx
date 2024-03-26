@@ -1,14 +1,36 @@
-import { StyleSheet, Text, View } from "react-native";
+import {
+  DimensionValue,
+  Image,
+  ImageBackground,
+  ImageSourcePropType,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
 const styles = StyleSheet.create({
   card: {
-    width: 350,
     height: 500,
     borderRadius: 15,
     paddingLeft: 25,
     paddingRight: 25,
     paddingTop: 40,
-    paddingBottom: 40,
+    paddingBottom: 30,
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    flexWrap: "wrap",
+    alignContent: "space-between",
+  },
+  image: {
+    height: 500,
+  },
+  innerImage: {
+    flex: 1,
+    borderRadius: 15,
+    paddingLeft: 25,
+    paddingRight: 25,
+    paddingTop: 40,
+    paddingBottom: 30,
     flexDirection: "row",
     justifyContent: "flex-start",
     flexWrap: "wrap",
@@ -21,8 +43,20 @@ const styles = StyleSheet.create({
     textAlign: "left",
     width: "100%",
   },
+  authorView: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 20,
+    height: 50,
+  },
+  authorImage: {
+    width: 45,
+    height: 45,
+    borderRadius: 100,
+    borderColor: "#7C7CD4",
+    borderWidth: 2,
+  },
   authorText: {
-    fontFamily: "Inter-Bold",
     fontSize: 16,
     color: "white",
     textAlign: "left",
@@ -30,20 +64,79 @@ const styles = StyleSheet.create({
 });
 
 interface CardProps {
-  backgroundColorStyle: string;
+  backgroundColor: string;
+  width?: DimensionValue | undefined;
   text?: string;
-  image?: string; // TODO: Not sure if this should be a string or some image prop
+  image?: ImageSourcePropType;
   authorText: string;
-  authorImage?: string;
+  isAuthorBold: boolean;
+  authorImage?: ImageSourcePropType;
 }
 
 export default function Card(props: CardProps) {
-  return (
-    <View
-      style={[{ backgroundColor: props.backgroundColorStyle }, styles.card]}
-    >
-      <Text style={styles.text}>{props.text}</Text>
-      <Text style={styles.authorText}>{props.authorText}</Text>
-    </View>
-  );
+  const DEFAULT_WIDTH: DimensionValue = "100%";
+  const propsStyle = props.width
+    ? { backgroundColor: props.backgroundColor, width: props?.width }
+    : { backgroundColor: props.backgroundColor, width: DEFAULT_WIDTH };
+
+  if (props.image)
+    return (
+      <ImageBackground
+        style={styles.image}
+        imageStyle={{
+          borderRadius: 15,
+        }}
+        resizeMode="cover"
+        source={props.image}
+      >
+        <View
+          style={[
+            styles.innerImage,
+            props.text ? { backgroundColor: "rgba(0,0,0, 0.60)" } : {},
+          ]}
+        >
+          <Text style={styles.text}>{props.text}</Text>
+          <View style={styles.authorView}>
+            {props?.authorImage ? (
+              <Image source={props.authorImage} style={styles.authorImage} />
+            ) : (
+              <></>
+            )}
+            <Text
+              style={[
+                props.isAuthorBold
+                  ? { fontFamily: "Inter-Bold" }
+                  : { fontFamily: "Inter-Regular" },
+                styles.authorText,
+              ]}
+            >
+              {props.authorText}
+            </Text>
+          </View>
+        </View>
+      </ImageBackground>
+    );
+  else
+    return (
+      <View style={[propsStyle, styles.card]}>
+        <Text style={styles.text}>{props.text}</Text>
+        <View style={styles.authorView}>
+          {props?.authorImage ? (
+            <Image source={props.authorImage} style={styles.authorImage} />
+          ) : (
+            <></>
+          )}
+          <Text
+            style={[
+              props.isAuthorBold
+                ? { fontFamily: "Inter-Bold" }
+                : { fontFamily: "Inter-Regular" },
+              styles.authorText,
+            ]}
+          >
+            {props.authorText}
+          </Text>
+        </View>
+      </View>
+    );
 }
