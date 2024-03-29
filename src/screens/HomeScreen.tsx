@@ -1,11 +1,5 @@
-import {
-  DimensionValue,
-  ImageSourcePropType,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
+import { CardProps } from "@_types/CardTypes";
 import Card from "@components/Card";
 import Swiper from "react-native-deck-swiper";
 import { useRef } from "react";
@@ -39,6 +33,9 @@ const styles = StyleSheet.create({
   },
 });
 
+const isHidden = true;
+
+// Not tracking dummy data in git
 const data = [
   {
     id: "1",
@@ -46,6 +43,7 @@ const data = [
     text: "Who was the celebrity you've been the closest to?",
     authorText: "Question of the Day",
     isAuthorBold: true,
+    // isHidden: false,
   },
   {
     id: "2",
@@ -55,35 +53,27 @@ const data = [
     authorText: "maikaroni",
     authorImage: require("@assets/images/test-pfp.jpg"),
     isAuthorBold: false,
+    isHidden: isHidden,
   },
   {
     id: "3",
     backgroundColor: "#24245E",
-    text: "Pitbull at work",
+    text: "Pitbull at work! I was with @banditgawd and @boombapo and they saw also lol",
     authorText: "johnmiranda",
     authorImage: require("@assets/images/test-pfp.jpg"),
     isAuthorBold: false,
+    isHidden: isHidden,
   },
   {
     id: "4",
     backgroundColor: "#131254",
-    // text: "Jeremy Lin bruv",
     image: require("@assets/images/linsanity.jpg"),
     authorText: "buansanity",
     authorImage: require("@assets/images/test-pfp.jpg"),
     isAuthorBold: false,
+    isHidden: isHidden,
   },
 ];
-
-interface CardProps {
-  backgroundColor: string;
-  width?: DimensionValue | undefined;
-  text?: string;
-  image?: ImageSourcePropType; // TODO: Not sure if this should be a string or some image prop
-  authorText: string;
-  isAuthorBold: boolean;
-  authorImage?: ImageSourcePropType;
-}
 
 export default function HomeScreen() {
   const swiper = useRef<Swiper<CardProps>>(null);
@@ -97,8 +87,7 @@ export default function HomeScreen() {
     <Swiper
       ref={swiper}
       cards={data}
-      cardIndex={0} // dont know about this
-      // containerStyle={{ alignItems: "center", justifyContent: "center" }}
+      cardIndex={0}
       backgroundColor={"#0C0B44"}
       cardVerticalMargin={30}
       cardHorizontalMargin={12}
@@ -110,23 +99,19 @@ export default function HomeScreen() {
           authorText={card.authorText}
           authorImage={card.authorImage}
           isAuthorBold={card.isAuthorBold}
+          isHidden={card.isHidden}
         />
       )}
       stackSize={4}
       stackSeparation={0}
-      // disableTopSwipe
-      // disableBottomSwipe
-      // goBackToPreviousCardOnSwipeLeft
       disableLeftSwipe
       disableRightSwipe
       disableBottomSwipe
-      // goBackToPreviousCardOnSwipeBottom
       showSecondCard={true}
       infinite
       childrenOnTop
       swipeBackCard
       stackAnimationTension={1}
-      // onSwipedBottom={press}
     >
       <Pressable style={{ position: "absolute", bottom: 30 }} onPress={press}>
         <Text style={{ color: "white" }}>Go back</Text>

@@ -1,12 +1,13 @@
 import {
-  DimensionValue,
   Image,
   ImageBackground,
-  ImageSourcePropType,
+  Platform,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { CardProps } from "@_types/CardTypes";
+import { processColorsInProps } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 
 const styles = StyleSheet.create({
   card: {
@@ -16,25 +17,11 @@ const styles = StyleSheet.create({
     paddingRight: 25,
     paddingTop: 40,
     paddingBottom: 30,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    flexWrap: "wrap",
-    alignContent: "space-between",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   image: {
     height: 500,
-  },
-  innerImage: {
-    flex: 1,
-    borderRadius: 15,
-    paddingLeft: 25,
-    paddingRight: 25,
-    paddingTop: 40,
-    paddingBottom: 30,
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    flexWrap: "wrap",
-    alignContent: "space-between",
   },
   text: {
     fontFamily: "Inter-Bold",
@@ -42,6 +29,28 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "left",
     width: "100%",
+  },
+  iOSTextBlur: {
+    color: "white",
+    fontFamily: "Inter-Bold",
+    fontSize: 32,
+    left: -2000,
+    elevation: 2,
+    backgroundColor: "transparent",
+    shadowOpacity: 1,
+    shadowRadius: 7,
+    shadowColor: "rgba(255,255,255,1)",
+    shadowOffset: { width: 2000, height: 0 },
+  },
+  androidTextBlur: {
+    color: "transparent",
+    width: "105%",
+    height: "85%",
+    fontFamily: "Inter-Bold",
+    fontSize: 32,
+    textShadowRadius: 35,
+    textShadowOffset: { width: 9, height: 0 },
+    textShadowColor: "rgba(255,255,255,1)",
   },
   authorView: {
     flexDirection: "row",
@@ -63,54 +72,67 @@ const styles = StyleSheet.create({
   },
 });
 
-interface CardProps {
-  backgroundColor: string;
-  width?: DimensionValue | undefined;
-  text?: string;
-  image?: ImageSourcePropType;
-  authorText: string;
-  isAuthorBold: boolean;
-  authorImage?: ImageSourcePropType;
-}
+function Card(props: CardProps) {
+  const {
+    backgroundColor, // dynamically determine background color of card
+    width, // has default value of 100% if not specified
+    text, // (Optional)
+    image, // (Optional) background image of card
+    authorText,
+    isAuthorBold, // dynamically determine if authorText will be bolded
+    authorImage, // for profile picture
+    isHidden, // has default value of `false` if not specified
+  }: CardProps = props;
 
-export default function Card(props: CardProps) {
-  const DEFAULT_WIDTH: DimensionValue = "100%";
-  const propsStyle = props.width
-    ? { backgroundColor: props.backgroundColor, width: props?.width }
-    : { backgroundColor: props.backgroundColor, width: DEFAULT_WIDTH };
+  // Styling to be mixed with `styles.card`
+  const cardContainerStyle = {
+    backgroundColor: backgroundColor,
+    width: width,
+  };
 
-  if (props.image)
+  if (image)
     return (
       <ImageBackground
         style={styles.image}
-        imageStyle={{
-          borderRadius: 15,
-        }}
+        imageStyle={{ borderRadius: 15 }}
         resizeMode="cover"
-        source={props.image}
+        blurRadius={isHidden ? 20 : 0}
+        source={image}
       >
         <View
           style={[
-            styles.innerImage,
-            props.text ? { backgroundColor: "rgba(0,0,0, 0.60)" } : {},
+            styles.card,
+            text != undefined
+              ? { backgroundColor: "rgba(0,0,0, 0.60)" } // add a semi-transparent dark tint
+              : {},
           ]}
         >
-          <Text style={styles.text}>{props.text}</Text>
+          <Text
+            style={
+              isHidden
+                ? Platform.OS == "ios" // blurring text differs by OS
+                  ? styles.iOSTextBlur
+                  : styles.androidTextBlur
+                : styles.text
+            }
+          >
+            {text}
+          </Text>
           <View style={styles.authorView}>
             {props?.authorImage ? (
-              <Image source={props.authorImage} style={styles.authorImage} />
+              <Image source={authorImage} style={styles.authorImage} />
             ) : (
-              <></>
+              <></> // If no author image at bottom of card
             )}
             <Text
               style={[
-                props.isAuthorBold
+                isAuthorBold
                   ? { fontFamily: "Inter-Bold" }
                   : { fontFamily: "Inter-Regular" },
                 styles.authorText,
               ]}
             >
-              {props.authorText}
+              {authorText}
             </Text>
           </View>
         </View>
@@ -118,25 +140,42 @@ export default function Card(props: CardProps) {
     );
   else
     return (
-      <View style={[propsStyle, styles.card]}>
-        <Text style={styles.text}>{props.text}</Text>
+      <View style={[cardContainerStyle, styles.card]}>
+        <Text
+          style={
+            isHidden
+              ? Platform.OS == "ios" // blurring text differs by OS
+                ? styles.iOSTextBlur
+                : styles.androidTextBlur
+              : styles.text
+          }
+        >
+          {text}
+        </Text>
         <View style={styles.authorView}>
           {props?.authorImage ? (
-            <Image source={props.authorImage} style={styles.authorImage} />
+            <Image source={authorImage} style={styles.authorImage} />
           ) : (
-            <></>
+            <></> // If no author image at bottom of card
           )}
           <Text
             style={[
-              props.isAuthorBold
+              isAuthorBold
                 ? { fontFamily: "Inter-Bold" }
                 : { fontFamily: "Inter-Regular" },
               styles.authorText,
             ]}
           >
-            {props.authorText}
+            {authorText}
           </Text>
         </View>
       </View>
     );
 }
+
+Card.defaultProps = {
+  width: "100%",
+  isHidden: false,
+};
+
+export default Card;
