@@ -3,6 +3,8 @@ import { CardProps } from "@_types/CardTypes";
 import Card from "@components/Card";
 import Swiper from "react-native-deck-swiper";
 import { useRef } from "react";
+import FlippingCard from "@components/FlippingCard";
+import CommentCard from "@components/CommentCard";
 
 // const styles = StyleSheet.create({
 //   home: {
@@ -33,7 +35,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const isHidden = true;
+const isHidden = false;
 
 // Not tracking dummy data in git
 const data = [
@@ -54,6 +56,7 @@ const data = [
     authorImage: require("@assets/images/test-pfp.jpg"),
     isAuthorBold: false,
     isHidden: isHidden,
+    width: 350,
   },
   {
     id: "3",
@@ -92,21 +95,28 @@ export default function HomeScreen() {
       cardVerticalMargin={30}
       cardHorizontalMargin={12}
       renderCard={(card) => (
-        <Card
-          backgroundColor={card.backgroundColor}
-          text={card.text}
-          image={card?.image}
-          authorText={card.authorText}
-          authorImage={card.authorImage}
-          isAuthorBold={card.isAuthorBold}
-          isHidden={card.isHidden}
+        <FlippingCard
+          width={350}
+          FrontCard={
+            <Card
+              backgroundColor={card.backgroundColor}
+              text={card.text}
+              image={card?.image}
+              authorText={card.authorText}
+              authorImage={card.authorImage}
+              isAuthorBold={card.isAuthorBold}
+              isHidden={card.isHidden}
+              width={card.width}
+            />
+          }
+          BackCard={<CommentCard />}
         />
       )}
       stackSize={4}
       stackSeparation={0}
-      disableLeftSwipe
-      disableRightSwipe
+      disableTopSwipe
       disableBottomSwipe
+      verticalSwipe={false}
       showSecondCard={true}
       infinite
       childrenOnTop
