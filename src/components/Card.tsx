@@ -7,7 +7,6 @@ import {
   View,
 } from "react-native";
 import { CardProps } from "@_types/CardTypes";
-import { processColorsInProps } from "react-native-reanimated/lib/typescript/reanimated2/Colors";
 
 const styles = StyleSheet.create({
   card: {
