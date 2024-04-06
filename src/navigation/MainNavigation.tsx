@@ -3,6 +3,7 @@ import HomeScreen from "@screens/HomeScreen";
 import ProfileNavigation from "./ProfileNavigation";
 import { MainRouteParams } from "@_types/AuthTypes";
 import TabIcon from "@components/TabIcon";
+import { BOTTOM_TAB_BG_COLOR, DARK_BG_COLOR } from "@assets/styles/colors";
 
 const BottomTab = createBottomTabNavigator<MainRouteParams>();
 
@@ -10,7 +11,7 @@ export default function MainNavigation() {
   const screenOptions = ({ route }: any) => ({
     // fix typing for this
     tabBarShowLabel: false,
-    tabBarStyle: { backgroundColor: "#212154", borderTopWidth: 0 },
+    tabBarStyle: { backgroundColor: BOTTOM_TAB_BG_COLOR, borderTopWidth: 0 },
     tabBarIcon: ({ focused }: any) => {
       if (route.name == "Home")
         return (
@@ -46,7 +47,7 @@ export default function MainNavigation() {
             fontSize: 32,
           },
           headerStyle: {
-            backgroundColor: "#0C0B44",
+            backgroundColor: DARK_BG_COLOR,
             borderBottomWidth: 0,
             height: 100,
             shadowColor: "transparent",
