@@ -1,11 +1,4 @@
-import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -14,14 +7,33 @@ import Animated, {
 } from "react-native-reanimated";
 import { FlippingCardProps } from "@_types/CardTypes";
 import FlippingCardButton from "./FlippingCardButton";
+import { hasHighLuminance } from "@utils/utils";
 
-export default function FlippingCard(props: FlippingCardProps) {
+const styles = StyleSheet.create({
+  flippingCard: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  animatedView: {
+    backfaceVisibility: "hidden",
+    position: "absolute",
+    top: 0,
+  },
+});
+
+function FlippingCard(props: FlippingCardProps) {
   const {
-    FrontCard, // Component to render for the front side of the flipping card
-    BackCard, // Componetn to render for back side of the flipping card
+    frontCard, // Component to render for the front side of the flipping card
+    backCard, // Componetn to render for back side of the flipping card
     width, // Width to set both `FrontCard` and `BackCard` components
+    backgroundColor, // Color of card
+    frontCardProps, // Props to be passed to FrontCard component
+    backCardProps, // Props to be passed to BackCard component
   }: FlippingCardProps = props;
+
   const keyboardVerticalOffset = Platform.OS === "ios" ? 150 : 0;
+
+  // Animation logic for flipping card
   const rotate = useSharedValue(0);
   const frontCardAnimatedStyle = useAnimatedStyle(() => {
     const rotateValue = interpolate(rotate.value, [0, 1], [1, 180]);
@@ -47,35 +59,41 @@ export default function FlippingCard(props: FlippingCardProps) {
   });
   const flippingCardCallback = () => {
     rotate.value = rotate.value ? 0 : 1;
-    console.log(rotate.value);
   };
 
   return (
-    <View style={{ justifyContent: "center", alignItems: "center" }}>
+    <View style={styles.flippingCard}>
       <Animated.View
         style={[
           frontCardAnimatedStyle,
+          styles.animatedView,
           {
-            backfaceVisibility: "hidden",
-            position: "absolute",
-            top: 0,
             width: width,
           },
         ]}
       >
-        {FrontCard}
+        {frontCard({
+          ...frontCardProps,
+          backgroundColor: backgroundColor,
+          width: width,
+        })}
         <FlippingCardButton
           flippingCardCallback={flippingCardCallback}
           isFrontCard={true}
+          hasHighLuminance={
+            frontCardProps.image
+              ? false
+              : backgroundColor
+              ? hasHighLuminance(backgroundColor)
+              : false
+          }
         />
       </Animated.View>
       <Animated.View
         style={[
           backCardAnimatedStyle,
+          styles.animatedView,
           {
-            backfaceVisibility: "hidden",
-            position: "absolute",
-            top: 0,
             width: width,
           },
         ]}
@@ -84,13 +102,22 @@ export default function FlippingCard(props: FlippingCardProps) {
           behavior="position"
           keyboardVerticalOffset={keyboardVerticalOffset}
         >
-          {BackCard}
+          {backCard({ ...backCardProps, backgroundColor: backgroundColor })}
           <FlippingCardButton
             flippingCardCallback={flippingCardCallback}
             isFrontCard={false}
+            hasHighLuminance={
+              backgroundColor ? hasHighLuminance(backgroundColor) : false
+            }
           />
         </KeyboardAvoidingView>
       </Animated.View>
     </View>
   );
 }
+
+FlippingCard.defaultProps = {
+  backgroundColor: "#000000",
+};
+
+export default FlippingCard;

@@ -1,18 +1,18 @@
 import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+  AUTHOR_IMAGE_BORDER_COLOR,
+  COMMENT_SHADED_COLOR,
+  HIGH_LUMINANCE_TEXT_COLOR,
+  LOW_LUMINANCE_TEXT_COLOR,
+} from "@assets/styles/colors";
+import { Image, StyleSheet, Text, View } from "react-native";
+import { CommentProps } from "@_types/CardTypes";
 
 const styles = StyleSheet.create({
   comment: {
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#24245E",
+    borderBottomWidth: 0.2,
     paddingLeft: 15,
     paddingRight: 55,
     paddingVertical: 15,
@@ -22,36 +22,68 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 100,
-    borderColor: "#7C7CD4",
-    borderWidth: 1.5,
+    borderColor: AUTHOR_IMAGE_BORDER_COLOR,
+    borderWidth: 0.5,
   },
   authorText: {
-    color: "white",
+    color: LOW_LUMINANCE_TEXT_COLOR,
     fontFamily: "Inter-Bold",
     fontSize: 12,
   },
   commentText: {
-    color: "white",
+    color: LOW_LUMINANCE_TEXT_COLOR,
     fontFamily: "Inter-Regular",
     fontSize: 12,
   },
+  textColorHighLuminance: {
+    color: HIGH_LUMINANCE_TEXT_COLOR,
+  },
+  textColorLowLuminance: {
+    color: LOW_LUMINANCE_TEXT_COLOR,
+  },
 });
 
-interface CommentProps {
-  authorImage: ImageSourcePropType;
-  authorText: string;
-  comment: string;
-}
-
-export default function Comment(props: CommentProps) {
-  const { authorImage, authorText, comment }: CommentProps = props;
+function Comment(props: CommentProps) {
+  const {
+    authorImage,
+    authorText,
+    comment,
+    secondaryBackgroundColor,
+    hasHighLuminance,
+  }: CommentProps = props;
 
   return (
-    <View style={styles.comment}>
+    <View
+      style={[styles.comment, { borderBottomColor: secondaryBackgroundColor }]}
+    >
       <Image source={authorImage} style={styles.authorImage} />
-      <Text style={styles.authorText}>
-        {authorText} <Text style={styles.commentText}>{comment}</Text>
+      <Text
+        style={[
+          styles.authorText,
+          hasHighLuminance
+            ? styles.textColorHighLuminance
+            : styles.textColorLowLuminance,
+        ]}
+      >
+        {authorText}{" "}
+        <Text
+          style={[
+            styles.commentText,
+            hasHighLuminance
+              ? styles.textColorHighLuminance
+              : styles.textColorLowLuminance,
+          ]}
+        >
+          {comment}
+        </Text>
       </Text>
     </View>
   );
 }
+
+Comment.defaultProps = {
+  secondaryBackgroundColor: COMMENT_SHADED_COLOR,
+  hasHighLuminance: false,
+};
+
+export default Comment;

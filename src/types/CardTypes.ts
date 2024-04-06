@@ -1,19 +1,34 @@
-import React from "react";
 import { DimensionValue, ImageSourcePropType } from "react-native";
 
 export interface CardProps {
-  backgroundColor: string;
+  authorText: string;
+  backgroundColor?: string;
   width?: DimensionValue;
   text?: string;
   image?: ImageSourcePropType;
-  authorText: string;
   isAuthorBold: boolean;
   authorImage?: ImageSourcePropType;
   isHidden?: boolean;
 }
 
+export interface CommentCardProps {
+  backgroundColor?: string;
+  comments: CommentProps[];
+}
+
+export interface CommentProps {
+  authorImage: ImageSourcePropType;
+  authorText: string;
+  comment: string;
+  secondaryBackgroundColor?: string;
+  hasHighLuminance?: boolean;
+}
+
 export interface FlippingCardProps {
-  FrontCard: React.ReactNode | null;
-  BackCard: React.ReactNode | null;
+  frontCard: (props: CardProps) => JSX.Element;
+  backCard: (props: CommentCardProps) => JSX.Element;
   width: number;
+  backgroundColor?: string;
+  frontCardProps: CardProps;
+  backCardProps: CommentCardProps;
 }

@@ -7,11 +7,18 @@ import {
   View,
 } from "react-native";
 import { CardProps } from "@_types/CardTypes";
+import {
+  AUTHOR_IMAGE_BORDER_COLOR,
+  HIGH_LUMINANCE_TEXT_COLOR,
+  LOW_LUMINANCE_TEXT_COLOR,
+} from "@assets/styles/colors";
+import { hasHighLuminance } from "@utils/utils";
+import { CARD_BORDER_RADIUS, CARD_HEIGHT } from "@assets/styles/card";
 
 const styles = StyleSheet.create({
   card: {
-    height: 500,
-    borderRadius: 15,
+    height: CARD_HEIGHT,
+    borderRadius: CARD_BORDER_RADIUS,
     paddingLeft: 25,
     paddingRight: 25,
     paddingTop: 40,
@@ -19,13 +26,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "flex-start",
   },
-  image: {
-    height: 500,
+  imageView: {
+    height: CARD_HEIGHT,
+  },
+  cardRadius: {
+    borderRadius: CARD_BORDER_RADIUS,
+  },
+  semiTransparentDarkTint: {
+    backgroundColor: "rgba(0,0,0, 0.60)",
   },
   text: {
     fontFamily: "Inter-Bold",
     fontSize: 32,
-    color: "white",
+    color: LOW_LUMINANCE_TEXT_COLOR,
     textAlign: "left",
     width: "100%",
   },
@@ -51,6 +64,16 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 9, height: 0 },
     textShadowColor: "rgba(255,255,255,1)",
   },
+  highLuminanceTextColor: {
+    color: HIGH_LUMINANCE_TEXT_COLOR,
+    shadowColor: HIGH_LUMINANCE_TEXT_COLOR, // iOS
+    textShadowColor: HIGH_LUMINANCE_TEXT_COLOR, // Android
+  },
+  lowLuminanceTextColor: {
+    color: LOW_LUMINANCE_TEXT_COLOR,
+    shadowColor: LOW_LUMINANCE_TEXT_COLOR,
+    textShadowColor: LOW_LUMINANCE_TEXT_COLOR,
+  },
   authorView: {
     flexDirection: "row",
     alignItems: "center",
@@ -61,23 +84,29 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 100,
-    borderColor: "#7C7CD4",
-    borderWidth: 2,
+    borderColor: AUTHOR_IMAGE_BORDER_COLOR,
+    borderWidth: 1,
   },
   authorText: {
     fontSize: 16,
-    color: "white",
+    color: LOW_LUMINANCE_TEXT_COLOR,
     textAlign: "left",
+  },
+  boldInterText: {
+    fontFamily: "Inter-Bold",
+  },
+  regularInterText: {
+    fontFamily: "Inter-Regular",
   },
 });
 
 function Card(props: CardProps) {
   const {
+    authorText, // text at bottom of card; Typically the creator
     backgroundColor, // dynamically determine background color of card
     width, // has default value of 100% if not specified
     text, // (Optional)
     image, // (Optional) background image of card
-    authorText,
     isAuthorBold, // dynamically determine if authorText will be bolded
     authorImage, // for profile picture
     isHidden, // has default value of `false` if not specified
@@ -92,8 +121,8 @@ function Card(props: CardProps) {
   if (image)
     return (
       <ImageBackground
-        style={styles.image}
-        imageStyle={{ borderRadius: 15 }}
+        style={styles.imageView} // styling view (under the hood) containing image
+        imageStyle={styles.cardRadius} // styling image itself
         resizeMode="cover"
         blurRadius={isHidden ? 20 : 0}
         source={image}
@@ -102,7 +131,7 @@ function Card(props: CardProps) {
           style={[
             styles.card,
             text != undefined
-              ? { backgroundColor: "rgba(0,0,0, 0.60)" } // add a semi-transparent dark tint
+              ? styles.semiTransparentDarkTint // add a semi-transparent dark tint
               : {},
           ]}
         >
@@ -125,9 +154,7 @@ function Card(props: CardProps) {
             )}
             <Text
               style={[
-                isAuthorBold
-                  ? { fontFamily: "Inter-Bold" }
-                  : { fontFamily: "Inter-Regular" },
+                isAuthorBold ? styles.boldInterText : styles.regularInterText,
                 styles.authorText,
               ]}
             >
@@ -141,13 +168,18 @@ function Card(props: CardProps) {
     return (
       <View style={[cardContainerStyle, styles.card]}>
         <Text
-          style={
+          style={[
             isHidden
               ? Platform.OS == "ios" // blurring text differs by OS
                 ? styles.iOSTextBlur
                 : styles.androidTextBlur
-              : styles.text
-          }
+              : styles.text,
+            backgroundColor
+              ? hasHighLuminance(backgroundColor)
+                ? styles.highLuminanceTextColor
+                : styles.lowLuminanceTextColor
+              : styles.lowLuminanceTextColor,
+          ]}
         >
           {text}
         </Text>
@@ -159,10 +191,13 @@ function Card(props: CardProps) {
           )}
           <Text
             style={[
-              isAuthorBold
-                ? { fontFamily: "Inter-Bold" }
-                : { fontFamily: "Inter-Regular" },
+              isAuthorBold ? styles.boldInterText : styles.regularInterText,
               styles.authorText,
+              backgroundColor
+                ? hasHighLuminance(backgroundColor)
+                  ? styles.highLuminanceTextColor
+                  : styles.lowLuminanceTextColor
+                : styles.lowLuminanceTextColor,
             ]}
           >
             {authorText}
@@ -173,7 +208,11 @@ function Card(props: CardProps) {
 }
 
 Card.defaultProps = {
+  backgroundColor: "#000000",
   width: "100%",
+  text: "",
+  image: undefined,
+  authorImage: undefined,
   isHidden: false,
 };
 

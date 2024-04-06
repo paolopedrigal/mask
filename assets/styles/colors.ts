@@ -1,0 +1,9 @@
+export const DARK_BG_COLOR: string = "#050522";
+export const QUESTION_CARD_BG_COLOR: string = "#000000"; // black
+export const BOTTOM_TAB_BG_COLOR: string = "#000000"; // black
+export const AUTHOR_IMAGE_BORDER_COLOR: string = "#FFFFFF"; // white
+export const COMMENT_SHADED_COLOR: string = "#FFFFFF";
+export const LOW_LUMINANCE_FADED_TEXT_COLOR: string = "#C0C0C0";
+export const HIGH_LUMINCANCE_FADED_TEXT_COLOR: string = "#D7D7D7";
+export const HIGH_LUMINANCE_TEXT_COLOR: string = "#636363";
+export const LOW_LUMINANCE_TEXT_COLOR: string = "#FFFFFF";

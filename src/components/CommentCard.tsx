@@ -1,80 +1,63 @@
-import {
-  FlatList,
-  Image,
-  ImageSourcePropType,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  Pressable,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import Comment from "@components/Comment";
 import { useState } from "react";
+import { CommentCardProps } from "@_types/CardTypes";
+import {
+  COMMENT_SHADED_COLOR,
+  HIGH_LUMINANCE_TEXT_COLOR,
+  HIGH_LUMINCANCE_FADED_TEXT_COLOR,
+  LOW_LUMINANCE_FADED_TEXT_COLOR,
+  LOW_LUMINANCE_TEXT_COLOR,
+} from "@assets/styles/colors";
+import { applyShading, hasHighLuminance } from "@utils/utils";
+import { CARD_BORDER_RADIUS, CARD_HEIGHT } from "@assets/styles/card";
 
-interface Comment {
-  authorImage: ImageSourcePropType;
-  authorText: string;
-  comment: string;
-}
+const styles = StyleSheet.create({
+  commentCard: {
+    height: CARD_HEIGHT,
+    borderRadius: CARD_BORDER_RADIUS,
+    paddingTop: 25,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  commentSectionView: {
+    justifyContent: "center",
+    // alignItems: "stretch",
+    height: 375,
+    marginVertical: 20,
+    width: "100%",
+  },
+  emptyCommentSectionText: {
+    fontFamily: "Inter-Regular",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  commentTextInput: {
+    borderRadius: 25,
+    width: 275,
+    height: 30,
+    paddingLeft: 10,
+    color: "white",
+  },
+});
 
-const comments: Comment[] = [
-  {
-    authorImage: require("@assets/images/test-pfp.jpg"),
-    authorText: "boombampao",
-    comment:
-      "Wow! This is a really long comment about Bruno Mars in Las Vegas, Nevada during July of 2023! Wow!",
-  },
-  {
-    authorImage: require("@assets/images/test-pfp.jpg"),
-    authorText: "maikaroni",
-    comment: "Did they take away your phones? :-(",
-  },
-  {
-    authorImage: require("@assets/images/test-pfp.jpg"),
-    authorText: "banditgawd",
-    comment:
-      "Bro, Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit.",
-  },
-  {
-    authorImage: require("@assets/images/test-pfp.jpg"),
-    authorText: "banditgawd",
-    comment:
-      "Bro, Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit.",
-  },
-  {
-    authorImage: require("@assets/images/test-pfp.jpg"),
-    authorText: "banditgawd",
-    comment:
-      "Bro, Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit.",
-  },
-  {
-    authorImage: require("@assets/images/test-pfp.jpg"),
-    authorText: "banditgawd",
-    comment:
-      "Bro, Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit. Logs for your project will appear below. Press Ctrl+C to exit.",
-  },
-];
-
-export default function CommentCard() {
+function CommentCard(props: CommentCardProps) {
   const [commentText, setCommentText] = useState<string>("");
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const { backgroundColor, comments }: CommentCardProps = props;
+
+  const secondaryBackgroundColor: string | undefined =
+    applyShading(backgroundColor);
 
   return (
     <View
-      style={{
-        height: 500,
-        borderRadius: 15,
-        paddingTop: 25,
-        backgroundColor: "#2A2A6B",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+      style={[
+        styles.commentCard,
+        {
+          backgroundColor: backgroundColor,
+        },
+      ]}
     >
-      <View style={{ height: 375, marginVertical: 20 }}>
+      <View style={styles.commentSectionView}>
         <FlatList
           data={comments}
           renderItem={({ item }) => (
@@ -82,50 +65,57 @@ export default function CommentCard() {
               authorImage={item.authorImage}
               authorText={item.authorText}
               comment={item.comment}
+              secondaryBackgroundColor={
+                backgroundColor ? secondaryBackgroundColor : backgroundColor
+              }
+              hasHighLuminance={
+                backgroundColor ? hasHighLuminance(backgroundColor) : false
+              }
             />
           )}
-        />
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
-        <TextInput
-          placeholder={"Post a comment..."}
-          value={commentText}
-          onChangeText={setCommentText}
-          placeholderTextColor="#636363"
-          style={{
-            backgroundColor: "#24245E",
-            borderRadius: 25,
-            width: 275,
-            height: 30,
-            paddingLeft: 10,
-            color: "white",
-          }}
-        />
-        <Pressable
-          onPress={() =>
-            setIsLiked((prev) => {
-              console.log(prev);
-              return !prev;
-            })
+          ListEmptyComponent={
+            <Text
+              style={[
+                styles.emptyCommentSectionText,
+                backgroundColor
+                  ? hasHighLuminance(backgroundColor)
+                    ? { color: HIGH_LUMINANCE_TEXT_COLOR }
+                    : { color: LOW_LUMINANCE_TEXT_COLOR }
+                  : { color: LOW_LUMINANCE_TEXT_COLOR },
+              ]}
+            >
+              Nothing to see here yet!
+            </Text>
           }
-        >
-          <Image
-            source={
-              isLiked
-                ? require("@assets/icons/like-button-icon-filled.png")
-                : require("@assets/icons/like-button-icon.png")
-            }
-            style={{ width: 20, height: 20 }}
-          />
-        </Pressable>
+        />
       </View>
+      <TextInput
+        placeholder={"Post a comment..."}
+        value={commentText}
+        onChangeText={setCommentText}
+        placeholderTextColor={
+          backgroundColor
+            ? hasHighLuminance(backgroundColor)
+              ? HIGH_LUMINCANCE_FADED_TEXT_COLOR
+              : LOW_LUMINANCE_FADED_TEXT_COLOR
+            : LOW_LUMINANCE_FADED_TEXT_COLOR
+        }
+        style={[
+          styles.commentTextInput,
+          {
+            backgroundColor: backgroundColor
+              ? secondaryBackgroundColor
+              : backgroundColor,
+          },
+        ]}
+      />
     </View>
   );
 }
+
+CommentCard.defaultProps = {
+  backgroundColor: "#000000",
+  secondaryBackgroundColor: COMMENT_SHADED_COLOR,
+};
+
+export default CommentCard;
