@@ -18,6 +18,7 @@ module.exports = function (api) {
             "@redux": "./src/redux",
             "@contexts": "./src/contexts",
             "@_types": "./src/types", // added the underscore to differntiate from @types in node_modules
+            "@utils": "./src/utils",
           },
           root: ["./src"],
           extensions: [".js", ".jsx", ".ts", ".tsx"],
