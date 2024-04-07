@@ -1,11 +1,11 @@
 import {
-  Image,
   ImageBackground,
   Platform,
   StyleSheet,
   Text,
   View,
 } from "react-native";
+import { Image } from "expo-image";
 import { CardProps } from "@_types/CardTypes";
 import {
   AUTHOR_IMAGE_BORDER_COLOR,

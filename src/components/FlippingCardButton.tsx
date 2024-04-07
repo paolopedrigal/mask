@@ -1,4 +1,5 @@
-import { Image, Pressable } from "react-native";
+import { Pressable } from "react-native";
+import { Image } from "expo-image";
 
 interface FlippingCardProps {
   flippingCardCallback: () => void;

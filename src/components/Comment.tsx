@@ -4,8 +4,9 @@ import {
   HIGH_LUMINANCE_TEXT_COLOR,
   LOW_LUMINANCE_TEXT_COLOR,
 } from "@assets/styles/colors";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { CommentProps } from "@_types/CardTypes";
+import { Image } from "expo-image";
 
 const styles = StyleSheet.create({
   comment: {

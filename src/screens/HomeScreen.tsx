@@ -1,4 +1,5 @@
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Image } from "expo-image";
 import { CardProps, CommentProps } from "@_types/CardTypes";
 import Card from "@components/Card";
 import Swiper from "react-native-deck-swiper";
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const isHidden = true;
+const isHidden = false;
 
 interface Data {
   id: number;
@@ -81,7 +82,7 @@ const data: Data[] = [
   {
     id: 3,
     card: {
-      backgroundColor: "#ABAB90",
+      backgroundColor: "#FEFFCB",
       text: "Pitbull at work! I was with @banditgawd and @boombapo and they saw also lol",
       authorText: "johnmiranda",
       authorImage: require("@assets/images/test-pfp.jpg"),

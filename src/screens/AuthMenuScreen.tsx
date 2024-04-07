@@ -1,5 +1,4 @@
 import {
-  Image,
   Keyboard,
   KeyboardAvoidingView,
   KeyboardTypeOptions,
@@ -11,6 +10,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Image } from "expo-image";
 
 // Route names for the stack navigator
 type AuthRouteParams = {
