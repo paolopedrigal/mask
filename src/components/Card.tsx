@@ -28,11 +28,25 @@ const styles = StyleSheet.create({
   },
   imageView: {
     height: CARD_HEIGHT,
-  },
-  cardRadius: {
     borderRadius: CARD_BORDER_RADIUS,
   },
-  semiTransparentDarkTint: {
+  image: {
+    height: CARD_HEIGHT,
+    position: "absolute", // Absolute positioning for the image
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: CARD_BORDER_RADIUS,
+  },
+  semiTransparentDarkTintView: {
+    flex: 1,
+    paddingLeft: 25,
+    paddingRight: 25,
+    paddingTop: 40,
+    paddingBottom: 30,
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     backgroundColor: "rgba(0,0,0, 0.60)",
   },
   text: {
@@ -141,50 +155,43 @@ function Card(props: CardProps) {
 
   if (image)
     return (
-      <ImageBackground
-        style={styles.imageView} // styling view (under the hood) containing image
-        imageStyle={styles.cardRadius} // styling image itself
-        resizeMode="cover"
-        blurRadius={isHidden ? 20 : 0}
-        source={image}
-      >
-        <View
-          style={[
-            styles.card,
-            text != undefined
-              ? styles.semiTransparentDarkTint // add a semi-transparent dark tint
-              : {},
-          ]}
+      <View style={styles.imageView}>
+        <Image
+          contentFit="cover"
+          style={styles.imageView}
+          blurRadius={isHidden ? 20 : 0}
+          source={image}
         >
-          <Text
-            style={[
-              // styles.lowLuminanceTextColor,
-              isHidden
-                ? Platform.OS == "ios" // blurring text differs by OS
-                  ? styles.iOSLowLuminanceTextBlur
-                  : styles.androidLowLuminanceTextBlur
-                : styles.text,
-            ]}
-          >
-            {text}
-          </Text>
-          <View style={styles.authorView}>
-            {props?.authorImage ? (
-              <Image source={authorImage} style={styles.authorImage} />
-            ) : (
-              <></> // If no author image at bottom of card
-            )}
+          <View style={styles.semiTransparentDarkTintView}>
             <Text
               style={[
-                isAuthorBold ? styles.boldInterText : styles.regularInterText,
-                styles.authorText,
+                isHidden
+                  ? Platform.OS == "ios" // blurring text differs by OS
+                    ? styles.iOSLowLuminanceTextBlur
+                    : styles.androidLowLuminanceTextBlur
+                  : styles.text,
               ]}
             >
-              {authorText}
+              {text}
             </Text>
+            <View style={styles.authorView}>
+              {props?.authorImage ? (
+                <Image source={authorImage} style={styles.authorImage} />
+              ) : (
+                <></> // If no author image at bottom of card
+              )}
+              <Text
+                style={[
+                  isAuthorBold ? styles.boldInterText : styles.regularInterText,
+                  styles.authorText,
+                ]}
+              >
+                {authorText}
+              </Text>
+            </View>
           </View>
-        </View>
-      </ImageBackground>
+        </Image>
+      </View>
     );
   else
     return (
