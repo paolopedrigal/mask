@@ -36,14 +36,14 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0, 0.60)",
   },
   text: {
+    color: LOW_LUMINANCE_TEXT_COLOR, // default
     fontFamily: "Inter-Bold",
     fontSize: 32,
-    color: LOW_LUMINANCE_TEXT_COLOR,
     textAlign: "left",
     width: "100%",
   },
-  iOSTextBlur: {
-    color: "white",
+  iOSLowLuminanceTextBlur: {
+    color: LOW_LUMINANCE_TEXT_COLOR,
     fontFamily: "Inter-Bold",
     fontSize: 32,
     left: -2000,
@@ -51,10 +51,10 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     shadowOpacity: 1,
     shadowRadius: 7,
-    shadowColor: "rgba(255,255,255,1)",
+    shadowColor: LOW_LUMINANCE_TEXT_COLOR, // "rgba(255,255,255,1)",
     shadowOffset: { width: 2000, height: 0 },
   },
-  androidTextBlur: {
+  androidLowLuminanceTextBlur: {
     color: "transparent",
     width: "105%",
     height: "85%",
@@ -62,17 +62,38 @@ const styles = StyleSheet.create({
     fontSize: 32,
     textShadowRadius: 35,
     textShadowOffset: { width: 9, height: 0 },
-    textShadowColor: "rgba(255,255,255,1)",
+    textShadowColor: LOW_LUMINANCE_TEXT_COLOR, // "rgba(255,255,255,1)",
+  },
+  iOSHighLuminanceTextBlur: {
+    color: HIGH_LUMINANCE_TEXT_COLOR,
+    fontFamily: "Inter-Bold",
+    fontSize: 32,
+    left: -2000,
+    elevation: 2,
+    backgroundColor: "transparent",
+    shadowOpacity: 1,
+    shadowRadius: 7,
+    shadowColor: HIGH_LUMINANCE_TEXT_COLOR, // "rgba(255,255,255,1)",
+    shadowOffset: { width: 2000, height: 0 },
+  },
+  androidHighLuminanceTextBlur: {
+    color: "transparent",
+    width: "105%",
+    height: "85%",
+    fontFamily: "Inter-Bold",
+    fontSize: 32,
+    textShadowRadius: 35,
+    textShadowOffset: { width: 9, height: 0 },
+    textShadowColor: HIGH_LUMINANCE_TEXT_COLOR, // "rgba(255,255,255,1)",
   },
   highLuminanceTextColor: {
     color: HIGH_LUMINANCE_TEXT_COLOR,
-    shadowColor: HIGH_LUMINANCE_TEXT_COLOR, // iOS
-    textShadowColor: HIGH_LUMINANCE_TEXT_COLOR, // Android
   },
   lowLuminanceTextColor: {
     color: LOW_LUMINANCE_TEXT_COLOR,
-    shadowColor: LOW_LUMINANCE_TEXT_COLOR,
-    textShadowColor: LOW_LUMINANCE_TEXT_COLOR,
+  },
+  transparentText: {
+    color: "transparent",
   },
   authorView: {
     flexDirection: "row",
@@ -89,7 +110,7 @@ const styles = StyleSheet.create({
   },
   authorText: {
     fontSize: 16,
-    color: LOW_LUMINANCE_TEXT_COLOR,
+    color: LOW_LUMINANCE_TEXT_COLOR, // default color
     textAlign: "left",
   },
   boldInterText: {
@@ -136,13 +157,14 @@ function Card(props: CardProps) {
           ]}
         >
           <Text
-            style={
+            style={[
+              // styles.lowLuminanceTextColor,
               isHidden
                 ? Platform.OS == "ios" // blurring text differs by OS
-                  ? styles.iOSTextBlur
-                  : styles.androidTextBlur
-                : styles.text
-            }
+                  ? styles.iOSLowLuminanceTextBlur
+                  : styles.androidLowLuminanceTextBlur
+                : styles.text,
+            ]}
           >
             {text}
           </Text>
@@ -169,15 +191,19 @@ function Card(props: CardProps) {
       <View style={[cardContainerStyle, styles.card]}>
         <Text
           style={[
+            styles.text,
             isHidden
               ? Platform.OS == "ios" // blurring text differs by OS
-                ? styles.iOSTextBlur
-                : styles.androidTextBlur
-              : styles.text,
-            backgroundColor
-              ? hasHighLuminance(backgroundColor)
-                ? styles.highLuminanceTextColor
-                : styles.lowLuminanceTextColor
+                ? // iOS blur
+                  hasHighLuminance(backgroundColor)
+                  ? styles.iOSHighLuminanceTextBlur
+                  : styles.iOSLowLuminanceTextBlur
+                : // Android blur
+                hasHighLuminance(backgroundColor)
+                ? styles.androidHighLuminanceTextBlur
+                : styles.androidLowLuminanceTextBlur
+              : hasHighLuminance(backgroundColor)
+              ? styles.highLuminanceTextColor
               : styles.lowLuminanceTextColor,
           ]}
         >
