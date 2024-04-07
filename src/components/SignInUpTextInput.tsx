@@ -21,6 +21,10 @@ import {
   SignInUpJSONType,
   SignInUpValues,
 } from "@_types/AuthTypes";
+import {
+  AUTH_PLACEHOLDER_TEXT_COLOR,
+  SELECTION_COLOR,
+} from "@assets/styles/colors";
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -164,8 +168,8 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
         onChangeText={(masked, unmasked) => setText(unmasked)}
         mask={[/\d/, /\d/, " ", /\d/, /\d/, " ", /\d/, /\d/, /\d/, /\d/]}
         keyboardType={keyboardType}
-        placeholderTextColor="#24245E"
-        selectionColor={"#6767D9"}
+        placeholderTextColor={AUTH_PLACEHOLDER_TEXT_COLOR}
+        selectionColor={SELECTION_COLOR}
         style={styles.textInput}
       />
     );
@@ -183,8 +187,8 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
           maxLength={signInUpScreen == 2 && isSignUp ? 35 : undefined}
           keyboardType={keyboardType}
           autoCapitalize="none"
-          placeholderTextColor="#24245E"
-          selectionColor={"#6767D9"}
+          placeholderTextColor={AUTH_PLACEHOLDER_TEXT_COLOR}
+          selectionColor={SELECTION_COLOR}
           numberOfLines={1} // Ensure only one line is visible
           style={[
             styles.textInput,

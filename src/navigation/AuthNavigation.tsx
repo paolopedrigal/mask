@@ -8,6 +8,7 @@ import SignInUpBackButton from "@components/SignInUpBackButton";
 import { useContext } from "react";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
 import { AuthRouteParams } from "@_types/AuthTypes";
+import { DARK_BG_COLOR } from "@assets/styles/colors";
 
 const AuthStack = createNativeStackNavigator<AuthRouteParams>(); // Stack Navigator just for the Sign In/Up Screens
 
@@ -25,7 +26,7 @@ export default function AuthNavigation() {
       fontSize: 32,
     },
     headerTitleAlign: "center",
-    headerStyle: { backgroundColor: "#0C0B44" },
+    headerStyle: { backgroundColor: DARK_BG_COLOR },
     headerLeft: () => <SignInUpBackButton />,
     headerTintColor: "white",
     headerBackTitleVisible: false,

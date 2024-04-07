@@ -11,6 +11,11 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Image } from "expo-image";
+import {
+  AUTH_MENU_LOG_IN_TEXT_COLOR,
+  AUTH_MENU_SIGN_UP_PRESSABLE_COLOR,
+  DARK_BG_COLOR,
+} from "@assets/styles/colors";
 
 // Route names for the stack navigator
 type AuthRouteParams = {
@@ -30,7 +35,7 @@ type Props = NativeStackScreenProps<AuthRouteParams, "Menu">; // Get props from 
 const styles = StyleSheet.create({
   signInContainer: {
     flex: 1,
-    backgroundColor: "#0C0B44",
+    backgroundColor: DARK_BG_COLOR,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -39,13 +44,13 @@ const styles = StyleSheet.create({
     height: 77,
   },
   logoContainer: {
-    flex: 1,
+    flex: 2,
     justifyContent: "center",
     alignItems: "center",
   },
   credentialsContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   textInputView: {
@@ -64,28 +69,26 @@ const styles = StyleSheet.create({
   },
   logInSignUpView: {
     marginTop: 30,
-    gap: 12,
+    gap: 25,
   },
-  logInPressable: {
-    backgroundColor: "#9593E7",
+  logInView: {
     justifyContent: "center",
     alignItems: "center",
-    height: 50,
-    width: 250,
-    borderRadius: 25,
+    flexDirection: "row",
+    gap: 5,
   },
-  logInText: {
+  haveAnAccountText: {
     color: "white",
     fontFamily: "Inter-Regular",
     fontSize: 16,
   },
-  orText: {
-    fontFamily: "Inter-Regular",
-    color: "#C0C0C0",
-    textAlign: "center",
+  logInText: {
+    color: AUTH_MENU_LOG_IN_TEXT_COLOR,
+    fontFamily: "Inter-Bold",
+    fontSize: 16,
   },
   signUpPressable: {
-    backgroundColor: "#D9D9D9",
+    backgroundColor: AUTH_MENU_SIGN_UP_PRESSABLE_COLOR,
     justifyContent: "center",
     alignItems: "center",
     height: 50,
@@ -128,20 +131,6 @@ export default function AuthMenuScreen({ navigation }: Props) {
               <Pressable
                 onPress={() =>
                   navigation.navigate("SignInUp", {
-                    isSignUp: false,
-                    question: "What's your email?",
-                    textInputPlaceholderText: "Your email",
-                    textInputKeyboardType: "email-address",
-                  })
-                }
-                style={styles.logInPressable}
-              >
-                <Text style={styles.logInText}>Log in</Text>
-              </Pressable>
-              <Text style={styles.orText}>or</Text>
-              <Pressable
-                onPress={() =>
-                  navigation.navigate("SignInUp", {
                     isSignUp: true,
                     question: "When is your brithday?",
                     textInputPlaceholderText: "MM DD YYYY",
@@ -152,6 +141,21 @@ export default function AuthMenuScreen({ navigation }: Props) {
               >
                 <Text style={styles.signUpText}>Sign up</Text>
               </Pressable>
+              <View style={styles.logInView}>
+                <Text style={styles.haveAnAccountText}>Have an account?</Text>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("SignInUp", {
+                      isSignUp: false,
+                      question: "What's your email?",
+                      textInputPlaceholderText: "Your email",
+                      textInputKeyboardType: "email-address",
+                    })
+                  }
+                >
+                  <Text style={styles.logInText}>Log in</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         </KeyboardAvoidingView>

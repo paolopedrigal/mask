@@ -7,3 +7,7 @@ export const LOW_LUMINANCE_FADED_TEXT_COLOR: string = "#C0C0C0";
 export const HIGH_LUMINCANCE_FADED_TEXT_COLOR: string = "#D7D7D7";
 export const HIGH_LUMINANCE_TEXT_COLOR: string = "#636363";
 export const LOW_LUMINANCE_TEXT_COLOR: string = "#FFFFFF";
+export const SELECTION_COLOR: string = "#6767D9";
+export const AUTH_PLACEHOLDER_TEXT_COLOR: string = "#24245E";
+export const AUTH_MENU_LOG_IN_TEXT_COLOR: string = "#9BC4E2";
+export const AUTH_MENU_SIGN_UP_PRESSABLE_COLOR: string = "#C0C0C0";

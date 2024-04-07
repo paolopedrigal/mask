@@ -15,11 +15,12 @@ import { SignInUpProps } from "@_types/AuthTypes";
 import Card from "@components/Card";
 import SignInUpTextInput from "@components/SignInUpTextInput";
 import ErrorMessage from "@components/ErrorMessage";
+import { DARK_BG_COLOR, QUESTION_CARD_BG_COLOR } from "@assets/styles/colors";
 
 const styles = StyleSheet.create({
   signUpContainer: {
     flex: 1,
-    backgroundColor: "#0C0B44",
+    backgroundColor: DARK_BG_COLOR, // "#0C0B44",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -125,7 +126,7 @@ export default function SignInUpScreen({ route }: SignInUpProps) {
           keyboardVerticalOffset={keyboardVerticalOffset}
         >
           <Card
-            backgroundColor="#7A7ACA"
+            backgroundColor={QUESTION_CARD_BG_COLOR}
             text={question}
             authorText={authorText}
             width={350}
