@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import * as SplashScreen from "expo-splash-screen";
 import Navigation from "@navigation/Navigation";
 import { store } from "@redux/store";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 SplashScreen.preventAutoHideAsync(); // Show splash scren while fetching resources
 
@@ -52,11 +53,13 @@ export default function App() {
   }
 
   return (
-    <Provider store={store}>
-      <SafeAreaProvider onLayout={onLayoutRootView}>
-        <Navigation />
-        <StatusBar style="light" />
-      </SafeAreaProvider>
-    </Provider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <Provider store={store}>
+        <SafeAreaProvider onLayout={onLayoutRootView}>
+          <Navigation />
+          <StatusBar style="light" />
+        </SafeAreaProvider>
+      </Provider>
+    </GestureHandlerRootView>
   );
 }
