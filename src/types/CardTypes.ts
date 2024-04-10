@@ -4,11 +4,18 @@ export interface CardProps {
   authorText: string;
   backgroundColor?: string;
   width?: DimensionValue;
+  height?: DimensionValue;
   text?: string;
+  fontSize?: number;
   image?: ImageSourcePropType;
   isAuthorBold: boolean;
   authorImage?: ImageSourcePropType;
+  authorFontSize?: number;
   isHidden?: boolean;
+  paddingHorizontal?: number;
+  paddingTop?: number;
+  paddingBottom?: number;
+  scalar?: number;
 }
 
 export interface CommentCardProps {
@@ -27,8 +34,9 @@ export interface CommentProps {
 export interface FlippingCardProps {
   frontCard: (props: CardProps) => JSX.Element;
   backCard: (props: CommentCardProps) => JSX.Element;
-  width: number;
-  backgroundColor?: string;
   frontCardProps: CardProps;
   backCardProps: CommentCardProps;
+  width?: number;
+  height?: number;
+  backgroundColor?: string;
 }

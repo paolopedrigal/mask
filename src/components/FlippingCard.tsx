@@ -8,6 +8,7 @@ import Animated, {
 import { FlippingCardProps } from "@_types/CardTypes";
 import FlippingCardButton from "./FlippingCardButton";
 import { hasHighLuminance } from "@utils/utils";
+import { CARD_FONT_SIZE, CARD_HEIGHT, CARD_WIDTH } from "@assets/styles/card";
 
 const styles = StyleSheet.create({
   flippingCard: {
@@ -25,13 +26,14 @@ function FlippingCard(props: FlippingCardProps) {
   const {
     frontCard, // Component to render for the front side of the flipping card
     backCard, // Componetn to render for back side of the flipping card
-    width, // Width to set both `FrontCard` and `BackCard` components
-    backgroundColor, // Color of card
     frontCardProps, // Props to be passed to FrontCard component
     backCardProps, // Props to be passed to BackCard component
+    width, // Width to set both `FrontCard` and `BackCard` components
+    height, // Height to set both `FrontCard` and `BackCard` components
+    backgroundColor, // Color of card
   }: FlippingCardProps = props;
 
-  const keyboardVerticalOffset = Platform.OS === "ios" ? 150 : 0;
+  const keyboardVerticalOffset = Platform.OS === "ios" ? 150 : 200;
 
   // Animation logic for flipping card
   const rotate = useSharedValue(0);
@@ -69,6 +71,7 @@ function FlippingCard(props: FlippingCardProps) {
           styles.animatedView,
           {
             width: width,
+            height: height,
           },
         ]}
       >
@@ -76,6 +79,7 @@ function FlippingCard(props: FlippingCardProps) {
           ...frontCardProps,
           backgroundColor: backgroundColor,
           width: width,
+          height: height,
         })}
         <FlippingCardButton
           flippingCardCallback={flippingCardCallback}
@@ -95,6 +99,7 @@ function FlippingCard(props: FlippingCardProps) {
           styles.animatedView,
           {
             width: width,
+            height: height,
           },
         ]}
       >
@@ -102,7 +107,10 @@ function FlippingCard(props: FlippingCardProps) {
           behavior="position"
           keyboardVerticalOffset={keyboardVerticalOffset}
         >
-          {backCard({ ...backCardProps, backgroundColor: backgroundColor })}
+          {backCard({
+            ...backCardProps,
+            backgroundColor: backgroundColor,
+          })}
           <FlippingCardButton
             flippingCardCallback={flippingCardCallback}
             isFrontCard={false}
@@ -117,6 +125,8 @@ function FlippingCard(props: FlippingCardProps) {
 }
 
 FlippingCard.defaultProps = {
+  width: CARD_WIDTH,
+  height: CARD_HEIGHT,
   backgroundColor: "#000000",
 };
 

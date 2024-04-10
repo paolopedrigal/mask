@@ -10,10 +10,15 @@ import {
   LOW_LUMINANCE_TEXT_COLOR,
 } from "@assets/styles/colors";
 import { applyShading, hasHighLuminance } from "@utils/utils";
-import { CARD_BORDER_RADIUS, CARD_HEIGHT } from "@assets/styles/card";
+import {
+  CARD_BORDER_RADIUS,
+  CARD_HEIGHT,
+  CARD_WIDTH,
+} from "@assets/styles/card";
 
 const styles = StyleSheet.create({
   commentCard: {
+    width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: CARD_BORDER_RADIUS,
     paddingTop: 25,

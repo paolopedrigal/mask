@@ -1,10 +1,4 @@
-import {
-  ImageBackground,
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { DimensionValue, Platform, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { CardProps } from "@_types/CardTypes";
 import {
@@ -13,24 +7,36 @@ import {
   LOW_LUMINANCE_TEXT_COLOR,
 } from "@assets/styles/colors";
 import { hasHighLuminance } from "@utils/utils";
-import { CARD_BORDER_RADIUS, CARD_HEIGHT } from "@assets/styles/card";
+import {
+  CARD_AUTHOR_FONT_SIZE,
+  CARD_BORDER_RADIUS,
+  CARD_FONT_SIZE,
+  CARD_HEIGHT,
+  CARD_PADDING_BOTTOM,
+  CARD_PADDING_HORIZONTAL,
+  CARD_PADDING_TOP,
+  CARD_WIDTH,
+} from "@assets/styles/card";
+import { useMemo } from "react";
 
 const styles = StyleSheet.create({
   card: {
+    width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: CARD_BORDER_RADIUS,
-    paddingLeft: 25,
-    paddingRight: 25,
-    paddingTop: 40,
-    paddingBottom: 30,
+    paddingHorizontal: CARD_PADDING_HORIZONTAL,
+    paddingTop: CARD_PADDING_TOP,
+    paddingBottom: CARD_PADDING_BOTTOM,
     justifyContent: "space-between",
     alignItems: "flex-start",
   },
   imageView: {
+    width: CARD_WIDTH,
     height: CARD_HEIGHT,
     borderRadius: CARD_BORDER_RADIUS,
   },
   image: {
+    width: CARD_WIDTH,
     height: CARD_HEIGHT,
     position: "absolute", // Absolute positioning for the image
     top: 0,
@@ -41,10 +47,9 @@ const styles = StyleSheet.create({
   },
   semiTransparentDarkTintView: {
     flex: 1,
-    paddingLeft: 25,
-    paddingRight: 25,
-    paddingTop: 40,
-    paddingBottom: 30,
+    paddingHorizontal: CARD_PADDING_HORIZONTAL,
+    paddingTop: CARD_PADDING_TOP,
+    paddingBottom: CARD_PADDING_BOTTOM,
     justifyContent: "space-between",
     alignItems: "flex-start",
     backgroundColor: "rgba(0,0,0, 0.60)",
@@ -52,14 +57,14 @@ const styles = StyleSheet.create({
   text: {
     color: LOW_LUMINANCE_TEXT_COLOR, // default
     fontFamily: "Inter-Bold",
-    fontSize: 32,
+    fontSize: CARD_AUTHOR_FONT_SIZE,
     textAlign: "left",
     width: "100%",
   },
   iOSLowLuminanceTextBlur: {
     color: LOW_LUMINANCE_TEXT_COLOR,
     fontFamily: "Inter-Bold",
-    fontSize: 32,
+    fontSize: CARD_AUTHOR_FONT_SIZE,
     left: -2000,
     elevation: 2,
     backgroundColor: "transparent",
@@ -73,15 +78,15 @@ const styles = StyleSheet.create({
     width: "105%",
     height: "85%",
     fontFamily: "Inter-Bold",
-    fontSize: 32,
-    textShadowRadius: 35,
+    fontSize: CARD_FONT_SIZE,
+    textShadowRadius: CARD_AUTHOR_FONT_SIZE + 3,
     textShadowOffset: { width: 9, height: 0 },
     textShadowColor: LOW_LUMINANCE_TEXT_COLOR, // "rgba(255,255,255,1)",
   },
   iOSHighLuminanceTextBlur: {
     color: HIGH_LUMINANCE_TEXT_COLOR,
     fontFamily: "Inter-Bold",
-    fontSize: 32,
+    fontSize: CARD_AUTHOR_FONT_SIZE,
     left: -2000,
     elevation: 2,
     backgroundColor: "transparent",
@@ -95,8 +100,8 @@ const styles = StyleSheet.create({
     width: "105%",
     height: "85%",
     fontFamily: "Inter-Bold",
-    fontSize: 32,
-    textShadowRadius: 35,
+    fontSize: CARD_FONT_SIZE,
+    textShadowRadius: CARD_AUTHOR_FONT_SIZE + 3,
     textShadowOffset: { width: 9, height: 0 },
     textShadowColor: HIGH_LUMINANCE_TEXT_COLOR, // "rgba(255,255,255,1)",
   },
@@ -123,7 +128,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   authorText: {
-    fontSize: 16,
+    fontSize: CARD_AUTHOR_FONT_SIZE,
     color: LOW_LUMINANCE_TEXT_COLOR, // default color
     textAlign: "left",
   },
@@ -139,30 +144,90 @@ function Card(props: CardProps) {
   const {
     authorText, // text at bottom of card; Typically the creator
     backgroundColor, // dynamically determine background color of card
-    width, // has default value of 100% if not specified
+    width, // has default value of 350 (CARD_WIDTH)
+    height, // has default value of 500 (CARD_HEIGHT)
     text, // (Optional)
+    fontSize, // has default value of 32
     image, // (Optional) background image of card
     isAuthorBold, // dynamically determine if authorText will be bolded
     authorImage, // for profile picture
+    authorFontSize, // has default value of 16
     isHidden, // has default value of `false` if not specified
+    scalar, // Scaling factor of shrinking or enlargening card. Default value of 1
+    paddingTop, // has default value of 40
+    paddingBottom, // has default value of 30
+    paddingHorizontal, // has default value of 25
   }: CardProps = props;
 
-  // Styling to be mixed with `styles.card`
-  const cardContainerStyle = {
-    backgroundColor: backgroundColor,
-    width: width,
-  };
+  ////////////////////////////////////////////////////////////////////////////////////////
+
+  // Memoizes styling props for Card
+  // Each styling prop returns their respective input prop/default prop * scalingFactor
+  // Else returns default prop
+
+  const scalingFactor: number = useMemo(() => {
+    return scalar ? scalar : 1;
+  }, [scalar]);
+
+  const widthNumber: DimensionValue = useMemo(() => {
+    return width && typeof width === "number"
+      ? width * scalingFactor
+      : CARD_WIDTH;
+  }, [width, scalingFactor]);
+
+  const heightNumber: DimensionValue = useMemo(() => {
+    return height && typeof height === "number"
+      ? height * scalingFactor
+      : CARD_HEIGHT;
+  }, [height, scalingFactor]);
+
+  const fontSizeNumber: number = useMemo(() => {
+    return fontSize ? fontSize * scalingFactor : CARD_FONT_SIZE;
+  }, [fontSize, scalingFactor]);
+
+  const authorFontSizeNumber: number = useMemo(() => {
+    return authorFontSize
+      ? authorFontSize * scalingFactor
+      : CARD_AUTHOR_FONT_SIZE;
+  }, [authorFontSize, scalingFactor]);
+
+  const paddingTopNumber: number = useMemo(() => {
+    return paddingTop ? paddingTop * scalingFactor : CARD_PADDING_TOP;
+  }, [paddingTop, scalingFactor]);
+
+  const paddingBottomNumber: number = useMemo(() => {
+    return paddingBottom ? paddingBottom * scalingFactor : CARD_PADDING_BOTTOM;
+  }, [paddingBottom, scalingFactor]);
+
+  const paddingHorizontalNumber: number = useMemo(() => {
+    return paddingHorizontal
+      ? paddingHorizontal * scalingFactor
+      : CARD_PADDING_BOTTOM;
+  }, [paddingHorizontal, scalingFactor]);
+
+  ////////////////////////////////////////////////////////////////////////////////////////
 
   if (image)
     return (
-      <View style={styles.imageView}>
+      <View
+        style={[styles.imageView, { width: widthNumber, height: heightNumber }]}
+      >
         <Image
           contentFit="cover"
-          style={styles.imageView}
+          style={[styles.image, { width: widthNumber, height: heightNumber }]}
           blurRadius={isHidden ? 20 : 0}
           source={image}
         >
-          <View style={styles.semiTransparentDarkTintView}>
+          <View
+            style={[
+              styles.semiTransparentDarkTintView,
+              {
+                paddingHorizontal: paddingHorizontalNumber,
+                paddingTop: paddingTopNumber,
+                paddingBottom: paddingBottomNumber,
+              },
+            ]}
+          >
             <Text
               style={[
                 isHidden
@@ -170,6 +235,7 @@ function Card(props: CardProps) {
                     ? styles.iOSLowLuminanceTextBlur
                     : styles.androidLowLuminanceTextBlur
                   : styles.text,
+                { fontSize: fontSizeNumber },
               ]}
             >
               {text}
@@ -184,6 +250,7 @@ function Card(props: CardProps) {
                 style={[
                   isAuthorBold ? styles.boldInterText : styles.regularInterText,
                   styles.authorText,
+                  { fontSize: authorFontSizeNumber },
                 ]}
               >
                 {authorText}
@@ -195,7 +262,19 @@ function Card(props: CardProps) {
     );
   else
     return (
-      <View style={[cardContainerStyle, styles.card]}>
+      <View
+        style={[
+          styles.card,
+          {
+            backgroundColor: backgroundColor,
+            width: widthNumber,
+            height: heightNumber,
+            paddingHorizontal: paddingHorizontalNumber,
+            paddingTop: paddingTopNumber,
+            paddingBottom: paddingBottomNumber,
+          },
+        ]}
+      >
         <Text
           style={[
             styles.text,
@@ -212,6 +291,7 @@ function Card(props: CardProps) {
               : hasHighLuminance(backgroundColor)
               ? styles.highLuminanceTextColor
               : styles.lowLuminanceTextColor,
+            { fontSize: fontSizeNumber },
           ]}
         >
           {text}
@@ -226,6 +306,7 @@ function Card(props: CardProps) {
             style={[
               isAuthorBold ? styles.boldInterText : styles.regularInterText,
               styles.authorText,
+              { fontSize: authorFontSizeNumber },
               backgroundColor
                 ? hasHighLuminance(backgroundColor)
                   ? styles.highLuminanceTextColor
@@ -242,11 +323,18 @@ function Card(props: CardProps) {
 
 Card.defaultProps = {
   backgroundColor: "#000000",
-  width: "100%",
+  width: CARD_WIDTH,
+  height: CARD_HEIGHT,
   text: "",
+  fontSize: CARD_FONT_SIZE,
   image: undefined,
   authorImage: undefined,
+  authorFontSize: CARD_AUTHOR_FONT_SIZE,
+  paddingHorizontal: CARD_PADDING_HORIZONTAL,
+  paddingTop: CARD_PADDING_TOP,
+  paddingBottom: CARD_PADDING_BOTTOM,
   isHidden: false,
+  scalar: 1,
 };
 
 export default Card;
