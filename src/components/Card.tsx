@@ -202,7 +202,7 @@ function Card(props: CardProps) {
   const paddingHorizontalNumber: number = useMemo(() => {
     return paddingHorizontal
       ? paddingHorizontal * scalingFactor
-      : CARD_PADDING_BOTTOM;
+      : CARD_PADDING_HORIZONTAL;
   }, [paddingHorizontal, scalingFactor]);
 
   ////////////////////////////////////////////////////////////////////////////////////////
