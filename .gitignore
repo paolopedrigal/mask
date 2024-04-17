@@ -38,7 +38,7 @@ yarn-error.*
 firebaseConfig.js
 
 # Supabase
-supabase.js
+supabase.ts
 
 # Stuff TODO
 TODO.md
