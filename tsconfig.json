@@ -22,7 +22,8 @@
       "@redux/*": ["./src/redux/*"],
       "@contexts/*": ["./src/contexts/*"],
       "@_types/*": ["./src/types/*"], // added the underscore to differntiate from @types in node_modules
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "supabase": ["./supabase.ts"]
     }
   },
   "exclude": ["node_modules"],

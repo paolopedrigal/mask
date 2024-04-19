@@ -19,6 +19,7 @@ module.exports = function (api) {
             "@contexts": "./src/contexts",
             "@_types": "./src/types", // added the underscore to differntiate from @types in node_modules
             "@utils": "./src/utils",
+            supabase: "./supabase.ts",
           },
           root: ["./src"],
           extensions: [".js", ".jsx", ".ts", ".tsx"],
