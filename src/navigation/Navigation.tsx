@@ -6,10 +6,11 @@ import {
 import AuthNavigation from "@navigation/AuthNavigation";
 import MainNavigation from "./MainNavigation";
 import AuthProvider from "@contexts/AuthProvider";
-import { FIREBASE_AUTH } from "firebaseConfig";
 import { useEffect, useState } from "react";
-import { onAuthStateChanged } from "firebase/auth";
 import { AppRouteParams } from "@_types/AuthTypes";
+import { supabase } from "supabase";
+import { setFavColor, setName, setUserID, setUsername } from "@redux/userSlice";
+import { useDispatch } from "react-redux";
 
 // Create stack for navigation
 const AppStack = createNativeStackNavigator<AppRouteParams>();
@@ -25,17 +26,31 @@ function AuthenticationNavigation() {
 export default function Navigation() {
   const options = { headerShown: false } as NativeStackNavigationOptions;
   const [currentUser, setCurrentUser] = useState<boolean>(true);
+  const dispatch = useDispatch();
+
+  async function fetchUserData(userID: string) {
+    const { data, error } = await supabase
+      .from("users")
+      .select("*")
+      .eq("user_id", userID);
+    console.log("userData from fetchUserData:", data);
+    if (error) return null;
+    else {
+      dispatch(setUserID(userID));
+      dispatch(setName(data[0]["name"]));
+      dispatch(setUsername(data[0]["username"]));
+      dispatch(setFavColor(data[0]["fav_color"]));
+    }
+  }
 
   useEffect(() => {
-    onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      if (user) {
-        console.log("Still signed in or recently signed in.");
-        console.log(user.displayName);
+    // Supabase Auth
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
         setCurrentUser(true);
-      } else {
-        console.log("Not signed in");
-        setCurrentUser(false);
-      }
+        const userID: string = session.user.id;
+        fetchUserData(userID);
+      } else setCurrentUser(false);
     });
   }, []);
 

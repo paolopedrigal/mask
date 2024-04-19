@@ -9,13 +9,6 @@ import MaskInput from "react-native-mask-input";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
 import { StackActions, useNavigation } from "@react-navigation/native";
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile,
-} from "firebase/auth";
-import { FIREBASE_AUTH } from "firebaseConfig";
-import { UserCredential } from "firebase/auth";
-import {
   MainNavigationProps,
   SignInUpProps,
   SignInUpJSONType,
@@ -25,6 +18,8 @@ import {
   AUTH_PLACEHOLDER_TEXT_COLOR,
   SELECTION_COLOR,
 } from "@assets/styles/colors";
+import { supabase } from "supabase";
+import { CARD_FONT_SIZE } from "@assets/styles/card";
 
 const styles = StyleSheet.create({
   scrollView: {
@@ -33,7 +28,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     fontFamily: "Inter-Bold",
-    fontSize: 32,
+    fontSize: CARD_FONT_SIZE,
     color: "white",
     width: "100%",
     height: 50,
@@ -76,6 +71,23 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
     setIsTyped,
     setName,
   }: AuthContextStates = useContext(AuthContext) as AuthContextStates;
+
+  async function signUpNewUser(password: string) {
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    });
+    if (error) setIsCreateUserError(true);
+  }
+
+  async function signInWithEmail(password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error) setIsCreateUserError(true);
+  }
 
   const navigateToNextSignInUpScreen = () => {
     if (
@@ -125,29 +137,19 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
         setEmail(text);
         navigateToNextSignInUpScreen();
       } else if (signInUpScreen == 2 && !isSignUp) {
-        signInWithEmailAndPassword(FIREBASE_AUTH, email, text)
-          .then(() => {
-            navigateToNextSignInUpScreen();
-          })
-          .catch((error) => {
-            console.log("Error code:", error.code);
-            console.log("Error message:", error.message);
-            setIsCreateUserError(true);
-          });
+        // Supabase Auth
+        signInWithEmail(text).then(() => {
+          navigateToNextSignInUpScreen();
+          console.log("Finish signing in");
+        });
       } else if (signInUpScreen == 4 && isSignUp) {
-        // && !isUserCreated && !isCreateUserError) {
-        createUserWithEmailAndPassword(FIREBASE_AUTH, email, text)
-          .then((userCredential: UserCredential) => {
-            updateProfile(userCredential.user, { displayName: name });
-            navigateToNextSignInUpScreen();
-          })
-          .catch((error) => {
-            console.log("Error code:", error.code);
-            console.log("Error message:", error.message);
-            setIsCreateUserError(true);
-          });
+        // Supabase sign up
+        signUpNewUser(text).then(() => {
+          navigateToNextSignInUpScreen();
+          console.log("Finish signing up");
+        });
       } else {
-        // Should be (isSignUp && signInUpScreen == 2)
+        // Would be (isSignUp && signInUpScreen == 2)
         setName(text);
         navigateToNextSignInUpScreen();
       }
@@ -192,7 +194,7 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
           numberOfLines={1} // Ensure only one line is visible
           style={[
             styles.textInput,
-            text.length > 15 ? { fontSize: 24 } : { fontSize: 32 }, // Change fontSize to 24 if text input is too long (i.e. longer than 15 characters)
+            text.length > 15 ? { fontSize: 24 } : { fontSize: CARD_FONT_SIZE }, // Change fontSize to 24 if text input is too long (i.e. longer than 15 characters)
           ]}
         />
       </ScrollView>

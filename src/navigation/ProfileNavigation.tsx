@@ -17,6 +17,8 @@ import {
   EditProfileProps,
   AuthenticationNavigationProps,
 } from "@_types/AuthTypes";
+import { DARK_BG_COLOR } from "@assets/styles/colors";
+import { supabase } from "supabase";
 
 const ProfileDrawer = createDrawerNavigator<ProfileRouteParams>();
 
@@ -38,10 +40,23 @@ export default function ProfileNavigation() {
     profileNavigation.dispatch(DrawerActions.closeDrawer());
   }, []);
 
+  async function signOut() {
+    const { error } = await supabase.auth.signOut();
+    console.log("signing out");
+    if (error) console.log("error in signing out");
+  }
+
   return (
     <ProfileDrawer.Navigator
       initialRouteName="Profile"
       screenOptions={{
+        headerShadowVisible: false,
+        headerTitleStyle: {
+          fontFamily: "Inter-Bold",
+          textAlign: "center",
+          fontSize: 24,
+          color: "white",
+        },
         drawerPosition: "right",
         headerLeft: () => <></>,
         headerRight: () => <DrawerToggleButton />,
@@ -50,15 +65,7 @@ export default function ProfileNavigation() {
         return (
           <DrawerContentScrollView {...props}>
             <DrawerItemList {...props} />
-            <DrawerItem
-              label="Logout"
-              onPress={() =>
-                signOut(FIREBASE_AUTH).then(() => {
-                  navigateToAuthMenu();
-                  console.log("logging out");
-                })
-              }
-            />
+            <DrawerItem label="Logout" onPress={() => signOut()} />
           </DrawerContentScrollView>
         );
       }}
@@ -68,6 +75,7 @@ export default function ProfileNavigation() {
         component={ProfileScreen}
         options={{
           drawerItemStyle: { display: "none" },
+          headerStyle: { backgroundColor: DARK_BG_COLOR },
         }}
       />
       <ProfileDrawer.Screen
