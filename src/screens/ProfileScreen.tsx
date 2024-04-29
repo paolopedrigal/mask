@@ -1,5 +1,5 @@
 import { Pressable, Text, View } from "react-native";
-import { Image } from "expo-image";
+import { Image, ImageSource } from "expo-image";
 import {
   DARK_BG_COLOR,
   HIGH_LUMINANCE_TEXT_COLOR,
@@ -9,8 +9,25 @@ import {
 import { applyShading, hasHighLuminance } from "@utils/utils";
 import { CARD_BORDER_RADIUS } from "@assets/styles/card";
 import { PROFILE_BOX_WIDTH } from "@assets/styles/profile";
+import { useEffect, useState } from "react";
+import {
+  selectFavColor,
+  selectName,
+  selectUserID,
+  selectUsername,
+} from "@redux/userSlice";
+import { useSelector } from "react-redux";
+import { fetchFileFromStorage } from "@utils/supabase-utils";
 
 export default function ProfileScreen() {
+  const [userID, setUserID] = useState<string>(useSelector(selectUserID));
+  const [profile, setProfile] = useState({
+    name: useSelector(selectName),
+    username: useSelector(selectUsername),
+    favColor: useSelector(selectFavColor),
+  });
+  const [profilePic, setProfilePic] = useState<string | ArrayBuffer | null>("");
+
   const user = {
     id: 1,
     name: "Paolo",
@@ -56,6 +73,21 @@ export default function ProfileScreen() {
     ],
   };
 
+  useEffect(() => {
+    fetchFileFromStorage(userID + "/profile.jpg", "profile_pics").then(
+      (profilePic) => {
+        setProfilePic(profilePic);
+      }
+    );
+
+    // fetchFileFromStorage(
+    //   "49d813d9-960f-457b-aee8-f62fafb55da3" + "/selfie.heic",
+    //   "card_pics"
+    // ).then((profilePic) => {
+    //   setProfilePic(profilePic);
+    // });
+  }, []);
+
   const month = {
     month: "April",
     startingDay: "M",
@@ -63,17 +95,19 @@ export default function ProfileScreen() {
     numDays: 30,
   };
 
+  const source: ImageSource = profilePic;
+
   return (
     <View
       style={{ flex: 1, backgroundColor: DARK_BG_COLOR, alignItems: "center" }}
     >
       <Image
-        source={user.profilePic}
+        source={source}
         style={{
           width: 135,
           height: 135,
           borderRadius: 100,
-          borderWidth: 4,
+          borderWidth: 3,
           borderColor: "#FFFFFF",
           marginTop: 15,
         }}
@@ -82,11 +116,11 @@ export default function ProfileScreen() {
         style={{
           color: LOW_LUMINANCE_TEXT_COLOR,
           fontFamily: "Inter-Bold",
-          fontSize: 24,
+          fontSize: 20,
           padding: 10,
         }}
       >
-        {user.name}
+        {profile.name}
       </Text>
       <Text
         style={{
@@ -96,11 +130,11 @@ export default function ProfileScreen() {
           paddingBottom: 10,
         }}
       >
-        {user.username}
+        {profile.username}
       </Text>
       <View
         style={{
-          backgroundColor: user.favoriteColor,
+          backgroundColor: profile.favColor,
           width: PROFILE_BOX_WIDTH,
           borderRadius: CARD_BORDER_RADIUS,
           paddingHorizontal: 10,
@@ -118,7 +152,7 @@ export default function ProfileScreen() {
         >
           <Text
             style={{
-              color: hasHighLuminance(user.favoriteColor)
+              color: hasHighLuminance(profile.favColor)
                 ? HIGH_LUMINANCE_TEXT_COLOR
                 : LOW_LUMINANCE_TEXT_COLOR,
               fontSize: 16,
@@ -157,7 +191,7 @@ export default function ProfileScreen() {
       </View>
       <View
         style={{
-          backgroundColor: user.favoriteColor,
+          backgroundColor: profile.favColor,
           width: PROFILE_BOX_WIDTH,
           borderRadius: CARD_BORDER_RADIUS,
           padding: 10,
@@ -226,7 +260,7 @@ export default function ProfileScreen() {
         <View style={{ justifyContent: "center", alignItems: "center" }}>
           <Pressable
             style={{
-              backgroundColor: applyShading(user.favoriteColor),
+              backgroundColor: applyShading(profile.favColor),
               borderRadius: 25,
               width: 75,
               height: 30,
