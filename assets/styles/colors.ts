@@ -1,4 +1,4 @@
-export const DARK_BG_COLOR: string = "#050522";
+export const DARK_BG_COLOR: string = "#030313"; // "#050522";
 export const QUESTION_CARD_BG_COLOR: string = "#000000"; // black
 export const BOTTOM_TAB_BG_COLOR: string = "#000000"; // black
 export const AUTHOR_IMAGE_BORDER_COLOR: string = "#FFFFFF"; // white
@@ -11,3 +11,5 @@ export const SELECTION_COLOR: string = "#6767D9";
 export const AUTH_PLACEHOLDER_TEXT_COLOR: string = "#24245E";
 export const AUTH_MENU_LOG_IN_TEXT_COLOR: string = "#9BC4E2";
 export const AUTH_MENU_SIGN_UP_PRESSABLE_COLOR: string = "#C0C0C0";
+export const BOTTOM_SHEET_BG_COLOR: string = "#050522"; //"#18183C";
+export const BOTTOM_SHEET_HANDLE_INDICATOR_COLOR: string = "#3A3A5F";
