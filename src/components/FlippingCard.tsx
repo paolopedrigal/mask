@@ -8,7 +8,7 @@ import Animated, {
 import { FlippingCardProps } from "@_types/CardTypes";
 import FlippingCardButton from "./FlippingCardButton";
 import { hasHighLuminance } from "@utils/utils";
-import { CARD_FONT_SIZE, CARD_HEIGHT, CARD_WIDTH } from "@assets/styles/card";
+import { CARD_HEIGHT, CARD_WIDTH } from "@assets/styles/card";
 
 const styles = StyleSheet.create({
   flippingCard: {

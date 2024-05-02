@@ -1,59 +1,141 @@
-import React, { useCallback, useRef, useMemo } from "react";
-import { StyleSheet, View, Text, Button } from "react-native";
+import React, {
+  useCallback,
+  useRef,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
+import { StyleSheet, View, Text, Button, Pressable } from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import Deck from "@components/Deck";
+import {
+  BOTTOM_SHEET_BG_COLOR,
+  BOTTOM_SHEET_HANDLE_INDICATOR_COLOR,
+} from "@assets/styles/colors";
+import { CARD_BORDER_RADIUS } from "@assets/styles/card";
+import Card from "@components/Card";
+import { CardProps } from "@_types/CardTypes";
+import { supabase } from "supabase";
+import { useSelector } from "react-redux";
+import { selectUserID } from "@redux/userSlice";
+import { fetchFileFromStorage } from "@utils/supabase-utils";
+
+interface InboxInterface {
+  id: string;
+  card: CardProps;
+}
 
 export default function HomeScreen() {
-  // hooks
   const sheetRef = useRef<BottomSheet>(null);
+  const [deckID, setDeckID] = useState<string>("");
+  const snapPoints = useMemo(() => ["5%", "100%"], []);
+  const userID = useSelector(selectUserID);
+  const [inbox, setInbox] = useState<InboxInterface[]>([]);
 
-  // variables
-  const data = useMemo(
-    () =>
-      Array(50)
-        .fill(0)
-        .map((_, index) => `index-${index}`),
-    []
-  );
-  const snapPoints = useMemo(() => ["5%", "50%", "100%"], []);
+  // // callbacks
+  // const handleSheetChange = useCallback((index) => {
+  //   console.log("handleSheetChange", index);
+  // }, []);
 
-  // callbacks
-  const handleSheetChange = useCallback((index: any) => {
-    console.log("handleSheetChange", index);
-  }, []);
-  const handleSnapPress = useCallback((index: any) => {
-    sheetRef.current?.snapToIndex(index);
-  }, []);
-  const handleClosePress = useCallback(() => {
-    sheetRef.current?.close();
-  }, []);
+  useEffect(() => {
+    async function fetchInbox() {
+      interface InboxQuery {
+        deck_id: string;
+        viewed: boolean;
+        main_card_id: { text: string | null };
+        sender_id: { username: string; fav_color: string };
+      }
 
-  // render
-  const renderItem = useCallback(
-    ({ item }: any) => (
-      <View style={styles.itemContainer}>
-        <Text>{item}</Text>
-      </View>
-    ),
-    []
-  );
+      try {
+        const { data, error } = await supabase
+          .from("inbox")
+          .select(
+            `
+            deck_id,
+            viewed,
+            main_card_id (
+              text
+            ),
+            sender_id (
+              username,
+              fav_color
+            )
+          `
+          )
+          .eq("recipient_id", userID)
+          .returns<InboxQuery[]>();
+
+        if (error) throw error;
+        else {
+          let inboxArray: InboxInterface[] = [];
+          console.log("test inbox");
+          for (let i: number = 0; i < data.length; i++) {
+            inboxArray.push({
+              id: data[i].deck_id,
+              card: {
+                text: data[i]?.main_card_id?.text,
+                authorText: data[i]?.sender_id.username,
+                isHidden: false, //!data[0]["viewed"],
+                backgroundColor: data[i].sender_id.fav_color,
+                isAuthorBold: false,
+              },
+            });
+          }
+
+          setInbox(inboxArray);
+        }
+      } catch (error: any) {
+        console.error("error in home screen:", error.message);
+      }
+    }
+    if (userID) fetchInbox();
+  }, [userID]);
+
   return (
     <View style={styles.container}>
-      {/* <Button title="Snap To 90%" onPress={() => handleSnapPress(2)} />
-      <Button title="Snap To 50%" onPress={() => handleSnapPress(1)} />
-      <Button title="Snap To 25%" onPress={() => handleSnapPress(0)} />
-      <Button title="Close" onPress={() => handleClosePress()} /> */}
-      <Deck />
+      <Deck
+        deckID={deckID}
+        // userID={deckProps.userID}
+        // deckData={deckProps.deckData}
+        // replied={true}
+      />
       <BottomSheet
         ref={sheetRef}
         snapPoints={snapPoints}
-        onChange={handleSheetChange}
+        // onChange={handleSheetChange}
+        handleStyle={{
+          backgroundColor: BOTTOM_SHEET_BG_COLOR,
+          borderTopLeftRadius: CARD_BORDER_RADIUS,
+          borderTopRightRadius: CARD_BORDER_RADIUS,
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: BOTTOM_SHEET_HANDLE_INDICATOR_COLOR,
+        }}
+        backgroundStyle={{
+          backgroundColor: BOTTOM_SHEET_BG_COLOR,
+        }}
       >
         <BottomSheetFlatList
-          data={[0, 0]}
+          data={inbox}
           // keyExtractor={(i) => i}
-          renderItem={() => <Text>Hi</Text>}
+          renderItem={({ item }) => (
+            <Pressable onPress={() => setDeckID(item.id)} style={{ margin: 5 }}>
+              <Card
+                // image={item.mainCard.image}
+                text={item.card.text}
+                authorText={item.card.authorText}
+                isAuthorBold={item.card.isAuthorBold}
+                backgroundColor={item.card.backgroundColor}
+                paddingBottom={15}
+                scalar={0.5}
+                isHidden={item.card.isHidden}
+              />
+            </Pressable>
+          )}
           contentContainerStyle={styles.contentContainer}
+          horizontal={false}
+          key={"_"}
+          numColumns={2}
         />
       </BottomSheet>
     </View>
@@ -66,7 +148,9 @@ const styles = StyleSheet.create({
     paddingTop: 200,
   },
   contentContainer: {
-    backgroundColor: "white",
+    backgroundColor: BOTTOM_SHEET_BG_COLOR,
+    alignItems: "center",
+    padding: 5,
   },
   itemContainer: {
     padding: 6,

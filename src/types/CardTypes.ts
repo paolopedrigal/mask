@@ -5,7 +5,7 @@ export interface CardProps {
   backgroundColor?: string;
   width?: DimensionValue;
   height?: DimensionValue;
-  text?: string;
+  text?: string | null;
   fontSize?: number;
   image?: ImageSourcePropType;
   isAuthorBold: boolean;
