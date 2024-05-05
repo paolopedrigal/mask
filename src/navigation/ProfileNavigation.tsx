@@ -16,7 +16,7 @@ import {
   ProfileRouteParams,
   EditProfileProps,
   AuthenticationNavigationProps,
-} from "@_types/AuthTypes";
+} from "@_types/NavigationTypes";
 import { DARK_BG_COLOR } from "@assets/styles/colors";
 import { supabase } from "supabase";
 

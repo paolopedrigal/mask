@@ -11,7 +11,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
-import { SignInUpProps } from "@_types/AuthTypes";
+import { SignInUpProps } from "@_types/NavigationTypes";
 import Card from "@components/Card";
 import SignInUpTextInput from "@components/SignInUpTextInput";
 import ErrorMessage from "@components/ErrorMessage";

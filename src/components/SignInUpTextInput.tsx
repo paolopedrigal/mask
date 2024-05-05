@@ -13,7 +13,7 @@ import {
   SignInUpProps,
   SignInUpJSONType,
   SignInUpValues,
-} from "@_types/AuthTypes";
+} from "@_types/NavigationTypes";
 import {
   AUTH_PLACEHOLDER_TEXT_COLOR,
   SELECTION_COLOR,

@@ -6,7 +6,7 @@ import {
   SignInUpJSONType,
   SignInUpValues,
   SignInUpProps,
-} from "@_types/AuthTypes";
+} from "@_types/NavigationTypes";
 
 // Get JSON data from "@assets/json/sign-in-up.json"
 const signInUpJSON: SignInUpJSONType = require("@assets/json/sign-in-up.json");

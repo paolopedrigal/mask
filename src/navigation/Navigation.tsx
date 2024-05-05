@@ -7,7 +7,7 @@ import AuthNavigation from "@navigation/AuthNavigation";
 import MainNavigation from "./MainNavigation";
 import AuthProvider from "@contexts/AuthProvider";
 import { useEffect, useState } from "react";
-import { AppRouteParams } from "@_types/AuthTypes";
+import { AppRouteParams } from "@_types/NavigationTypes";
 import { supabase } from "supabase";
 import { setFavColor, setName, setUserID, setUsername } from "@redux/userSlice";
 import { useDispatch } from "react-redux";
@@ -33,7 +33,6 @@ export default function Navigation() {
       .from("users")
       .select("*")
       .eq("user_id", userID);
-    console.log("userData from fetchUserData:", data);
     if (error) return null;
     else {
       dispatch(setUserID(userID));

@@ -24,6 +24,7 @@ export type AuthRouteParams = {
 // Route params for bottom tab navigator
 export type MainRouteParams = {
   Home: undefined;
+  Create: undefined;
   ProfileNavigation: NavigatorScreenParams<ProfileRouteParams>;
 };
 

@@ -7,7 +7,7 @@ import SignInUpScreen from "@screens/SignInUpScreen";
 import SignInUpBackButton from "@components/SignInUpBackButton";
 import { useContext } from "react";
 import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
-import { AuthRouteParams } from "@_types/AuthTypes";
+import { AuthRouteParams } from "@_types/NavigationTypes";
 import { DARK_BG_COLOR } from "@assets/styles/colors";
 
 const AuthStack = createNativeStackNavigator<AuthRouteParams>(); // Stack Navigator just for the Sign In/Up Screens
