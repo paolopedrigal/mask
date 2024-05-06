@@ -10,9 +10,12 @@ import { DeckCardData, DeckData, DeckProps } from "@_types/DeckTypes";
 import { LinearGradient } from "expo-linear-gradient";
 import { supabase } from "supabase";
 import { useSelector } from "react-redux";
-import { selectUserID } from "@redux/userSlice";
+import {
+  FriendsInterface,
+  selectFriendIDs,
+  selectUserID,
+} from "@redux/userSlice";
 import { fetchFileFromStorage } from "@utils/supabase-utils";
-import { preventAutoHideAsync } from "expo-splash-screen";
 
 const styles = StyleSheet.create({
   container: {
@@ -50,6 +53,9 @@ interface CardPics {
 export default function Deck(props: DeckProps) {
   const { deckID }: DeckProps = props;
   const [userID, setUserID] = useState<string>(useSelector(selectUserID)); // Get current user's ID
+  const [friendsIDs, setFriendsIDs] = useState<FriendsInterface>(
+    useSelector(selectFriendIDs)
+  ); // Get current user's friends' IDs
   const [deck, setDeck] = useState<DeckData>(); // Deck data
   const [deckLength, setDeckLength] = useState<number>(0);
   const [replied, setReplied] = useState<boolean>(false);
@@ -127,10 +133,11 @@ export default function Deck(props: DeckProps) {
         if (error) throw error;
         let deckCardsData: DeckCardData[] = [...Array(data.length)];
         let cardPics: CardPics = {};
-        let cardIndex: number = 1;
+        let cardIndex: number = 1; // To let main card to be first index in array
 
         for (let i: number = 0; i < data.length; i++) {
           if (data[i].card_id.image_url != null)
+            // Fetch photo
             fetchFileFromStorage(
               data[i].card_id.author_id.user_id +
                 "/" +
@@ -140,7 +147,10 @@ export default function Deck(props: DeckProps) {
               cardPics[data[i].card_id.card_id] = cardPic;
             });
 
+          if (data[i].card_id.author_id.user_id == userID) setReplied(true);
+
           if (data[i].is_main)
+            // Let main card be first index in array
             deckCardsData[0] = {
               cardID: data[i].card_id.card_id,
               authorID: data[i].card_id.author_id.user_id,
@@ -174,6 +184,14 @@ export default function Deck(props: DeckProps) {
           }
         }
 
+        const viewMutuals = data[0].deck_id.view_mutuals;
+        const numCards: number = viewMutuals
+          ? deckCardsData.length
+          : deckCardsData.filter(
+              (cardData) => cardData.authorID == userID || cardData.isMain
+            ).length; // Number of cards in deck depends if main user can see other mutuals in deck or not
+        const isLooping = data[0].deck_id.is_looping;
+
         /*
          * No swiping activated:
          *  a) is_looping and only 1 card left OR
@@ -181,24 +199,25 @@ export default function Deck(props: DeckProps) {
          */
 
         // Only 1 card in deck
-        if (data.length == 1 && data[0].deck_id.is_looping) {
+        if (numCards == 1 && isLooping) {
           console.log("setting no swiping to true");
           setAllowedSwiping(false);
-          // reloadSwiper();
         } else {
+          console.log("numCards:", numCards);
           setAllowedSwiping(true);
-          // reloadSwiper();
         }
 
         setDeck({
-          deckCardsData: deckCardsData,
-          isLooping: data[0].deck_id.is_looping,
-          viewMutuals: data[0].deck_id.view_mutuals,
+          deckCardsData: viewMutuals
+            ? deckCardsData
+            : deckCardsData.filter(
+                (cardData) => cardData.authorID == userID || cardData.isMain
+              ),
+          isLooping: isLooping,
+          viewMutuals: viewMutuals,
         });
-
         setCardPics(cardPics);
-
-        setDeckLength(data.length);
+        setDeckLength(numCards);
       } catch (error: any) {
         console.log(error.message);
       }
@@ -217,14 +236,7 @@ export default function Deck(props: DeckProps) {
       <Swiper
         key={deck.deckCardsData.length} // key has to be length of `cards` to have dynamic size in `cards`
         ref={swiper}
-        cards={
-          deck.deckCardsData
-          // deck?.viewMutuals ? deck.deckCardsData
-          // :
-          // deck?.deckCardsData.filter(
-          //     (cardData) => cardData.userID == userID || cardData.isMain
-          //   )
-        }
+        cards={deck.deckCardsData}
         renderCard={(cardData) => {
           if (cardData.isMain) {
             // show main card
@@ -233,7 +245,7 @@ export default function Deck(props: DeckProps) {
                 key={cardData.cardID}
                 backgroundColor={cardData.card.backgroundColor}
                 text={cardData.card?.text}
-                image={cardData.card?.image}
+                image={cardPics[cardData.cardID]}
                 authorText={cardData.card.authorText}
                 authorImage={cardData.card?.authorImage}
                 isAuthorBold={cardData.card.isAuthorBold}
@@ -241,30 +253,23 @@ export default function Deck(props: DeckProps) {
               />
             );
           } else if (deck.viewMutuals) {
-            if (
-              !replied
-              // Undo this later
-              // ||
-              // (replied &&
-              //   !listofFriendsIDs.has(cardData?.userID) &&
-              //   cardData?.userID != userID)
-            )
-              // if viewing mutuals is allowed
+            // if viewing mutuals is allowed
+            if (!replied || (replied && !(cardData.authorID in friendsIDs)))
               // show hidden cards
-              //   return (
-              //     <Card
-              //       key={cardData?.cardID}
-              //       backgroundColor={cardData?.card.backgroundColor}
-              //       text={cardData?.card.text}
-              //       image={cardPics} //{cardData?.card.image}
-              //       authorText={cardData?.card.authorText}
-              //       authorImage={cardData?.card.authorImage}
-              //       isAuthorBold={cardData?.card.isAuthorBold}
-              //       isHidden={true}
-              //     />
-              //   );
-              // show non-hidden cards
-              // else
+              return (
+                <Card
+                  key={cardData?.cardID}
+                  backgroundColor={cardData?.card.backgroundColor}
+                  text={cardData?.card.text}
+                  image={cardPics[cardData.cardID]}
+                  authorText={cardData?.card.authorText}
+                  authorImage={cardData?.card.authorImage}
+                  isAuthorBold={cardData?.card.isAuthorBold}
+                  isHidden={true}
+                />
+              );
+            // show non-hidden cards
+            else
               return (
                 <FlippingCard
                   key={cardData.cardID}
@@ -290,7 +295,7 @@ export default function Deck(props: DeckProps) {
                 key={cardData.cardID}
                 backgroundColor={cardData.card?.backgroundColor}
                 text={cardData.card.text}
-                image={cardData.card?.image}
+                image={cardPics[cardData.cardID]}
                 authorText={cardData.card.authorText}
                 authorImage={cardData.card?.authorImage}
                 isAuthorBold={cardData.card.isAuthorBold}
@@ -341,35 +346,39 @@ export default function Deck(props: DeckProps) {
             gap: 10,
           }}
         >
-          <TouchableOpacity
-            style={[
-              styles.smallerTouchablePadding,
-              !allowedSwiping ? { opacity: 0.2 } : {},
-            ]}
-            onPress={swipeBackCallBack}
-          >
-            <LinearGradient
-              colors={["#273B4A", "#33363F"]}
-              style={{
-                width: 50, // 60,
-                height: 50, //60,
-                borderRadius: 100,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
+          {deck.isLooping ? (
+            <TouchableOpacity
+              style={[
+                styles.smallerTouchablePadding,
+                !allowedSwiping ? { opacity: 0.2 } : {},
+              ]}
+              onPress={swipeBackCallBack}
             >
-              <Image
-                source={require("@assets/icons/prev-card-icon.png")}
-                style={{ width: 33, height: 33 }} // {{ width: 40, height: 40 }}
-              />
-            </LinearGradient>
-          </TouchableOpacity>
+              <LinearGradient
+                colors={["#273B4A", "#33363F"]}
+                style={{
+                  width: 50,
+                  height: 50,
+                  borderRadius: 100,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Image
+                  source={require("@assets/icons/prev-card-icon.png")}
+                  style={{ width: 33, height: 33 }}
+                />
+              </LinearGradient>
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )}
           <TouchableOpacity style={styles.biggerTouchablePadding}>
             <LinearGradient
               colors={["#273B4A", "#33363F"]}
               style={{
-                width: 60, // 75
-                height: 60, // 75
+                width: 60,
+                height: 60,
                 borderRadius: 100,
                 justifyContent: "center",
                 alignItems: "center",
@@ -377,7 +386,7 @@ export default function Deck(props: DeckProps) {
             >
               <Image
                 source={require("@assets/icons/answer-icon.png")}
-                style={{ width: 24, height: 32 }} //{{ width: 30, height: 40 }}
+                style={{ width: 24, height: 32 }}
               />
             </LinearGradient>
           </TouchableOpacity>
@@ -391,18 +400,25 @@ export default function Deck(props: DeckProps) {
             <LinearGradient
               colors={["#273B4A", "#33363F"]}
               style={{
-                width: 50, //60,
-                height: 50, //60,
+                width: deck.isLooping ? 50 : 60,
+                height: deck.isLooping ? 50 : 60,
                 borderRadius: 100,
                 justifyContent: "center",
                 alignItems: "center",
                 paddingHorizontal: 15,
               }}
             >
-              <Image
-                source={require("@assets/icons/swipe-icon.png")}
-                style={{ width: 35, height: 35 }} //{{ width: 42, height: 42 }}
-              />
+              {deck.isLooping ? (
+                <Image
+                  source={require("@assets/icons/swipe-icon.png")}
+                  style={{ width: 35, height: 35 }}
+                />
+              ) : (
+                <Image
+                  source={require("@assets/icons/burn-icon.png")}
+                  style={{ width: 42, height: 42 }}
+                />
+              )}
             </LinearGradient>
           </TouchableOpacity>
         </View>
