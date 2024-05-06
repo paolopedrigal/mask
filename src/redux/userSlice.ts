@@ -1,12 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 
+export interface FriendsInterface {
+  [key: string]: boolean;
+}
+
 interface UserState {
   userID: string;
   name: string;
   username: string;
   favColor: string;
   secondaryColor: string;
+  friendIDs: FriendsInterface;
 }
 
 const initialState: UserState = {
@@ -15,6 +20,7 @@ const initialState: UserState = {
   username: "",
   favColor: "",
   secondaryColor: "",
+  friendIDs: {},
 };
 
 export const userSlice = createSlice({
@@ -36,6 +42,12 @@ export const userSlice = createSlice({
     setSecondaryColor: (state, action: PayloadAction<string>) => {
       state.secondaryColor = action.payload;
     },
+    setFriendsIDs: (state, action: PayloadAction<FriendsInterface>) => {
+      state.friendIDs = action.payload;
+    },
+    addFriendID: (state, action: PayloadAction<string>) => {
+      state.friendIDs[action.payload] = true;
+    },
   },
 });
 
@@ -46,6 +58,8 @@ export const {
   setUsername,
   setFavColor,
   setSecondaryColor,
+  setFriendsIDs,
+  addFriendID,
 } = userSlice.actions;
 
 // Export selectors for authSlice
@@ -55,6 +69,7 @@ export const selectUsername = (state: RootState) => state.user.username;
 export const selectFavColor = (state: RootState) => state.user.favColor;
 export const selectSecondaryColor = (state: RootState) =>
   state.user.secondaryColor;
+export const selectFriendIDs = (state: RootState) => state.user.friendIDs;
 
 // Export authSlice's reducer
 export default userSlice.reducer;

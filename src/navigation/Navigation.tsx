@@ -9,7 +9,14 @@ import AuthProvider from "@contexts/AuthProvider";
 import { useEffect, useState } from "react";
 import { AppRouteParams } from "@_types/NavigationTypes";
 import { supabase } from "supabase";
-import { setFavColor, setName, setUserID, setUsername } from "@redux/userSlice";
+import {
+  FriendsInterface,
+  setFavColor,
+  setFriendsIDs,
+  setName,
+  setUserID,
+  setUsername,
+} from "@redux/userSlice";
 import { useDispatch } from "react-redux";
 
 // Create stack for navigation
@@ -29,16 +36,38 @@ export default function Navigation() {
   const dispatch = useDispatch();
 
   async function fetchUserData(userID: string) {
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("user_id", userID);
-    if (error) return null;
-    else {
-      dispatch(setUserID(userID));
-      dispatch(setName(data[0]["name"]));
-      dispatch(setUsername(data[0]["username"]));
-      dispatch(setFavColor(data[0]["fav_color"]));
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("user_id", userID);
+      if (error) return null;
+      else {
+        dispatch(setUserID(userID));
+        dispatch(setName(data[0]["name"]));
+        dispatch(setUsername(data[0]["username"]));
+        dispatch(setFavColor(data[0]["fav_color"]));
+      }
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  }
+
+  async function fetchFriendsData(userID: string) {
+    try {
+      const { data, error } = await supabase
+        .from("friends")
+        .select("friend_id")
+        .eq("user_id", userID)
+        .eq("is_friends", true);
+      if (error) throw error;
+      let friendsIDs: FriendsInterface = {};
+      for (let i: number = 0; i < data.length; i++) {
+        friendsIDs[data[i].friend_id] = true;
+      }
+      dispatch(setFriendsIDs(friendsIDs));
+    } catch (error: any) {
+      console.error(error.message);
     }
   }
 
@@ -49,6 +78,7 @@ export default function Navigation() {
         setCurrentUser(true);
         const userID: string = session.user.id;
         fetchUserData(userID);
+        fetchFriendsData(userID);
       } else setCurrentUser(false);
     });
   }, []);
