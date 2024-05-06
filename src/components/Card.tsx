@@ -215,7 +215,7 @@ function Card(props: CardProps) {
         <Image
           contentFit="cover"
           style={[styles.image, { width: widthNumber, height: heightNumber }]}
-          blurRadius={isHidden ? 20 : 0}
+          blurRadius={isHidden ? 90 : 0}
           source={image}
         >
           <View
