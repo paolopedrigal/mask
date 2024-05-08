@@ -94,7 +94,10 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
       (isSignUp && signInUpScreen == 4) ||
       (!isSignUp && signInUpScreen == 2)
     ) {
-      mainNavigation.navigate("MainNavigation", { screen: "Home" });
+      mainNavigation.navigate("MainNavigation", {
+        screen: "HomeNavigation",
+        params: { screen: "Home" },
+      });
     } else {
       authNavigation.dispatch(
         // Using `replace` to prevent multiple `SignInUp` components to access the same states

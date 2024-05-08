@@ -23,9 +23,16 @@ export type AuthRouteParams = {
 
 // Route params for bottom tab navigator
 export type MainRouteParams = {
-  Home: undefined;
+  HomeNavigation: NavigatorScreenParams<HomeRouteParams>;
   Create: undefined;
   ProfileNavigation: NavigatorScreenParams<ProfileRouteParams>;
+};
+
+// Route names for Home Navigator
+export type HomeRouteParams = {
+  Home: undefined;
+  ViewProfile: undefined;
+  Answer: undefined;
 };
 
 // Route names for Profile Navigator
@@ -35,19 +42,20 @@ export type ProfileRouteParams = {
 };
 
 // Contains ["navigation", "route"] props for specified screens
-export type SignInUpProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">;
 export type MainNavigationProps = NativeStackScreenProps<
   AppRouteParams,
   "MainNavigation"
->;
-export type EditProfileProps = NativeStackScreenProps<
-  ProfileRouteParams,
-  "EditProfile"
 >;
 export type AuthenticationNavigationProps = NativeStackScreenProps<
   AppRouteParams,
   "AuthenticationNavigation"
 >;
+export type SignInUpProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">;
+export type EditProfileProps = NativeStackScreenProps<
+  ProfileRouteParams,
+  "EditProfile"
+>;
+export type HomeProps = NativeStackScreenProps<HomeRouteParams, "Home">;
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 

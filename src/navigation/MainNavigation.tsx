@@ -5,6 +5,7 @@ import { MainRouteParams } from "@_types/NavigationTypes";
 import TabIcon from "@components/TabIcon";
 import { BOTTOM_TAB_BG_COLOR, DARK_BG_COLOR } from "@assets/styles/colors";
 import CreateScreen from "@screens/CreateScreen";
+import HomeNavigation from "./HomeNavigation";
 
 const BottomTab = createBottomTabNavigator<MainRouteParams>();
 
@@ -14,7 +15,7 @@ export default function MainNavigation() {
     tabBarShowLabel: false,
     tabBarStyle: { backgroundColor: BOTTOM_TAB_BG_COLOR, borderTopWidth: 0 },
     tabBarIcon: ({ focused }: any) => {
-      if (route.name == "Home")
+      if (route.name == "HomeNavigation")
         return (
           <TabIcon
             isFocused={focused}
@@ -45,8 +46,11 @@ export default function MainNavigation() {
   });
 
   return (
-    <BottomTab.Navigator initialRouteName="Home" screenOptions={screenOptions}>
-      <BottomTab.Screen
+    <BottomTab.Navigator
+      initialRouteName="HomeNavigation"
+      screenOptions={screenOptions}
+    >
+      {/* <BottomTab.Screen
         name="Home"
         component={HomeScreen}
         options={{
@@ -64,6 +68,11 @@ export default function MainNavigation() {
             shadowColor: "transparent",
           },
         }}
+      /> */}
+      <BottomTab.Screen
+        name="HomeNavigation"
+        component={HomeNavigation}
+        options={{ headerShown: false }}
       />
       <BottomTab.Screen
         name="Create"
@@ -79,7 +88,7 @@ export default function MainNavigation() {
           headerStyle: {
             backgroundColor: DARK_BG_COLOR,
             borderBottomWidth: 0,
-            height: 100,
+            // height: 100,
             shadowColor: "transparent",
           },
         }}

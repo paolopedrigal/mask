@@ -16,6 +16,8 @@ import {
   selectUserID,
 } from "@redux/userSlice";
 import { fetchFileFromStorage } from "@utils/supabase-utils";
+import { useNavigation } from "@react-navigation/native";
+import { HomeProps } from "@_types/NavigationTypes";
 
 const styles = StyleSheet.create({
   container: {
@@ -61,6 +63,8 @@ export default function Deck(props: DeckProps) {
   const [replied, setReplied] = useState<boolean>(false);
   const [allowedSwiping, setAllowedSwiping] = useState<boolean>(true);
   const [cardPics, setCardPics] = useState<CardPics>({});
+
+  const homeNavigation = useNavigation<HomeProps["navigation"]>();
 
   const swiper = useRef<Swiper<DeckCardData>>(null);
   const swipeBackCallBack = () => {
@@ -160,7 +164,7 @@ export default function Deck(props: DeckProps) {
                 text: data[i].card_id.text,
                 image: undefined,
                 authorText: data[i].card_id.author_id.username,
-                isAuthorBold: false,
+                isAuthorBold: true,
                 authorImage: undefined,
               },
               comments: [],
@@ -373,7 +377,13 @@ export default function Deck(props: DeckProps) {
           ) : (
             <></>
           )}
-          <TouchableOpacity style={styles.biggerTouchablePadding}>
+          <TouchableOpacity
+            style={styles.biggerTouchablePadding}
+            onPress={() => {
+              console.log("what");
+              homeNavigation.navigate("Answer");
+            }}
+          >
             <LinearGradient
               colors={["#273B4A", "#33363F"]}
               style={{

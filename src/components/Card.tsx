@@ -1,4 +1,11 @@
-import { DimensionValue, Platform, StyleSheet, Text, View } from "react-native";
+import {
+  DimensionValue,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Image } from "expo-image";
 import { CardProps } from "@_types/CardTypes";
 import {
@@ -18,6 +25,8 @@ import {
   CARD_WIDTH,
 } from "@assets/styles/card";
 import { useMemo } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { HomeProps } from "@_types/NavigationTypes";
 
 const styles = StyleSheet.create({
   card: {
@@ -158,6 +167,8 @@ function Card(props: CardProps) {
     paddingBottom, // has default value of 30
     paddingHorizontal, // has default value of 25
   }: CardProps = props;
+
+  const viewProfileNavigation = useNavigation<HomeProps["navigation"]>(); // TODO: make this a prop?
 
   ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -302,20 +313,27 @@ function Card(props: CardProps) {
           ) : (
             <></> // If no author image at bottom of card
           )}
-          <Text
-            style={[
-              isAuthorBold ? styles.boldInterText : styles.regularInterText,
-              styles.authorText,
-              { fontSize: authorFontSizeNumber },
-              backgroundColor
-                ? hasHighLuminance(backgroundColor)
-                  ? styles.highLuminanceTextColor
-                  : styles.lowLuminanceTextColor
-                : styles.lowLuminanceTextColor,
-            ]}
+          <Pressable
+            onPress={() => {
+              console.log("navigate to profile screen");
+              viewProfileNavigation.navigate("ViewProfile");
+            }}
           >
-            {authorText}
-          </Text>
+            <Text
+              style={[
+                isAuthorBold ? styles.boldInterText : styles.regularInterText,
+                styles.authorText,
+                { fontSize: authorFontSizeNumber },
+                backgroundColor
+                  ? hasHighLuminance(backgroundColor)
+                    ? styles.highLuminanceTextColor
+                    : styles.lowLuminanceTextColor
+                  : styles.lowLuminanceTextColor,
+              ]}
+            >
+              {authorText}
+            </Text>
+          </Pressable>
         </View>
       </View>
     );
