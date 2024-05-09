@@ -9,8 +9,6 @@ import { HeaderBackButton } from "@react-navigation/elements";
 import ProfileScreen from "@screens/ProfileScreen";
 import EditProfileScreen from "@screens/EditProfileScreen";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { signOut } from "firebase/auth";
-import { FIREBASE_AUTH } from "firebaseConfig";
 import { useEffect } from "react";
 import {
   ProfileRouteParams,
@@ -19,10 +17,13 @@ import {
 } from "@_types/NavigationTypes";
 import { DARK_BG_COLOR } from "@assets/styles/colors";
 import { supabase } from "supabase";
+import { useSelector } from "react-redux";
+import { selectUserID } from "@redux/userSlice";
 
 const ProfileDrawer = createDrawerNavigator<ProfileRouteParams>();
 
 export default function ProfileNavigation() {
+  const userID = useSelector(selectUserID);
   const profileNavigation = useNavigation<EditProfileProps["navigation"]>();
   const authNavigation =
     useNavigation<AuthenticationNavigationProps["navigation"]>();
@@ -73,6 +74,7 @@ export default function ProfileNavigation() {
       <ProfileDrawer.Screen
         name="Profile"
         component={ProfileScreen}
+        initialParams={{ userID: userID }}
         options={{
           drawerItemStyle: { display: "none" },
           headerStyle: { backgroundColor: DARK_BG_COLOR },

@@ -10,8 +10,18 @@ import { applyShading, hasHighLuminance } from "@utils/utils";
 import { CARD_BORDER_RADIUS } from "@assets/styles/card";
 import { PROFILE_BOX_WIDTH } from "@assets/styles/profile";
 import { useEffect, useState } from "react";
+import {
+  selectFavColor,
+  selectName,
+  selectUserID,
+  selectUsername,
+} from "@redux/userSlice";
+import { useSelector } from "react-redux";
 import { fetchFileFromStorage } from "@utils/supabase-utils";
-import { ProfileScreenProps } from "@_types/NavigationTypes";
+import {
+  ProfileScreenProps,
+  ViewProfileScreenProps,
+} from "@_types/NavigationTypes";
 import { supabase } from "supabase";
 
 const user = {
@@ -42,20 +52,6 @@ const user = {
       profilePic: require("@assets/images/test-pfp.jpg"),
       favoriteColor: "#273B4A",
     },
-    // {
-    //   id: 5,
-    //   name: "Jason",
-    //   username: "buansanity",
-    //   profilePic: require("@assets/images/test-pfp.jpg"),
-    //   favoriteColor: "#273B4A",
-    // },
-    // {
-    //   id: 6,
-    //   name: "Jason",
-    //   username: "buansanity",
-    //   profilePic: require("@assets/images/test-pfp.jpg"),
-    //   favoriteColor: "#273B4A",
-    // },
   ],
 };
 
@@ -66,18 +62,18 @@ const month = {
   numDays: 30,
 };
 
-export default function ProfileScreen({ route }: ProfileScreenProps) {
+export default function ProfileScreen({ route }: ViewProfileScreenProps) {
   const { userID } = route.params;
   const [profilePic, setProfilePic] = useState<string | ArrayBuffer | null>("");
   const [username, setUsername] = useState<string>("");
   const [favColor, setFavColor] = useState<string>("#000000");
 
   useEffect(() => {
-    fetchFileFromStorage(userID + "/profile.jpg", "profile_pics").then(
-      (profilePic) => {
-        setProfilePic(profilePic);
-      }
-    );
+    // fetchFileFromStorage(userID + "/profile.jpg", "profile_pics").then(
+    //   (profilePic) => {
+    //     setProfilePic(profilePic);
+    //   }
+    // );
 
     const fetchProfileData = async () => {
       try {
@@ -89,14 +85,15 @@ export default function ProfileScreen({ route }: ProfileScreenProps) {
         setUsername(data[0].username);
         setFavColor(data[0].fav_color);
       } catch (error: any) {
-        console.error(error.message);
+        console.error("Error from ViewProfile:", error.message);
       }
     };
-    fetchProfileData();
+    if (userID != "") fetchProfileData();
   }, []);
 
   const source: ImageSource = profilePic as ImageSource;
 
+  console.log("username:", username);
   return (
     <View
       style={{ flex: 1, backgroundColor: DARK_BG_COLOR, alignItems: "center" }}

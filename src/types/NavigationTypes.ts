@@ -31,13 +31,18 @@ export type MainRouteParams = {
 // Route names for Home Navigator
 export type HomeRouteParams = {
   Home: undefined;
-  ViewProfile: undefined;
+  ViewProfile: {
+    userID: string;
+  };
   Answer: undefined;
 };
 
 // Route names for Profile Navigator
 export type ProfileRouteParams = {
-  Profile: undefined;
+  Profile: {
+    userID: string;
+    // friendStatus?: "friend" | "requested" | "addFriend";
+  };
   EditProfile: undefined;
 };
 
@@ -51,6 +56,14 @@ export type AuthenticationNavigationProps = NativeStackScreenProps<
   "AuthenticationNavigation"
 >;
 export type SignInUpProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">;
+export type ProfileScreenProps = NativeStackScreenProps<
+  ProfileRouteParams,
+  "Profile"
+>;
+export type ViewProfileScreenProps = NativeStackScreenProps<
+  HomeRouteParams,
+  "ViewProfile"
+>;
 export type EditProfileProps = NativeStackScreenProps<
   ProfileRouteParams,
   "EditProfile"

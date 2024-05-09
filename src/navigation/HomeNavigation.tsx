@@ -3,7 +3,7 @@ import { DARK_BG_COLOR } from "@assets/styles/colors";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateScreen from "@screens/CreateScreen";
 import HomeScreen from "@screens/HomeScreen";
-import ProfileScreen from "@screens/ProfileScreen";
+import ViewProfileScreen from "@screens/ViewProfileScreen";
 
 const HomeStack = createNativeStackNavigator<HomeRouteParams>();
 
@@ -29,7 +29,7 @@ export default function HomeNavigation() {
       />
       <HomeStack.Screen
         name="ViewProfile"
-        component={ProfileScreen}
+        component={ViewProfileScreen}
         options={{
           headerTitle: "View Profile",
           headerTitleAlign: "center",
