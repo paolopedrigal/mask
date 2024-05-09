@@ -126,6 +126,7 @@ export default function SignInUpScreen({ route }: SignInUpProps) {
           keyboardVerticalOffset={keyboardVerticalOffset}
         >
           <Card
+            hasAuthorImage={false}
             backgroundColor={QUESTION_CARD_BG_COLOR}
             text={question}
             authorText={authorText}

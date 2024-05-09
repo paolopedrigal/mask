@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { Image } from "expo-image";
+import { Image, ImageSource } from "expo-image";
 import { CardProps } from "@_types/CardTypes";
 import {
   AUTHOR_IMAGE_BORDER_COLOR,
@@ -24,9 +24,10 @@ import {
   CARD_PADDING_TOP,
   CARD_WIDTH,
 } from "@assets/styles/card";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { HomeProps } from "@_types/NavigationTypes";
+import { supabase } from "supabase";
 
 const styles = StyleSheet.create({
   card: {
@@ -126,12 +127,12 @@ const styles = StyleSheet.create({
   authorView: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 20,
+    gap: 10,
     height: 50,
   },
   authorImage: {
-    width: 45,
-    height: 45,
+    width: 40,
+    height: 40,
     borderRadius: 100,
     borderColor: AUTHOR_IMAGE_BORDER_COLOR,
     borderWidth: 1,
@@ -151,6 +152,7 @@ const styles = StyleSheet.create({
 
 function Card(props: CardProps) {
   const {
+    authorID, // id of author
     authorText, // text at bottom of card; Typically the creator
     backgroundColor, // dynamically determine background color of card
     width, // has default value of 350 (CARD_WIDTH)
@@ -159,7 +161,7 @@ function Card(props: CardProps) {
     fontSize, // has default value of 32
     image, // (Optional) background image of card
     isAuthorBold, // dynamically determine if authorText will be bolded
-    authorImage, // for profile picture
+    hasAuthorImage, // determines if card has profile picture
     authorFontSize, // has default value of 16
     isHidden, // has default value of `false` if not specified
     scalar, // Scaling factor of shrinking or enlargening card. Default value of 1
@@ -169,6 +171,7 @@ function Card(props: CardProps) {
   }: CardProps = props;
 
   const viewProfileNavigation = useNavigation<HomeProps["navigation"]>(); // TODO: make this a prop?
+  const [profilePic, setProfilePic] = useState<ImageSource>();
 
   ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -218,6 +221,37 @@ function Card(props: CardProps) {
 
   ////////////////////////////////////////////////////////////////////////////////////////
 
+  useEffect(() => {
+    const fetchProfilePicFromStorage = async (): Promise<
+      string | ArrayBuffer | null
+    > => {
+      try {
+        console.log("authorID from Card:", authorID);
+        const { data, error } = await supabase.storage
+          .from("profile_pics")
+          .download(authorID + "/profile.jpg");
+        if (error) throw error;
+        return new Promise((resolve, reject) => {
+          const fileReader = new FileReader();
+          fileReader.readAsDataURL(data);
+          fileReader.onloadend = () => {
+            resolve(fileReader.result);
+          };
+          fileReader.onerror = (err) => {
+            reject(err);
+          };
+        });
+      } catch (error: any) {
+        const defaultProfilePic: ImageSource = require("@assets/images/default-profile-pic.png");
+        setProfilePic(defaultProfilePic);
+        return null;
+      }
+    };
+    fetchProfilePicFromStorage().then((profilePic) => {
+      if (profilePic != null) setProfilePic(profilePic as ImageSource);
+    });
+  }, []);
+
   if (image)
     return (
       <View
@@ -251,22 +285,32 @@ function Card(props: CardProps) {
             >
               {text}
             </Text>
-            <View style={styles.authorView}>
-              {props?.authorImage ? (
-                <Image source={authorImage} style={styles.authorImage} />
-              ) : (
-                <></> // If no author image at bottom of card
-              )}
-              <Text
-                style={[
-                  isAuthorBold ? styles.boldInterText : styles.regularInterText,
-                  styles.authorText,
-                  { fontSize: authorFontSizeNumber },
-                ]}
-              >
-                {authorText}
-              </Text>
-            </View>
+            <Pressable
+              onPress={() => {
+                viewProfileNavigation.navigate("ViewProfile", {
+                  userID: authorID,
+                });
+              }}
+            >
+              <View style={styles.authorView}>
+                {profilePic != undefined && hasAuthorImage ? (
+                  <Image source={profilePic} style={styles.authorImage} />
+                ) : (
+                  <></> // If no author image at bottom of card
+                )}
+                <Text
+                  style={[
+                    isAuthorBold
+                      ? styles.boldInterText
+                      : styles.regularInterText,
+                    styles.authorText,
+                    { fontSize: authorFontSizeNumber },
+                  ]}
+                >
+                  {authorText}
+                </Text>
+              </View>
+            </Pressable>
           </View>
         </Image>
       </View>
@@ -307,18 +351,19 @@ function Card(props: CardProps) {
         >
           {text}
         </Text>
-        <View style={styles.authorView}>
-          {props?.authorImage ? (
-            <Image source={authorImage} style={styles.authorImage} />
-          ) : (
-            <></> // If no author image at bottom of card
-          )}
-          <Pressable
-            onPress={() => {
-              console.log("navigate to profile screen");
-              viewProfileNavigation.navigate("ViewProfile");
-            }}
-          >
+        <Pressable
+          onPress={() => {
+            viewProfileNavigation.navigate("ViewProfile", {
+              userID: authorID,
+            });
+          }}
+        >
+          <View style={styles.authorView}>
+            {profilePic != undefined && hasAuthorImage ? (
+              <Image source={profilePic} style={styles.authorImage} />
+            ) : (
+              <></> // If no author image at bottom of card
+            )}
             <Text
               style={[
                 isAuthorBold ? styles.boldInterText : styles.regularInterText,
@@ -333,13 +378,14 @@ function Card(props: CardProps) {
             >
               {authorText}
             </Text>
-          </Pressable>
-        </View>
+          </View>
+        </Pressable>
       </View>
     );
 }
 
 Card.defaultProps = {
+  authorID: "",
   backgroundColor: "#000000",
   width: CARD_WIDTH,
   height: CARD_HEIGHT,

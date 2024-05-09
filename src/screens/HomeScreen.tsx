@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import { StyleSheet, View, Text, Button, Pressable } from "react-native";
+import { StyleSheet, View, Pressable } from "react-native";
 import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import Deck from "@components/Deck";
 import {
@@ -18,7 +18,6 @@ import { CardProps } from "@_types/CardTypes";
 import { supabase } from "supabase";
 import { useSelector } from "react-redux";
 import { selectUserID } from "@redux/userSlice";
-import { fetchFileFromStorage } from "@utils/supabase-utils";
 
 interface InboxInterface {
   id: string;
@@ -32,10 +31,10 @@ export default function HomeScreen() {
   const userID = useSelector(selectUserID);
   const [inbox, setInbox] = useState<InboxInterface[]>([]);
 
-  // // callbacks
-  // const handleSheetChange = useCallback((index) => {
-  //   console.log("handleSheetChange", index);
-  // }, []);
+  // callbacks
+  const handleClosePress = useCallback(() => {
+    sheetRef.current?.snapToIndex(0);
+  }, []);
 
   useEffect(() => {
     async function fetchInbox() {
@@ -43,7 +42,7 @@ export default function HomeScreen() {
         deck_id: string;
         viewed: boolean;
         main_card_id: { text: string | null };
-        sender_id: { username: string; fav_color: string };
+        sender_id: { user_id: string; username: string; fav_color: string };
       }
 
       try {
@@ -57,6 +56,7 @@ export default function HomeScreen() {
               text
             ),
             sender_id (
+              user_id,
               username,
               fav_color
             )
@@ -68,14 +68,15 @@ export default function HomeScreen() {
         if (error) throw error;
         else {
           let inboxArray: InboxInterface[] = [];
-          console.log("test inbox");
           for (let i: number = 0; i < data.length; i++) {
             inboxArray.push({
               id: data[i].deck_id,
               card: {
-                text: data[i]?.main_card_id?.text,
+                authorID: data[i].sender_id.user_id,
+                text: data[i].main_card_id?.text,
                 authorText: data[i]?.sender_id.username,
                 isHidden: false, //!data[0]["viewed"],
+                hasAuthorImage: true,
                 backgroundColor: data[i].sender_id.fav_color,
                 isAuthorBold: false,
               },
@@ -93,16 +94,10 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Deck
-        deckID={deckID}
-        // userID={deckProps.userID}
-        // deckData={deckProps.deckData}
-        // replied={true}
-      />
+      <Deck deckID={deckID} />
       <BottomSheet
         ref={sheetRef}
         snapPoints={snapPoints}
-        // onChange={handleSheetChange}
         handleStyle={{
           backgroundColor: BOTTOM_SHEET_BG_COLOR,
           borderTopLeftRadius: CARD_BORDER_RADIUS,
@@ -119,12 +114,20 @@ export default function HomeScreen() {
           data={inbox}
           // keyExtractor={(i) => i}
           renderItem={({ item }) => (
-            <Pressable onPress={() => setDeckID(item.id)} style={{ margin: 5 }}>
+            <Pressable
+              onPress={() => {
+                setDeckID(item.id);
+                handleClosePress();
+              }}
+              style={{ margin: 5 }}
+            >
               <Card
                 // image={item.mainCard.image}
+                authorID={item.card.authorID}
                 text={item.card.text}
-                authorText={item.card.authorText}
+                authorText={""}
                 isAuthorBold={item.card.isAuthorBold}
+                hasAuthorImage={item.card.hasAuthorImage}
                 backgroundColor={item.card.backgroundColor}
                 paddingBottom={15}
                 scalar={0.5}

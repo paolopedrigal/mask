@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Image } from "expo-image";
+import { Image, ImageSource } from "expo-image";
 import Card from "@components/Card";
 import Swiper from "react-native-deck-swiper";
 import { useEffect, useRef, useState } from "react";
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 });
 
 interface CardPics {
-  [key: string]: string | ArrayBuffer | null;
+  [key: string]: ImageSource;
 }
 
 export default function Deck(props: DeckProps) {
@@ -148,7 +148,7 @@ export default function Deck(props: DeckProps) {
                 data[i].card_id.image_url,
               "card_pics"
             ).then((cardPic) => {
-              cardPics[data[i].card_id.card_id] = cardPic;
+              cardPics[data[i].card_id.card_id] = cardPic as ImageSource;
             });
 
           if (data[i].card_id.author_id.user_id == userID) setReplied(true);
@@ -160,12 +160,13 @@ export default function Deck(props: DeckProps) {
               authorID: data[i].card_id.author_id.user_id,
               isMain: data[i].is_main,
               card: {
+                authorID: data[i].card_id.author_id.user_id,
                 backgroundColor: data[i].card_id.author_id.fav_color,
                 text: data[i].card_id.text,
                 image: undefined,
                 authorText: data[i].card_id.author_id.username,
                 isAuthorBold: true,
-                authorImage: undefined,
+                hasAuthorImage: true,
               },
               comments: [],
             };
@@ -175,12 +176,13 @@ export default function Deck(props: DeckProps) {
               authorID: data[i].card_id.author_id.user_id,
               isMain: data[i].is_main,
               card: {
+                authorID: data[i].card_id.author_id.user_id,
                 backgroundColor: data[i].card_id.author_id.fav_color,
                 text: data[i].card_id.text,
                 image: undefined,
                 authorText: data[i].card_id.author_id.username,
                 isAuthorBold: false,
-                authorImage: undefined,
+                hasAuthorImage: true,
               },
               comments: [],
             };
@@ -247,11 +249,12 @@ export default function Deck(props: DeckProps) {
             return (
               <Card
                 key={cardData.cardID}
+                authorID={cardData.authorID}
                 backgroundColor={cardData.card.backgroundColor}
                 text={cardData.card?.text}
                 image={cardPics[cardData.cardID]}
                 authorText={cardData.card.authorText}
-                authorImage={cardData.card?.authorImage}
+                hasAuthorImage={cardData.card.hasAuthorImage}
                 isAuthorBold={cardData.card.isAuthorBold}
                 isHidden={false}
               />
@@ -263,11 +266,12 @@ export default function Deck(props: DeckProps) {
               return (
                 <Card
                   key={cardData?.cardID}
+                  authorID={cardData.authorID}
                   backgroundColor={cardData?.card.backgroundColor}
                   text={cardData?.card.text}
                   image={cardPics[cardData.cardID]}
                   authorText={cardData?.card.authorText}
-                  authorImage={cardData?.card.authorImage}
+                  hasAuthorImage={cardData.card.hasAuthorImage}
                   isAuthorBold={cardData?.card.isAuthorBold}
                   isHidden={true}
                 />
@@ -281,11 +285,12 @@ export default function Deck(props: DeckProps) {
                   backCard={CommentCard}
                   backgroundColor={cardData.card.backgroundColor}
                   frontCardProps={{
+                    authorID: cardData.authorID,
                     text: cardData.card?.text,
                     image: cardPics[cardData.cardID], //cardData?.card.image,
                     authorText: cardData.card.authorText,
                     isAuthorBold: cardData.card.isAuthorBold,
-                    authorImage: cardData.card?.authorImage,
+                    hasAuthorImage: cardData.card.hasAuthorImage,
                   }}
                   backCardProps={{
                     comments: cardData.comments,
@@ -297,11 +302,12 @@ export default function Deck(props: DeckProps) {
             return (
               <Card
                 key={cardData.cardID}
+                authorID={cardData.authorID}
                 backgroundColor={cardData.card?.backgroundColor}
                 text={cardData.card.text}
                 image={cardPics[cardData.cardID]}
                 authorText={cardData.card.authorText}
-                authorImage={cardData.card?.authorImage}
+                hasAuthorImage={cardData.card.hasAuthorImage}
                 isAuthorBold={cardData.card.isAuthorBold}
                 isHidden={false}
               />

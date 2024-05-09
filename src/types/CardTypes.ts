@@ -1,6 +1,7 @@
 import { DimensionValue, ImageSourcePropType } from "react-native";
 
 export interface CardProps {
+  authorID: string;
   authorText: string;
   backgroundColor?: string;
   width?: DimensionValue;
@@ -9,7 +10,7 @@ export interface CardProps {
   fontSize?: number;
   image?: ImageSourcePropType;
   isAuthorBold: boolean;
-  authorImage?: ImageSourcePropType;
+  hasAuthorImage: boolean;
   authorFontSize?: number;
   isHidden?: boolean;
   paddingHorizontal?: number;
