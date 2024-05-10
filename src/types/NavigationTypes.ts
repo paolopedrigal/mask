@@ -24,7 +24,7 @@ export type AuthRouteParams = {
 // Route params for bottom tab navigator
 export type MainRouteParams = {
   HomeNavigation: NavigatorScreenParams<HomeRouteParams>;
-  Create: undefined;
+  PostNavigation: NavigatorScreenParams<PostRouteParams>;
   ProfileNavigation: NavigatorScreenParams<ProfileRouteParams>;
 };
 
@@ -35,6 +35,12 @@ export type HomeRouteParams = {
     userID: string;
   };
   Answer: undefined;
+};
+
+// Route names for Post Navigator
+export type PostRouteParams = {
+  Camera: undefined;
+  EditCard: undefined;
 };
 
 // Route names for Profile Navigator
@@ -56,6 +62,11 @@ export type AuthenticationNavigationProps = NativeStackScreenProps<
   "AuthenticationNavigation"
 >;
 export type SignInUpProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">;
+export type PostNavigationProps = NativeStackScreenProps<
+  MainRouteParams,
+  "PostNavigation"
+>;
+export type HomeProps = NativeStackScreenProps<HomeRouteParams, "Home">;
 export type ProfileScreenProps = NativeStackScreenProps<
   ProfileRouteParams,
   "Profile"
@@ -68,8 +79,10 @@ export type EditProfileProps = NativeStackScreenProps<
   ProfileRouteParams,
   "EditProfile"
 >;
-export type HomeProps = NativeStackScreenProps<HomeRouteParams, "Home">;
-
+export type CameraScreenProps = NativeStackScreenProps<
+  PostRouteParams,
+  "Camera"
+>;
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////// Refers to @assets/json/sign-in-up.json //////////////////////

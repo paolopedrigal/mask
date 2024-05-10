@@ -4,8 +4,8 @@ import ProfileNavigation from "./ProfileNavigation";
 import { MainRouteParams } from "@_types/NavigationTypes";
 import TabIcon from "@components/TabIcon";
 import { BOTTOM_TAB_BG_COLOR, DARK_BG_COLOR } from "@assets/styles/colors";
-import CreateScreen from "@screens/CreateScreen";
 import HomeNavigation from "./HomeNavigation";
+import PostNavigation from "./PostNavigation";
 
 const BottomTab = createBottomTabNavigator<MainRouteParams>();
 
@@ -24,7 +24,7 @@ export default function MainNavigation() {
             iconStyle={{ width: 40, height: 40 }}
           />
         );
-      else if (route.name == "Create")
+      else if (route.name == "PostNavigation")
         return (
           <TabIcon
             isFocused={focused}
@@ -50,33 +50,14 @@ export default function MainNavigation() {
       initialRouteName="HomeNavigation"
       screenOptions={screenOptions}
     >
-      {/* <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          headerTitle: "mask",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontFamily: "Inter-Bold",
-            color: "white",
-            fontSize: 28,
-          },
-          headerStyle: {
-            backgroundColor: DARK_BG_COLOR,
-            borderBottomWidth: 0,
-            height: 100,
-            shadowColor: "transparent",
-          },
-        }}
-      /> */}
       <BottomTab.Screen
         name="HomeNavigation"
         component={HomeNavigation}
         options={{ headerShown: false }}
       />
       <BottomTab.Screen
-        name="Create"
-        component={CreateScreen}
+        name="PostNavigation"
+        component={PostNavigation}
         options={{
           headerTitle: "Create",
           headerTitleAlign: "center",
