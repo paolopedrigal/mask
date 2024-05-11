@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "@screens/HomeScreen";
 import ProfileNavigation from "./ProfileNavigation";
 import { MainRouteParams } from "@_types/NavigationTypes";
 import TabIcon from "@components/TabIcon";
@@ -51,11 +50,6 @@ export default function MainNavigation() {
       screenOptions={screenOptions}
     >
       <BottomTab.Screen
-        name="HomeNavigation"
-        component={HomeNavigation}
-        options={{ headerShown: false }}
-      />
-      <BottomTab.Screen
         name="PostNavigation"
         component={PostNavigation}
         options={{
@@ -73,6 +67,11 @@ export default function MainNavigation() {
             shadowColor: "transparent",
           },
         }}
+      />
+      <BottomTab.Screen
+        name="HomeNavigation"
+        component={HomeNavigation}
+        options={{ headerShown: false }}
       />
       <BottomTab.Screen
         name="ProfileNavigation"
