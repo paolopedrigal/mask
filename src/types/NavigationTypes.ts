@@ -1,4 +1,5 @@
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
+import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { KeyboardTypeOptions } from "react-native";
@@ -63,7 +64,8 @@ export type AuthenticationNavigationProps = NativeStackScreenProps<
   "AuthenticationNavigation"
 >;
 export type SignInUpProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">;
-export type PostNavigationProps = BottomTabScreenProps<
+export type PostNavigationProps = MaterialTopTabScreenProps<
+  //BottomTabScreenProps<
   MainRouteParams,
   "PostNavigation"
 >;

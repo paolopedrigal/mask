@@ -5,14 +5,30 @@ import TabIcon from "@components/TabIcon";
 import { BOTTOM_TAB_BG_COLOR, DARK_BG_COLOR } from "@assets/styles/colors";
 import HomeNavigation from "./HomeNavigation";
 import PostNavigation from "./PostNavigation";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useSelector } from "react-redux";
+import { selectFavColor } from "@redux/userSlice";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const BottomTab = createBottomTabNavigator<MainRouteParams>();
+const BottomTab = createMaterialTopTabNavigator<MainRouteParams>();
 
 export default function MainNavigation() {
+  const insets = useSafeAreaInsets();
   const screenOptions = ({ route }: any) => ({
-    // fix typing for this
+    tabBarIndicatorStyle: {
+      marginBottom: insets.bottom,
+      backgroundColor: useSelector(selectFavColor),
+    },
     tabBarShowLabel: false,
-    tabBarStyle: { backgroundColor: BOTTOM_TAB_BG_COLOR, borderTopWidth: 0 },
+    tabBarStyle: {
+      backgroundColor: BOTTOM_TAB_BG_COLOR,
+      borderTopWidth: 0,
+      paddingBottom: insets.bottom,
+    },
+    tabBarIconStyle: {
+      width: 40,
+      height: 40,
+    },
     tabBarIcon: ({ focused }: any) => {
       if (route.name == "HomeNavigation")
         return (
@@ -20,16 +36,19 @@ export default function MainNavigation() {
             isFocused={focused}
             focusedIcon={require("@assets/icons/home-icon-focused.png")}
             notFocusedIcon={require("@assets/icons/home-icon.png")}
-            iconStyle={{ width: 40, height: 40 }}
+            iconStyle={{
+              width: 40,
+              height: 40,
+            }}
           />
         );
       else if (route.name == "PostNavigation")
         return (
           <TabIcon
             isFocused={focused}
-            focusedIcon={require("@assets/icons/create-icon-focused.png")}
-            notFocusedIcon={require("@assets/icons/create-icon.png")}
-            iconStyle={{ width: 35, height: 35 }}
+            focusedIcon={require("@assets/icons/post-icon-focused.png")}
+            notFocusedIcon={require("@assets/icons/post-icon.png")}
+            iconStyle={{ width: 40, height: 40 }}
           />
         );
       else
@@ -38,7 +57,10 @@ export default function MainNavigation() {
             isFocused={focused}
             focusedIcon={require("@assets/icons/profile-icon-focused.png")}
             notFocusedIcon={require("@assets/icons/profile-icon.png")}
-            iconStyle={{ width: 40, height: 40 }}
+            iconStyle={{
+              width: 40,
+              height: 40,
+            }}
           />
         );
     },
@@ -47,36 +69,29 @@ export default function MainNavigation() {
   return (
     <BottomTab.Navigator
       initialRouteName="HomeNavigation"
+      tabBarPosition="bottom"
       screenOptions={screenOptions}
     >
       <BottomTab.Screen
         name="PostNavigation"
         component={PostNavigation}
         options={{
-          headerTitle: "Create",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontFamily: "Inter-Bold",
-            color: "white",
-            fontSize: 28,
-          },
-          headerStyle: {
-            backgroundColor: DARK_BG_COLOR,
-            borderBottomWidth: 0,
-            // height: 100,
-            shadowColor: "transparent",
+          title: "Post",
+          tabBarIndicatorStyle: {
+            backgroundColor: "transparent",
           },
         }}
       />
       <BottomTab.Screen
         name="HomeNavigation"
         component={HomeNavigation}
-        options={{ headerShown: false }}
+        options={{
+          swipeEnabled: false,
+        }}
       />
       <BottomTab.Screen
         name="ProfileNavigation"
         component={ProfileNavigation}
-        options={{ headerShown: false }}
       />
     </BottomTab.Navigator>
   );

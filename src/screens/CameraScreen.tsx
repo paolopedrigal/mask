@@ -1,15 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, Text, Pressable } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Camera, CameraType, FlashMode } from "expo-camera";
 import { Image } from "expo-image";
 import * as MediaLibrary from "expo-media-library";
-import { ImageSource } from "expo-image";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { CameraScreenProps } from "@_types/NavigationTypes";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { CameraScreenProps, HomeProps } from "@_types/NavigationTypes";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { HeaderBackButton } from "@react-navigation/elements";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CameraScreen({ route, navigation }: CameraScreenProps) {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean>();
@@ -18,6 +16,8 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
   const [flash, setFlash] = useState<FlashMode>(FlashMode.off);
   const cameraRef = useRef<Camera>(null);
   const insets = useSafeAreaInsets();
+
+  const homeNavigation = useNavigation<HomeProps["navigation"]>();
 
   useEffect(() => {
     (async () => {
@@ -48,8 +48,6 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
     return <Text>Has no camera permissions</Text>;
   }
 
-  console.log("image:", image);
-
   if (image) return <Image source={{ uri: image }} style={{ flex: 1 }} />;
   else
     return (
@@ -67,19 +65,40 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
           alignItems: "center",
         }}
       >
-        <View style={{ flex: 1, alignSelf: "flex-end" }}>
-          <TouchableOpacity onPress={() => navigation.navigate("EditCard")}>
-            <Text
+        <View style={{ flex: 1 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <TouchableOpacity onPress={() => navigation.replace("EditCard")}>
+                <Text
+                  style={{
+                    color: "#636363",
+                    padding: 25,
+                    fontFamily: "Inter-Regular",
+                    fontSize: 16,
+                  }}
+                >
+                  Skip
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <HeaderBackButton
+              onPress={() => homeNavigation.navigate("Home")}
+              labelVisible={false}
+              tintColor="white"
               style={{
-                color: "#636363",
-                padding: 25,
-                fontFamily: "Inter-Regular",
-                fontSize: 16,
+                marginRight: 20,
+                transform: [
+                  { scaleX: -1 }, //horizontal
+                ],
               }}
-            >
-              Skip
-            </Text>
-          </TouchableOpacity>
+            />
+          </View>
         </View>
         <View
           style={{
@@ -118,7 +137,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
                     borderRadius: 100,
                     width: 50,
                     height: 50,
-                    backgroundColor: "#FFFFFF", // "#7A7ACA",
+                    backgroundColor: "#FFFFFF",
                   }}
                 ></View>
               </TouchableOpacity>
