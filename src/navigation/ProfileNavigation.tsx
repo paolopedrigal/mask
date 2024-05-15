@@ -78,6 +78,7 @@ export default function ProfileNavigation() {
         options={{
           drawerItemStyle: { display: "none" },
           headerStyle: { backgroundColor: DARK_BG_COLOR },
+          headerTitleAlign: "center",
         }}
       />
       <ProfileDrawer.Screen
