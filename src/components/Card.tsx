@@ -226,7 +226,6 @@ function Card(props: CardProps) {
       string | ArrayBuffer | null
     > => {
       try {
-        console.log("authorID from Card:", authorID);
         const { data, error } = await supabase.storage
           .from("profile_pics")
           .download(authorID + "/profile.jpg");
