@@ -43,6 +43,7 @@ export type HomeRouteParams = {
 export type PostRouteParams = {
   Camera: undefined;
   EditCard: undefined;
+  PostCard: undefined;
 };
 
 // Route names for Profile Navigator
@@ -85,6 +86,14 @@ export type EditProfileProps = NativeStackScreenProps<
 export type CameraScreenProps = NativeStackScreenProps<
   PostRouteParams,
   "Camera"
+>;
+export type EditCardScreenProps = NativeStackScreenProps<
+  PostRouteParams,
+  "EditCard"
+>;
+export type PostCardScreenProps = NativeStackScreenProps<
+  PostRouteParams,
+  "PostCard"
 >;
 ///////////////////////////////////////////////////////////////////////////////////////////
 

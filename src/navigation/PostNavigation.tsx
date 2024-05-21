@@ -10,6 +10,8 @@ import { useLayoutEffect } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import { Pressable } from "react-native";
+import { HeaderBackButton } from "@react-navigation/elements";
+import PostCardScreen from "@screens/PostCardScreen";
 
 const PostStack = createNativeStackNavigator<PostRouteParams>();
 
@@ -48,26 +50,26 @@ export default function PostNavigation({
     <PostStack.Navigator
       initialRouteName="Camera"
       screenOptions={{
-        animationTypeForReplace: "pop",
+        headerShown: true,
+        headerTitle: "Post",
+        headerTitleStyle: {
+          fontFamily: "Inter-Bold",
+          fontSize: 24,
+          color: "white",
+        },
+        headerStyle: { backgroundColor: DARK_BG_COLOR },
       }}
     >
       <PostStack.Screen
         name="Camera"
         component={CameraScreen}
-        options={{ headerShown: false }}
+        options={{ headerShown: false, animation: "fade" }}
       />
       <PostStack.Screen
         name="EditCard"
         component={EditCardScreen}
         options={{
-          headerShown: true,
-          headerTitle: "Post",
-          headerTitleStyle: {
-            fontFamily: "Inter-Bold",
-            fontSize: 24,
-            color: "white",
-          },
-          headerStyle: { backgroundColor: DARK_BG_COLOR },
+          animation: "fade",
           headerLeft: () => <></>,
           headerRight: () => (
             <Pressable
@@ -80,6 +82,27 @@ export default function PostNavigation({
                 style={{ width: 30, height: 30, margin: 10 }}
               />
             </Pressable>
+          ),
+        }}
+      />
+      <PostStack.Screen
+        name="PostCard"
+        component={PostCardScreen}
+        options={{
+          animation: "slide_from_bottom",
+          // gestureEnabled: true,
+          // gestureDirection: "vertical",
+          headerLeft: () => (
+            <HeaderBackButton
+              // labelVisible={false}
+              label="Edit Card"
+              backImage={() => <></>}
+              tintColor="#FFFFFF"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: 5 }}
+              // style={{fontSize: ""}}
+              labelStyle={{ fontSize: 15, color: "#F26B6B" }}
+            />
           ),
         }}
       />
