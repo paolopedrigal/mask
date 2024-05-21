@@ -12,12 +12,14 @@ import { supabase } from "supabase";
 import {
   FriendsInterface,
   setFavColor,
-  setFriendsIDs,
+  setFriendsData,
   setName,
+  setRequestedFriendsData,
   setUserID,
   setUsername,
 } from "@redux/userSlice";
 import { useDispatch } from "react-redux";
+import { applyShading } from "@utils/utils";
 
 // Create stack for navigation
 const AppStack = createNativeStackNavigator<AppRouteParams>();
@@ -54,19 +56,35 @@ export default function Navigation() {
   }
 
   async function fetchFriendsData(userID: string) {
+    interface FriendsDataInterface {
+      friend_id: { user_id: string; username: string };
+      is_friends: boolean;
+      requested: boolean;
+    }
+
     try {
       const { data, error } = await supabase
         .from("friends")
-        .select("friend_id")
+        .select("friend_id (user_id, username), is_friends, requested")
         .eq("user_id", userID)
-        .eq("is_friends", true);
+        .returns<FriendsDataInterface[]>();
       if (error) throw error;
-      let friendsIDs: FriendsInterface = {};
+      let friendIDs: FriendsInterface = {};
+      let requestedFriendIDs: FriendsInterface = {};
       for (let i: number = 0; i < data.length; i++) {
-        friendsIDs[data[i].friend_id] = true;
+        if (data[i].is_friends)
+          friendIDs[data[i]["friend_id"]["user_id"]] = {
+            username: data[i]["friend_id"]["username"],
+          };
+        else if (data[i].requested)
+          requestedFriendIDs[data[i]["friend_id"]["user_id"]] = {
+            username: data[i]["friend_id"]["username"],
+          };
       }
-      dispatch(setFriendsIDs(friendsIDs));
+      dispatch(setFriendsData(friendIDs));
+      dispatch(setRequestedFriendsData(requestedFriendIDs));
     } catch (error: any) {
+      console.log("error fetching friendsData");
       console.error(error.message);
     }
   }

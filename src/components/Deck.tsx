@@ -12,7 +12,7 @@ import { supabase } from "supabase";
 import { useSelector } from "react-redux";
 import {
   FriendsInterface,
-  selectFriendIDs,
+  selectFriendsData,
   selectUserID,
 } from "@redux/userSlice";
 import { fetchFileFromStorage } from "@utils/supabase-utils";
@@ -55,8 +55,8 @@ interface CardPics {
 export default function Deck(props: DeckProps) {
   const { deckID }: DeckProps = props;
   const [userID, setUserID] = useState<string>(useSelector(selectUserID)); // Get current user's ID
-  const [friendsIDs, setFriendsIDs] = useState<FriendsInterface>(
-    useSelector(selectFriendIDs)
+  const [friendsData, setFriendsData] = useState<FriendsInterface>(
+    useSelector(selectFriendsData)
   ); // Get current user's friends' IDs
   const [deck, setDeck] = useState<DeckData>(); // Deck data
   const [deckLength, setDeckLength] = useState<number>(0);
@@ -261,7 +261,7 @@ export default function Deck(props: DeckProps) {
             );
           } else if (deck.viewMutuals) {
             // if viewing mutuals is allowed
-            if (!replied || (replied && !(cardData.authorID in friendsIDs)))
+            if (!replied || (replied && !(cardData.authorID in friendsData)))
               // show hidden cards
               return (
                 <Card

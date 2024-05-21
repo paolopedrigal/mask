@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
 
 export interface FriendsInterface {
-  [key: string]: boolean;
+  [key: string]: { username: string };
 }
 
 interface UserState {
@@ -11,7 +11,8 @@ interface UserState {
   username: string;
   favColor: string;
   secondaryColor: string;
-  friendIDs: FriendsInterface;
+  friendsData: FriendsInterface;
+  requestedFriendsData: FriendsInterface;
 }
 
 const initialState: UserState = {
@@ -20,7 +21,8 @@ const initialState: UserState = {
   username: "",
   favColor: "",
   secondaryColor: "",
-  friendIDs: {},
+  friendsData: {},
+  requestedFriendsData: {},
 };
 
 export const userSlice = createSlice({
@@ -42,11 +44,14 @@ export const userSlice = createSlice({
     setSecondaryColor: (state, action: PayloadAction<string>) => {
       state.secondaryColor = action.payload;
     },
-    setFriendsIDs: (state, action: PayloadAction<FriendsInterface>) => {
-      state.friendIDs = action.payload;
+    setFriendsData: (state, action: PayloadAction<FriendsInterface>) => {
+      state.friendsData = action.payload;
     },
-    addFriendID: (state, action: PayloadAction<string>) => {
-      state.friendIDs[action.payload] = true;
+    setRequestedFriendsData: (
+      state,
+      action: PayloadAction<FriendsInterface>
+    ) => {
+      state.requestedFriendsData = action.payload;
     },
   },
 });
@@ -58,8 +63,8 @@ export const {
   setUsername,
   setFavColor,
   setSecondaryColor,
-  setFriendsIDs,
-  addFriendID,
+  setFriendsData,
+  setRequestedFriendsData,
 } = userSlice.actions;
 
 // Export selectors for authSlice
@@ -69,7 +74,9 @@ export const selectUsername = (state: RootState) => state.user.username;
 export const selectFavColor = (state: RootState) => state.user.favColor;
 export const selectSecondaryColor = (state: RootState) =>
   state.user.secondaryColor;
-export const selectFriendIDs = (state: RootState) => state.user.friendIDs;
+export const selectFriendsData = (state: RootState) => state.user.friendsData;
+export const selectRequestedFriendIDs = (state: RootState) =>
+  state.user.requestedFriendsData;
 
 // Export authSlice's reducer
 export default userSlice.reducer;
