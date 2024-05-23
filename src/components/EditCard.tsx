@@ -59,7 +59,7 @@ export default function EditCard() {
           }}
         >
           <Image
-            source={require("@assets/images/test-pfp.jpg")}
+            source={require("@assets/images/default-profile-pic.png")}
             style={{
               width: 40,
               height: 40,

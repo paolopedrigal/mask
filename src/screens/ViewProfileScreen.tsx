@@ -28,31 +28,31 @@ const user = {
   id: 1,
   name: "Paolo",
   username: "boombampao",
-  profilePic: require("@assets/images/test-pfp.jpg"),
+  profilePic: require("@assets/images/default-profile-pic.png"),
   favoriteColor: "#ABAB90", // "#0E420A",
   listOfBestFriends: [
     {
       id: 2,
       name: "Maika",
       username: "maikaroni",
-      profilePic: require("@assets/images/test-pfp.jpg"),
+      profilePic: require("@assets/images/default-profile-pic.png"),
       favoriteColor: "#D29DDB",
     },
     {
       id: 3,
       name: "Jason",
       username: "buansanity",
-      profilePic: require("@assets/images/test-pfp.jpg"),
+      profilePic: require("@assets/images/default-profile-pic.png"),
       favoriteColor: "#273B4A",
     },
     {
       id: 4,
       name: "Jason",
       username: "buansanity",
-      profilePic: require("@assets/images/test-pfp.jpg"),
+      profilePic: require("@assets/images/default-profile-pic.png"),
       favoriteColor: "#273B4A",
     },
-  ],
+  ]
 };
 
 const month = {
