@@ -89,7 +89,11 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
             }}
           >
             <View style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => navigation.replace("EditCard")}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.replace("EditCard", { image: undefined })
+                }
+              >
                 <Text
                   style={{
                     color: "#636363",
@@ -144,7 +148,9 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
               }}
             />
           </Pressable>
-          <Pressable onPress={flipCamera}>
+          <Pressable
+            onPress={() => navigation.replace("EditCard", { image: image })}
+          >
             <Image
               source={require("@assets/icons/image-ok-icon.png")}
               style={{
@@ -186,7 +192,11 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
             }}
           >
             <View style={{ flex: 1 }}>
-              <TouchableOpacity onPress={() => navigation.replace("EditCard")}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.replace("EditCard", { image: undefined })
+                }
+              >
                 <Text
                   style={{
                     color: "#636363",
@@ -239,22 +249,22 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
               height: 30,
             }}
           />
-          <View
-            style={{
-              marginBottom: 20,
-              borderWidth: 5,
-              borderColor: "#FFFFFF",
-              borderRadius: 100,
-            }}
-          >
+          <TouchableOpacity onPress={takePicture}>
             <View
               style={{
-                borderWidth: 2,
-                borderColor: "#000000",
+                marginBottom: 20,
+                borderWidth: 5,
+                borderColor: "#FFFFFF",
                 borderRadius: 100,
               }}
             >
-              <TouchableOpacity onPress={takePicture}>
+              <View
+                style={{
+                  borderWidth: 2,
+                  borderColor: "#000000",
+                  borderRadius: 100,
+                }}
+              >
                 <View
                   style={{
                     opacity: 0.4,
@@ -264,9 +274,9 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
                     backgroundColor: "#FFFFFF",
                   }}
                 ></View>
-              </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          </TouchableOpacity>
           <Pressable onPress={flipCamera}>
             <Image
               source={require("@assets/icons/flip-camera-icon.png")}

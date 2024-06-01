@@ -63,15 +63,19 @@ export default function PostNavigation({
       <PostStack.Screen
         name="Camera"
         component={CameraScreen}
-        options={{ headerShown: false, animation: "fade" }}
+        options={{
+          headerShown: false,
+          animation: "fade",
+          headerLeft: () => <></>,
+          headerRight: () => <></>,
+        }}
       />
       <PostStack.Screen
         name="EditCard"
         component={EditCardScreen}
         options={{
           animation: "fade",
-          headerLeft: () => <></>,
-          headerRight: () => (
+          headerLeft: () => (
             <Pressable
               onPress={() =>
                 navigation.navigate("PostNavigation", { screen: "Camera" })
@@ -79,10 +83,11 @@ export default function PostNavigation({
             >
               <Image
                 source={require("@assets/icons/camera-icon.png")}
-                style={{ width: 30, height: 30, margin: 10 }}
+                style={{ width: 30, height: 30, margin: 20 }}
               />
             </Pressable>
           ),
+          headerRight: () => <></>,
         }}
       />
       <PostStack.Screen

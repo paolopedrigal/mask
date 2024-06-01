@@ -42,7 +42,9 @@ export type HomeRouteParams = {
 // Route names for Post Navigator
 export type PostRouteParams = {
   Camera: undefined;
-  EditCard: undefined;
+  EditCard: {
+    image?: string;
+  };
   PostCard: undefined;
 };
 
