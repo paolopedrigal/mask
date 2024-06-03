@@ -22,14 +22,29 @@ import {
   AUTHOR_IMAGE_BORDER_COLOR,
   LOW_LUMINANCE_FADED_TEXT_COLOR,
 } from "@assets/styles/colors";
+import { useMemo } from "react";
 
 interface EditCardProps {
+  cardText: string;
+  setCardText: (text: string) => void;
   image?: string;
 }
 
+const greetings: string[] = require("@assets/json/greetings.json");
+
 export default function EditCard(props: EditCardProps) {
+  const { cardText, setCardText, image }: EditCardProps = props;
   const cardBackgroundColor = useSelector(selectFavColor);
-  const { image }: EditCardProps = props;
+
+  const greetings: string[] = useMemo(
+    () => require("@assets/json/greetings.json"),
+    []
+  );
+
+  const greeting: string = useMemo(
+    () => greetings[Math.floor(Math.random() * (greetings.length - 1))],
+    []
+  );
 
   if (image)
     return (
@@ -38,13 +53,9 @@ export default function EditCard(props: EditCardProps) {
         source={image}
         style={{
           height: CARD_HEIGHT,
+          maxHeight: CARD_HEIGHT,
           width: CARD_WIDTH,
           borderRadius: CARD_BORDER_RADIUS,
-          // paddingTop: CARD_PADDING_TOP,
-          // paddingHorizontal: CARD_PADDING_HORIZONTAL,
-          // paddingBottom: CARD_PADDING_BOTTOM,
-          // justifyContent: "space-between",
-          // alignItems: "flex-start",
         }}
       >
         <View
@@ -60,13 +71,20 @@ export default function EditCard(props: EditCardProps) {
           }}
         >
           <TextInput
-            placeholder="What's up dog...?"
+            placeholder={greeting}
             placeholderTextColor={LOW_LUMINANCE_FADED_TEXT_COLOR}
+            value={cardText}
+            onChangeText={setCardText}
             selectionColor={"#FFFFFF"}
             autoCapitalize="none"
-            multiline={true}
+            multiline
+            blurOnSubmit
             enterKeyHint="done"
             onKeyPress={({ nativeEvent: { key: keyValue } }) => {
+              if (keyValue == " " && cardText == "") {
+                console.log("setting cardText to: ", greeting);
+                setCardText(greeting);
+              }
               if (keyValue == "Enter") {
                 Keyboard.dismiss();
               }
@@ -109,6 +127,7 @@ export default function EditCard(props: EditCardProps) {
     <View
       style={{
         height: CARD_HEIGHT,
+        maxHeight: CARD_HEIGHT,
         width: CARD_WIDTH,
         backgroundColor: cardBackgroundColor,
         borderRadius: CARD_BORDER_RADIUS,
@@ -120,13 +139,20 @@ export default function EditCard(props: EditCardProps) {
       }}
     >
       <TextInput
-        placeholder="What's up dog...?"
-        placeholderTextColor={applyShading(cardBackgroundColor)}
+        placeholder={greeting}
+        placeholderTextColor={applyShading(useSelector(selectFavColor))}
+        value={cardText}
+        onChangeText={setCardText}
         selectionColor={"#FFFFFF"}
         autoCapitalize="none"
-        multiline={true}
+        multiline
+        blurOnSubmit
         enterKeyHint="done"
         onKeyPress={({ nativeEvent: { key: keyValue } }) => {
+          if (keyValue == " " && cardText == "") {
+            console.log("setting cardText to: ", greeting);
+            setCardText(greeting);
+          }
           if (keyValue == "Enter") {
             Keyboard.dismiss();
           }

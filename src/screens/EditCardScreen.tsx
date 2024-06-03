@@ -4,20 +4,24 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import EditCard from "@components/EditCard";
 import { DARK_BG_COLOR } from "@assets/styles/colors";
+import { Image } from "expo-image";
+import { useState } from "react";
 
 export default function EditCardScreen({
   navigation,
   route,
 }: EditCardScreenProps) {
   const { image } = route.params;
+  const [cardText, setCardText] = useState<string>("");
 
   const keyboardVerticalOffset = Platform.OS === "ios" ? 0 : 200;
+
+  const allowNavigate: boolean = image != undefined || cardText != "";
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
@@ -33,21 +37,35 @@ export default function EditCardScreen({
         <KeyboardAvoidingView
           behavior="position"
           keyboardVerticalOffset={keyboardVerticalOffset}
+          style={{ marginVertical: 5 }}
         >
-          <EditCard image={image} />
+          <EditCard
+            cardText={cardText}
+            setCardText={setCardText}
+            image={image}
+          />
         </KeyboardAvoidingView>
         <Pressable
+          onPress={() => {
+            if (allowNavigate) {
+              if (cardText == "") setCardText(" ");
+              navigation.push("PostCard");
+            }
+          }}
           style={{
+            width: "100%",
             justifyContent: "center",
             alignItems: "center",
-            height: 42,
-            width: 100,
-            borderRadius: 25,
-            backgroundColor: "#323232",
           }}
-          onPress={() => navigation.push("PostCard")}
         >
-          <Text>Next</Text>
+          <Image
+            source={
+              allowNavigate
+                ? require("@assets/icons/slide-up-icon.png")
+                : require("@assets/icons/slide-up-icon-faded.png")
+            }
+            style={{ width: 30, height: 30 }}
+          />
         </Pressable>
       </View>
     </TouchableWithoutFeedback>

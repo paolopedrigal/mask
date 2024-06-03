@@ -95,8 +95,8 @@ export default function PostNavigation({
         component={PostCardScreen}
         options={{
           animation: "slide_from_bottom",
-          // gestureEnabled: true,
-          // gestureDirection: "vertical",
+          gestureEnabled: true,
+          gestureDirection: "vertical",
           headerLeft: () => (
             <HeaderBackButton
               // labelVisible={false}
