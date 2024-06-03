@@ -46,6 +46,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
           );
         }
         setImage(photo.uri);
+        navigation.replace("EditCard", { image: photo.uri });
       } catch (error: any) {
         console.error("Error with CameraScreen.tsx:", error.message);
       }
@@ -77,8 +78,8 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
         <View
           style={{
             backgroundColor: "rgba(0,0,0, 0.60)",
-            flex: 2,
-            paddingTop: insets.top,
+            flex: 1,
+            justifyContent: "flex-end",
           }}
         >
           <View
@@ -86,6 +87,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
               flexDirection: "row",
               alignItems: "center",
               width: "100%",
+              paddingBottom: 20,
             }}
           >
             <View style={{ flex: 1 }}>
@@ -97,7 +99,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
                 <Text
                   style={{
                     color: "#636363",
-                    padding: 25,
+                    paddingLeft: 25,
                     fontFamily: "Inter-Regular",
                     fontSize: 16,
                   }}
@@ -136,7 +138,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
             width: "100%",
             backgroundColor: "rgba(0,0,0, 0.60)",
             paddingBottom: insets.bottom,
-            flex: 3,
+            flex: 1,
           }}
         >
           <Pressable onPress={() => setImage(undefined)}>
@@ -180,8 +182,8 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
         <View
           style={{
             backgroundColor: "rgba(0,0,0, 0.60)",
-            flex: 2,
-            paddingTop: insets.top,
+            flex: 1,
+            justifyContent: "flex-end",
           }}
         >
           <View
@@ -189,9 +191,14 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
               flexDirection: "row",
               alignItems: "center",
               width: "100%",
+              paddingBottom: 20,
             }}
           >
-            <View style={{ flex: 1 }}>
+            <View
+              style={{
+                flex: 1,
+              }}
+            >
               <TouchableOpacity
                 onPress={() =>
                   navigation.replace("EditCard", { image: undefined })
@@ -200,7 +207,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
                 <Text
                   style={{
                     color: "#636363",
-                    padding: 25,
+                    paddingLeft: 25,
                     fontFamily: "Inter-Regular",
                     fontSize: 16,
                   }}
@@ -239,7 +246,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
             width: "100%",
             backgroundColor: "rgba(0,0,0, 0.60)",
             paddingBottom: insets.bottom,
-            flex: 3,
+            flex: 1,
           }}
         >
           <Image
