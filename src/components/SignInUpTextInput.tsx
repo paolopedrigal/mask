@@ -194,7 +194,7 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
           autoCapitalize="none"
           placeholderTextColor={AUTH_PLACEHOLDER_TEXT_COLOR}
           selectionColor={SELECTION_COLOR}
-          numberOfLines={1} // Ensure only one line is visible
+          numberOfLines={1} // Android only
           style={[
             styles.textInput,
             text.length > 15 ? { fontSize: 24 } : { fontSize: CARD_FONT_SIZE }, // Change fontSize to 24 if text input is too long (i.e. longer than 15 characters)
