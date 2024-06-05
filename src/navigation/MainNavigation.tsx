@@ -2,12 +2,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfileNavigation from "./ProfileNavigation";
 import { MainRouteParams } from "@_types/NavigationTypes";
 import TabIcon from "@components/TabIcon";
-import { BOTTOM_TAB_BG_COLOR, DARK_BG_COLOR } from "@assets/styles/colors";
+import { BOTTOM_TAB_BG_COLOR } from "@assets/styles/colors";
 import HomeNavigation from "./HomeNavigation";
 import PostNavigation from "./PostNavigation";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { useSelector } from "react-redux";
-import { selectFavColor } from "@redux/userSlice";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const BottomTab = createMaterialTopTabNavigator<MainRouteParams>();
@@ -17,7 +15,7 @@ export default function MainNavigation() {
   const screenOptions = ({ route }: any) => ({
     tabBarIndicatorStyle: {
       marginBottom: insets.bottom,
-      backgroundColor: useSelector(selectFavColor),
+      backgroundColor: "transparent",
     },
     tabBarShowLabel: false,
     tabBarStyle: {
@@ -26,8 +24,8 @@ export default function MainNavigation() {
       paddingBottom: insets.bottom,
     },
     tabBarIconStyle: {
-      width: 40,
-      height: 40,
+      width: 35,
+      height: 35,
     },
     tabBarIcon: ({ focused }: any) => {
       if (route.name == "HomeNavigation")
@@ -37,8 +35,8 @@ export default function MainNavigation() {
             focusedIcon={require("@assets/icons/home-icon-focused.png")}
             notFocusedIcon={require("@assets/icons/home-icon.png")}
             iconStyle={{
-              width: 40,
-              height: 40,
+              width: 35,
+              height: 35,
             }}
           />
         );
@@ -48,7 +46,7 @@ export default function MainNavigation() {
             isFocused={focused}
             focusedIcon={require("@assets/icons/post-icon-focused.png")}
             notFocusedIcon={require("@assets/icons/post-icon.png")}
-            iconStyle={{ width: 40, height: 40 }}
+            iconStyle={{ width: 30, height: 30 }}
           />
         );
       else
@@ -58,8 +56,8 @@ export default function MainNavigation() {
             focusedIcon={require("@assets/icons/profile-icon-focused.png")}
             notFocusedIcon={require("@assets/icons/profile-icon.png")}
             iconStyle={{
-              width: 40,
-              height: 40,
+              width: 35,
+              height: 35,
             }}
           />
         );
