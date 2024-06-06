@@ -14,7 +14,6 @@ export default function MainNavigation() {
   const insets = useSafeAreaInsets();
   const screenOptions = ({ route }: any) => ({
     tabBarIndicatorStyle: {
-      marginBottom: insets.bottom,
       backgroundColor: "transparent",
     },
     tabBarShowLabel: false,
