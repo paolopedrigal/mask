@@ -12,9 +12,14 @@ import { Pressable, Switch, Text, TextInput, View } from "react-native";
 import { Image } from "expo-image";
 import { FlatList } from "react-native-gesture-handler";
 import PostCardFriendListItem from "@components/PostCardFriendListItem";
-import { useEffect, useState } from "react";
-import { FriendsInterface, selectFriendsData } from "@redux/userSlice";
+import { useEffect, useRef, useState } from "react";
+import {
+  FriendsInterface,
+  selectFriendsData,
+  selectUserID,
+} from "@redux/userSlice";
 import { useSelector } from "react-redux";
+import { supabase } from "supabase";
 
 interface SelectedFriendsInterface {
   [key: string]: boolean;
@@ -24,13 +29,16 @@ export default function PostCardScreen({
   navigation,
   route,
 }: PostCardScreenProps) {
+  const { image, cardText } = route.params;
+  const userID: string = useSelector(selectUserID);
   const [visibility, setVisibility] = useState<
     "anonymous" | "private" | "mutuals"
   >("mutuals");
   const friendsData: FriendsInterface = useSelector(selectFriendsData);
   const [isCardsBurned, setIsCardBurned] = useState<boolean>(false);
   const [selectedFriends, setSelectedFriends] =
-    useState<SelectedFriendsInterface>();
+    useState<SelectedFriendsInterface>({});
+  const selectedFriendsRef = useRef<SelectedFriendsInterface>(selectedFriends);
   const [isSelectAll, setIsSelectAll] = useState<boolean>(false);
 
   const toggleBurnSwitch = () => {
@@ -39,7 +47,7 @@ export default function PostCardScreen({
 
   const selectFriend = (friendID: string) => {
     setSelectedFriends((prev) => {
-      if (prev) return { ...prev, [friendID]: !prev[friendID] };
+      return { ...prev, [friendID]: !prev[friendID] };
     });
   };
 
@@ -72,12 +80,92 @@ export default function PostCardScreen({
     return true;
   };
 
-  useEffect(unselectAllFriends, []);
+  useEffect(() => {
+    // Dynamically change header of screen to include `postDeck` callback function
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={postDeck}
+          style={{
+            backgroundColor: "#FFFFFF",
+            paddingVertical: 7,
+            paddingHorizontal: 12,
+            borderRadius: 5,
+            marginHorizontal: 15,
+          }}
+        >
+          <Text
+            style={{
+              color: "#000000",
+              fontFamily: "Inter-Regular",
+            }}
+          >
+            Send
+          </Text>
+        </Pressable>
+      ),
+    });
+
+    // Unselect all friends upon initial render
+    unselectAllFriends();
+  }, []);
 
   useEffect(() => {
     if (isAllFriendsSelected()) setIsSelectAll(true);
     else setIsSelectAll(false);
+    selectedFriendsRef.current = selectedFriends;
   }, [selectedFriends]);
+
+  const postDeck = async () => {
+    try {
+      // Upload image to storage
+      const imageURL = userID + "/" + "test.jpg";
+      if (image != undefined) {
+        const { data, error } = await supabase.storage
+          .from("card_pics")
+          .upload(imageURL, image);
+      }
+
+      // Insert into cards table
+      const cardsInsertResponse = await supabase
+        .from("cards")
+        .insert({ author_id: userID, text: cardText, image_url: imageURL })
+        .select("card_id");
+
+      if (cardsInsertResponse.error) throw cardsInsertResponse.error;
+
+      // Insert into decks table
+      const decksInsertResponse = await supabase
+        .from("decks")
+        .insert({
+          view_mutuals: visibility == "mutuals" ? true : false,
+          is_looping: isCardsBurned,
+        })
+        .select("deck_id");
+
+      if (decksInsertResponse.error) throw decksInsertResponse.error;
+
+      // Insert into inbox table
+      const insertData = Object.keys(selectedFriendsRef.current)
+        .filter((friendID) => selectedFriendsRef.current[friendID])
+        .map((friendID) => {
+          if (selectedFriendsRef.current[friendID])
+            return {
+              recipient_id: friendID,
+              sender_id: userID,
+              main_card_id: cardsInsertResponse.data[0].card_id,
+              deck_id: decksInsertResponse.data[0].deck_id,
+            };
+        });
+      const inboxInsertResponse = await supabase
+        .from("inbox")
+        .insert(insertData);
+
+      if (inboxInsertResponse.error) throw inboxInsertResponse.error;
+    } catch (error: any) {
+      console.error("Error upon posting:", error);
+    }
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: DARK_BG_COLOR, padding: 10 }}>
