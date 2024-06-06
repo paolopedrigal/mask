@@ -49,7 +49,7 @@ export default function EditCardScreen({
           onPress={() => {
             if (allowNavigate) {
               if (cardText == "") setCardText(" ");
-              navigation.push("PostCard");
+              navigation.push("PostCard", { image: image, cardText: cardText });
             }
           }}
           style={{
