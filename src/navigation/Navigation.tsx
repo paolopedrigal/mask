@@ -13,13 +13,14 @@ import {
   FriendsInterface,
   setFavColor,
   setFriendsData,
-  setName,
   setRequestedFriendsData,
   setUserID,
+  setUserProfilePic,
   setUsername,
 } from "@redux/userSlice";
 import { useDispatch } from "react-redux";
-import { applyShading } from "@utils/utils";
+import { fetchFileFromStorage } from "@utils/supabase-utils";
+import { ImageSource } from "expo-image";
 
 // Create stack for navigation
 const AppStack = createNativeStackNavigator<AppRouteParams>();
@@ -46,9 +47,15 @@ export default function Navigation() {
       if (error) return null;
       else {
         dispatch(setUserID(userID));
-        dispatch(setName(data[0]["name"]));
         dispatch(setUsername(data[0]["username"]));
         dispatch(setFavColor(data[0]["fav_color"]));
+
+        fetchFileFromStorage(userID + "/profile.jpg", "profile_pics").then(
+          (profilePic) => {
+            if (profilePic)
+              dispatch(setUserProfilePic(profilePic as ImageSource));
+          }
+        );
       }
     } catch (error: any) {
       console.error(error.message);
@@ -84,7 +91,6 @@ export default function Navigation() {
       dispatch(setFriendsData(friendIDs));
       dispatch(setRequestedFriendsData(requestedFriendIDs));
     } catch (error: any) {
-      console.log("error fetching friendsData");
       console.error(error.message);
     }
   }

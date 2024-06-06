@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "./store";
+import { ImageSource } from "expo-image";
 
 export interface FriendsInterface {
   [key: string]: { username: string };
@@ -7,7 +8,7 @@ export interface FriendsInterface {
 
 interface UserState {
   userID: string;
-  name: string;
+  userProfilePic: ImageSource;
   username: string;
   favColor: string;
   secondaryColor: string;
@@ -17,7 +18,7 @@ interface UserState {
 
 const initialState: UserState = {
   userID: "",
-  name: "",
+  userProfilePic: require("@assets/images/default-profile-pic.png"),
   username: "",
   favColor: "",
   secondaryColor: "",
@@ -32,8 +33,8 @@ export const userSlice = createSlice({
     setUserID: (state, action: PayloadAction<string>) => {
       state.userID = action.payload;
     },
-    setName: (state, action: PayloadAction<string>) => {
-      state.name = action.payload;
+    setUserProfilePic: (state, action: PayloadAction<ImageSource>) => {
+      state.userProfilePic = action.payload;
     },
     setUsername: (state, action: PayloadAction<string>) => {
       state.username = action.payload;
@@ -59,7 +60,7 @@ export const userSlice = createSlice({
 // Export actions for authSlice
 export const {
   setUserID,
-  setName,
+  setUserProfilePic,
   setUsername,
   setFavColor,
   setSecondaryColor,
@@ -69,7 +70,8 @@ export const {
 
 // Export selectors for authSlice
 export const selectUserID = (state: RootState) => state.user.userID;
-export const selectName = (state: RootState) => state.user.name;
+export const selectUserProfilePic = (state: RootState) =>
+  state.user.userProfilePic;
 export const selectUsername = (state: RootState) => state.user.username;
 export const selectFavColor = (state: RootState) => state.user.favColor;
 export const selectSecondaryColor = (state: RootState) =>

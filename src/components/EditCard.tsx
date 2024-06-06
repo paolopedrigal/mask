@@ -7,15 +7,13 @@ import {
   CARD_PADDING_TOP,
   CARD_WIDTH,
 } from "@assets/styles/card";
-import { selectFavColor, selectSecondaryColor } from "@redux/userSlice";
-import { applyShading } from "@utils/utils";
 import {
-  Keyboard,
-  TextInput,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+  selectFavColor,
+  selectUserProfilePic,
+  selectUsername,
+} from "@redux/userSlice";
+import { applyShading } from "@utils/utils";
+import { Keyboard, TextInput, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import {
@@ -30,11 +28,11 @@ interface EditCardProps {
   image?: string;
 }
 
-const greetings: string[] = require("@assets/json/greetings.json");
-
 export default function EditCard(props: EditCardProps) {
   const { cardText, setCardText, image }: EditCardProps = props;
   const cardBackgroundColor = useSelector(selectFavColor);
+  const profilePic = useSelector(selectUserProfilePic);
+  const username = useSelector(selectUsername);
 
   const greetings: string[] = useMemo(
     () => require("@assets/json/greetings.json"),
@@ -81,10 +79,6 @@ export default function EditCard(props: EditCardProps) {
             blurOnSubmit
             enterKeyHint="done"
             onKeyPress={({ nativeEvent: { key: keyValue } }) => {
-              if (keyValue == " " && cardText == "") {
-                console.log("setting cardText to: ", greeting);
-                setCardText(greeting);
-              }
               if (keyValue == "Enter") {
                 Keyboard.dismiss();
               }
@@ -106,7 +100,7 @@ export default function EditCard(props: EditCardProps) {
             }}
           >
             <Image
-              source={require("@assets/images/default-profile-pic.png")}
+              source={profilePic}
               style={{
                 width: 40,
                 height: 40,
@@ -116,7 +110,7 @@ export default function EditCard(props: EditCardProps) {
               }}
             />
             <Text style={{ fontFamily: "Inter-Regular", color: "#FFFFFF" }}>
-              boombampao
+              {username}
             </Text>
           </View>
         </View>
@@ -149,10 +143,6 @@ export default function EditCard(props: EditCardProps) {
         blurOnSubmit
         enterKeyHint="done"
         onKeyPress={({ nativeEvent: { key: keyValue } }) => {
-          if (keyValue == " " && cardText == "") {
-            console.log("setting cardText to: ", greeting);
-            setCardText(greeting);
-          }
           if (keyValue == "Enter") {
             Keyboard.dismiss();
           }
@@ -174,7 +164,7 @@ export default function EditCard(props: EditCardProps) {
         }}
       >
         <Image
-          source={require("@assets/images/default-profile-pic.png")}
+          source={profilePic}
           style={{
             width: 40,
             height: 40,
@@ -184,7 +174,7 @@ export default function EditCard(props: EditCardProps) {
           }}
         />
         <Text style={{ fontFamily: "Inter-Regular", color: "#FFFFFF" }}>
-          boombampao
+          {username}
         </Text>
       </View>
     </View>
