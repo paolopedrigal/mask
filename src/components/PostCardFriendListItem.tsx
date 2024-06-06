@@ -2,7 +2,6 @@ import {
   AUTHOR_IMAGE_BORDER_COLOR,
   DARK_BORDER_COLOR,
   HIGH_LUMINANCE_TEXT_COLOR,
-  LOW_LUMINANCE_FADED_TEXT_COLOR,
   LOW_LUMINANCE_TEXT_COLOR,
 } from "@assets/styles/colors";
 import { Image, ImageSource } from "expo-image";
@@ -17,7 +16,7 @@ interface SelectedFriendsInterface {
 interface PostCardFriendListItemProps {
   friendID: string;
   friendUsername: string;
-  selectedFriends: SelectedFriendsInterface | undefined;
+  selectedFriends: SelectedFriendsInterface;
   selectItemCallback: (friendID: string) => void;
 }
 
