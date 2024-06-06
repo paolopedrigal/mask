@@ -20,7 +20,6 @@ export default function PostNavigation({
   route,
 }: PostNavigationProps) {
   const insets = useSafeAreaInsets();
-  const tabIndictorColor = useSelector(selectFavColor);
   useLayoutEffect(() => {
     // If undefined, default route is "Camera". This can occur in initial screen
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Camera";
@@ -39,7 +38,7 @@ export default function PostNavigation({
           paddingBottom: insets.bottom,
         },
         tabBarIndicatorStyle: {
-          backgroundColor: tabIndictorColor,
+          backgroundColor: "transparent",
           marginBottom: insets.bottom,
         },
       });
