@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import { fetchFileFromStorage } from "@utils/supabase-utils";
 import { ProfileScreenProps } from "@_types/NavigationTypes";
 import { supabase } from "supabase";
+import { useSelector } from "react-redux";
+import { selectUserID } from "@redux/userSlice";
 
 const user = {
   id: 1,
@@ -67,18 +69,12 @@ const month = {
 };
 
 export default function ProfileScreen({ route }: ProfileScreenProps) {
-  const { userID } = route.params;
+  const userID = useSelector(selectUserID);
   const [profilePic, setProfilePic] = useState<string | ArrayBuffer | null>("");
   const [username, setUsername] = useState<string>("");
   const [favColor, setFavColor] = useState<string>("#000000");
 
   useEffect(() => {
-    fetchFileFromStorage(userID + "/profile.jpg", "profile_pics").then(
-      (profilePic) => {
-        setProfilePic(profilePic);
-      }
-    );
-
     const fetchProfileData = async () => {
       try {
         const { data, error } = await supabase
@@ -89,11 +85,18 @@ export default function ProfileScreen({ route }: ProfileScreenProps) {
         setUsername(data[0].username);
         setFavColor(data[0].fav_color);
       } catch (error: any) {
-        console.error(error.message);
+        console.error("Error from fetching profile data:", error.message);
       }
     };
-    fetchProfileData();
-  }, []);
+    if (userID) {
+      fetchProfileData();
+      fetchFileFromStorage(userID + "/profile.jpg", "profile_pics").then(
+        (profilePic) => {
+          setProfilePic(profilePic);
+        }
+      );
+    }
+  }, [userID]);
 
   const source: ImageSource = profilePic as ImageSource;
 
@@ -112,16 +115,6 @@ export default function ProfileScreen({ route }: ProfileScreenProps) {
           marginTop: 15,
         }}
       />
-      {/* <Text
-        style={{
-          color: LOW_LUMINANCE_TEXT_COLOR,
-          fontFamily: "Inter-Bold",
-          fontSize: 20,
-          padding: 10,
-        }}
-      >
-        {profile.name}
-      </Text> */}
       <Text
         style={{
           color: LOW_LUMINANCE_TEXT_COLOR,

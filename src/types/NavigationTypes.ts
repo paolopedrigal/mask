@@ -45,15 +45,15 @@ export type PostRouteParams = {
   EditCard: {
     image?: string;
   };
-  PostCard: undefined;
+  PostCard: {
+    image?: string;
+    cardText?: string;
+  };
 };
 
 // Route names for Profile Navigator
 export type ProfileRouteParams = {
-  Profile: {
-    userID: string;
-    // friendStatus?: "friend" | "requested" | "addFriend";
-  };
+  Profile: undefined;
   EditProfile: undefined;
 };
 
