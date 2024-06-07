@@ -11,6 +11,7 @@ import Deck from "@components/Deck";
 import {
   BOTTOM_SHEET_BG_COLOR,
   BOTTOM_SHEET_HANDLE_INDICATOR_COLOR,
+  DARK_BG_COLOR,
 } from "@assets/styles/colors";
 import { CARD_BORDER_RADIUS } from "@assets/styles/card";
 import Card from "@components/Card";
@@ -18,6 +19,8 @@ import { CardProps } from "@_types/CardTypes";
 import { supabase } from "supabase";
 import { useSelector } from "react-redux";
 import { selectUserID } from "@redux/userSlice";
+import { fetchFileFromStorage } from "@utils/supabase-utils";
+import { ImageSource } from "expo-image";
 
 interface InboxInterface {
   id: string;
@@ -41,7 +44,7 @@ export default function HomeScreen() {
       interface InboxQuery {
         deck_id: string;
         viewed: boolean;
-        main_card_id: { text: string | null };
+        main_card_id: { text: string | null; image_url: string | null };
         sender_id: { user_id: string; username: string; fav_color: string };
       }
 
@@ -53,7 +56,8 @@ export default function HomeScreen() {
             deck_id,
             viewed,
             main_card_id (
-              text
+              text,
+              image_url
             ),
             sender_id (
               user_id,
@@ -69,11 +73,21 @@ export default function HomeScreen() {
         else {
           let inboxArray: InboxInterface[] = [];
           for (let i: number = 0; i < data.length; i++) {
+            let cardPic = undefined;
+
+            if (data[i].main_card_id.image_url != undefined) {
+              cardPic = await fetchFileFromStorage(
+                data[i].main_card_id.image_url as string,
+                "card_pics"
+              );
+            }
+
             inboxArray.push({
               id: data[i].deck_id,
               card: {
                 authorID: data[i].sender_id.user_id,
                 text: data[i].main_card_id?.text,
+                image: cardPic as ImageSource,
                 authorText: data[i]?.sender_id.username,
                 isHidden: false, //!data[0]["viewed"],
                 hasAuthorImage: true,
@@ -122,7 +136,7 @@ export default function HomeScreen() {
               style={{ margin: 5 }}
             >
               <Card
-                // image={item.mainCard.image}
+                image={item.card.image}
                 authorID={item.card.authorID}
                 text={item.card.text}
                 authorText={""}
@@ -149,6 +163,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 200,
+    backgroundColor: DARK_BG_COLOR,
+    justifyContent: "center",
+    alignItems: "center",
   },
   contentContainer: {
     backgroundColor: BOTTOM_SHEET_BG_COLOR,

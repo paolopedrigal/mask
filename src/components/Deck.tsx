@@ -110,6 +110,8 @@ export default function Deck(props: DeckProps) {
           };
         }
 
+        console.log("deckID in fetchDeck:", deckID);
+
         const { data, error } = await supabase
           .from("replies")
           .select(
@@ -136,20 +138,18 @@ export default function Deck(props: DeckProps) {
 
         if (error) throw error;
         let deckCardsData: DeckCardData[] = [...Array(data.length)];
-        let cardPics: CardPics = {};
+        let cardPictures: CardPics = {};
         let cardIndex: number = 1; // To let main card to be first index in array
 
         for (let i: number = 0; i < data.length; i++) {
-          if (data[i].card_id.image_url != null)
+          if (data[i].card_id.image_url != null) {
             // Fetch photo
-            fetchFileFromStorage(
-              data[i].card_id.author_id.user_id +
-                "/" +
-                data[i].card_id.image_url,
+            const cardPic = await fetchFileFromStorage(
+              data[i].card_id.image_url as string,
               "card_pics"
-            ).then((cardPic) => {
-              cardPics[data[i].card_id.card_id] = cardPic as ImageSource;
-            });
+            );
+            cardPictures[data[i].card_id.card_id] = cardPic as ImageSource;
+          }
 
           if (data[i].card_id.author_id.user_id == userID) setReplied(true);
 
@@ -222,10 +222,10 @@ export default function Deck(props: DeckProps) {
           isLooping: isLooping,
           viewMutuals: viewMutuals,
         });
-        setCardPics(cardPics);
+        setCardPics(cardPictures);
         setDeckLength(numCards);
       } catch (error: any) {
-        console.log(error.message);
+        console.error("Error in fetchDeck:", error.message);
       }
     };
 
@@ -236,7 +236,9 @@ export default function Deck(props: DeckProps) {
     console.log("deckLength:", deckLength);
   }, [deckLength]);
 
-  if (!deck || deckLength <= 0) return <Text>No deck from deck.tsx</Text>;
+  if (!deck || deckLength <= 0)
+    return <Text style={{ color: "white" }}>No deck selected</Text>;
+  // <View style={{ backgroundColor: DARK_BG_COLOR, flex: 1 }}></View>;
   else {
     return (
       <Swiper
@@ -386,7 +388,6 @@ export default function Deck(props: DeckProps) {
           <TouchableOpacity
             style={styles.biggerTouchablePadding}
             onPress={() => {
-              console.log("what");
               homeNavigation.navigate("Answer");
             }}
           >
