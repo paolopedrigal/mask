@@ -43,7 +43,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
           photo = await manipulateAsync(
             photo.uri,
             [{ rotate: 180 }, { flip: FlipType.Vertical }],
-            { compress: 1, format: SaveFormat.PNG, base64: true }
+            { compress: 1, format: SaveFormat.JPEG, base64: true }
           );
         }
         setImage({ uri: photo.uri, base64: photo.base64 as string });

@@ -137,7 +137,7 @@ export default function PostCardScreen({
       if (base64Image != undefined) {
         const picUploadResponse = await supabase.storage
           .from("card_pics")
-          .upload(imageURL, decode(base64Image), { contentType: "image/png" });
+          .upload(imageURL, decode(base64Image), { contentType: "image/jpeg" });
         if (picUploadResponse.error) throw picUploadResponse.error;
       }
 
