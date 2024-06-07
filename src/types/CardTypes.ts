@@ -1,4 +1,5 @@
-import { DimensionValue, ImageSourcePropType } from "react-native";
+import { ImageSource } from "expo-image";
+import { DimensionValue } from "react-native";
 
 export interface CardProps {
   authorID: string;
@@ -8,7 +9,7 @@ export interface CardProps {
   height?: DimensionValue;
   text?: string | null;
   fontSize?: number;
-  image?: ImageSourcePropType;
+  image?: ImageSource;
   isAuthorBold: boolean;
   hasAuthorImage: boolean;
   authorFontSize?: number;
@@ -25,7 +26,7 @@ export interface CommentCardProps {
 }
 
 export interface CommentProps {
-  authorImage: ImageSourcePropType;
+  authorImage: ImageSource;
   authorText: string;
   comment: string;
   secondaryBackgroundColor?: string;
