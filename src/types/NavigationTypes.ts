@@ -1,4 +1,3 @@
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -43,10 +42,10 @@ export type HomeRouteParams = {
 export type PostRouteParams = {
   Camera: undefined;
   EditCard: {
-    image?: string;
+    image?: { uri: string; base64: string };
   };
   PostCard: {
-    image?: string;
+    base64Image?: string; // base64
     cardText?: string;
   };
 };

@@ -42,14 +42,17 @@ export default function EditCardScreen({
           <EditCard
             cardText={cardText}
             setCardText={setCardText}
-            image={image}
+            image={image?.uri}
           />
         </KeyboardAvoidingView>
         <Pressable
           onPress={() => {
             if (allowNavigate) {
               if (cardText == "") setCardText(" ");
-              navigation.push("PostCard", { image: image, cardText: cardText });
+              navigation.push("PostCard", {
+                base64Image: image?.base64,
+                cardText: cardText,
+              });
             }
           }}
           style={{

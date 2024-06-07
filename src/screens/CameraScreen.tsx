@@ -9,15 +9,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
 import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
-import {
-  CARD_BORDER_RADIUS,
-  CARD_HEIGHT,
-  CARD_WIDTH,
-} from "@assets/styles/card";
+import { CARD_BORDER_RADIUS, CARD_HEIGHT } from "@assets/styles/card";
 
 export default function CameraScreen({ route, navigation }: CameraScreenProps) {
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean>();
-  const [image, setImage] = useState<string>();
+  const [image, setImage] = useState<{ uri: string; base64: string }>();
   const [facing, setFacing] = useState<CameraType>(CameraType.front);
   const [flash, setFlash] = useState<FlashMode>(FlashMode.off);
   const cameraRef = useRef<Camera>(null);
@@ -36,17 +32,24 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
   const takePicture = async () => {
     if (cameraRef && cameraRef.current) {
       try {
-        let photo = await cameraRef.current.takePictureAsync();
+        // let photo = await cameraRef.current.takePictureAsync({
+        //   base64: true,
+        //   isImageMirror: CameraType.front === facing,
+        // });
+
+        let photo = await cameraRef.current.takePictureAsync({ base64: true });
 
         if (facing === CameraType.front) {
           photo = await manipulateAsync(
             photo.uri,
             [{ rotate: 180 }, { flip: FlipType.Vertical }],
-            { compress: 1, format: SaveFormat.PNG }
+            { compress: 1, format: SaveFormat.PNG, base64: true }
           );
         }
-        setImage(photo.uri);
-        navigation.replace("EditCard", { image: photo.uri });
+        setImage({ uri: photo.uri, base64: photo.base64 as string });
+        navigation.replace("EditCard", {
+          image: { uri: photo.uri, base64: photo.base64 as string },
+        });
       } catch (error: any) {
         console.error("Error with CameraScreen.tsx:", error.message);
       }
@@ -66,7 +69,7 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
   if (image)
     return (
       <Image
-        source={{ uri: image }}
+        source={{ uri: image.uri }}
         style={{
           paddingLeft: insets.left,
           paddingRight: insets.right,

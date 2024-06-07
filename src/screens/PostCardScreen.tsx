@@ -20,6 +20,9 @@ import {
 } from "@redux/userSlice";
 import { useSelector } from "react-redux";
 import { supabase } from "supabase";
+import "react-native-get-random-values";
+import { v4 as uuid } from "uuid";
+import { decode } from "base64-arraybuffer";
 
 interface SelectedFriendsInterface {
   [key: string]: boolean;
@@ -29,7 +32,7 @@ export default function PostCardScreen({
   navigation,
   route,
 }: PostCardScreenProps) {
-  const { image, cardText } = route.params;
+  const { base64Image, cardText } = route.params;
   const userID: string = useSelector(selectUserID);
   const [visibility, setVisibility] = useState<
     "anonymous" | "private" | "mutuals"
@@ -118,22 +121,6 @@ export default function PostCardScreen({
 
   const postDeck = async () => {
     try {
-      // Upload image to storage
-      const imageURL = userID + "/" + "test.jpg";
-      if (image != undefined) {
-        const { data, error } = await supabase.storage
-          .from("card_pics")
-          .upload(imageURL, image);
-      }
-
-      // Insert into cards table
-      const cardsInsertResponse = await supabase
-        .from("cards")
-        .insert({ author_id: userID, text: cardText, image_url: imageURL })
-        .select("card_id");
-
-      if (cardsInsertResponse.error) throw cardsInsertResponse.error;
-
       // Insert into decks table
       const decksInsertResponse = await supabase
         .from("decks")
@@ -145,8 +132,34 @@ export default function PostCardScreen({
 
       if (decksInsertResponse.error) throw decksInsertResponse.error;
 
+      // Upload image to storage
+      const imageURL = decksInsertResponse.data[0].deck_id + "/" + uuid();
+      if (base64Image != undefined) {
+        const picUploadResponse = await supabase.storage
+          .from("card_pics")
+          .upload(imageURL, decode(base64Image), { contentType: "image/png" });
+        if (picUploadResponse.error) throw picUploadResponse.error;
+      }
+
+      // Insert into cards table
+      const cardsInsertResponse = await supabase
+        .from("cards")
+        .insert({ author_id: userID, text: cardText, image_url: imageURL })
+        .select("card_id");
+
+      if (cardsInsertResponse.error) throw cardsInsertResponse.error;
+
+      // Insert into replies table
+      const repliesInsertResponse = await supabase.from("replies").insert({
+        card_id: cardsInsertResponse.data[0].card_id,
+        deck_id: decksInsertResponse.data[0].deck_id,
+        is_main: true,
+      });
+
+      if (repliesInsertResponse.error) throw repliesInsertResponse.error;
+
       // Insert into inbox table
-      const insertData = Object.keys(selectedFriendsRef.current)
+      const inboxInsertData = Object.keys(selectedFriendsRef.current)
         .filter((friendID) => selectedFriendsRef.current[friendID])
         .map((friendID) => {
           if (selectedFriendsRef.current[friendID])
@@ -159,7 +172,7 @@ export default function PostCardScreen({
         });
       const inboxInsertResponse = await supabase
         .from("inbox")
-        .insert(insertData);
+        .insert(inboxInsertData);
 
       if (inboxInsertResponse.error) throw inboxInsertResponse.error;
     } catch (error: any) {
