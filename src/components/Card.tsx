@@ -261,6 +261,7 @@ function Card(props: CardProps) {
           style={[styles.image, { width: widthNumber, height: heightNumber }]}
           blurRadius={isHidden ? 90 : 0}
           source={image}
+          cachePolicy={"memory"}
         >
           <View
             style={[
@@ -293,7 +294,11 @@ function Card(props: CardProps) {
             >
               <View style={styles.authorView}>
                 {profilePic != undefined && hasAuthorImage ? (
-                  <Image source={profilePic} style={styles.authorImage} />
+                  <Image
+                    source={profilePic}
+                    style={styles.authorImage}
+                    cachePolicy={"memory"}
+                  />
                 ) : (
                   <></> // If no author image at bottom of card
                 )}
@@ -359,7 +364,11 @@ function Card(props: CardProps) {
         >
           <View style={styles.authorView}>
             {profilePic != undefined && hasAuthorImage ? (
-              <Image source={profilePic} style={styles.authorImage} />
+              <Image
+                source={profilePic}
+                style={styles.authorImage}
+                cachePolicy={"memory"}
+              />
             ) : (
               <></> // If no author image at bottom of card
             )}
