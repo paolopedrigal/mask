@@ -48,10 +48,6 @@ const styles = StyleSheet.create({
   },
 });
 
-interface CardPics {
-  [key: string]: ImageSource;
-}
-
 export default function Deck(props: DeckProps) {
   const { deckID }: DeckProps = props;
   const [userID, setUserID] = useState<string>(useSelector(selectUserID)); // Get current user's ID
@@ -62,7 +58,6 @@ export default function Deck(props: DeckProps) {
   const [deckLength, setDeckLength] = useState<number>(0);
   const [replied, setReplied] = useState<boolean>(false);
   const [allowedSwiping, setAllowedSwiping] = useState<boolean>(true);
-  const [cardPics, setCardPics] = useState<CardPics>({});
 
   const homeNavigation = useNavigation<HomeProps["navigation"]>();
 
@@ -138,17 +133,17 @@ export default function Deck(props: DeckProps) {
 
         if (error) throw error;
         let deckCardsData: DeckCardData[] = [...Array(data.length)];
-        let cardPictures: CardPics = {};
         let cardIndex: number = 1; // To let main card to be first index in array
 
         for (let i: number = 0; i < data.length; i++) {
+          let cardPic = undefined;
           if (data[i].card_id.image_url != null) {
             // Fetch photo
-            const cardPic = await fetchFileFromStorage(
+            cardPic = await fetchFileFromStorage(
               data[i].card_id.image_url as string,
               "card_pics"
             );
-            cardPictures[data[i].card_id.card_id] = cardPic as ImageSource;
+            // cardPictures[data[i].card_id.card_id] = cardPic as ImageSource;
           }
 
           if (data[i].card_id.author_id.user_id == userID) setReplied(true);
@@ -163,7 +158,7 @@ export default function Deck(props: DeckProps) {
                 authorID: data[i].card_id.author_id.user_id,
                 backgroundColor: data[i].card_id.author_id.fav_color,
                 text: data[i].card_id.text,
-                image: undefined,
+                image: cardPic as ImageSource,
                 authorText: data[i].card_id.author_id.username,
                 isAuthorBold: true,
                 hasAuthorImage: true,
@@ -179,7 +174,7 @@ export default function Deck(props: DeckProps) {
                 authorID: data[i].card_id.author_id.user_id,
                 backgroundColor: data[i].card_id.author_id.fav_color,
                 text: data[i].card_id.text,
-                image: undefined,
+                image: cardPic as ImageSource,
                 authorText: data[i].card_id.author_id.username,
                 isAuthorBold: false,
                 hasAuthorImage: true,
@@ -222,7 +217,6 @@ export default function Deck(props: DeckProps) {
           isLooping: isLooping,
           viewMutuals: viewMutuals,
         });
-        setCardPics(cardPictures);
         setDeckLength(numCards);
       } catch (error: any) {
         console.error("Error in fetchDeck:", error.message);
@@ -254,7 +248,7 @@ export default function Deck(props: DeckProps) {
                 authorID={cardData.authorID}
                 backgroundColor={cardData.card.backgroundColor}
                 text={cardData.card?.text}
-                image={cardPics[cardData.cardID]}
+                image={cardData.card?.image}
                 authorText={cardData.card.authorText}
                 hasAuthorImage={cardData.card.hasAuthorImage}
                 isAuthorBold={cardData.card.isAuthorBold}
@@ -271,7 +265,7 @@ export default function Deck(props: DeckProps) {
                   authorID={cardData.authorID}
                   backgroundColor={cardData?.card.backgroundColor}
                   text={cardData?.card.text}
-                  image={cardPics[cardData.cardID]}
+                  image={cardData.card?.image}
                   authorText={cardData?.card.authorText}
                   hasAuthorImage={cardData.card.hasAuthorImage}
                   isAuthorBold={cardData?.card.isAuthorBold}
@@ -289,7 +283,7 @@ export default function Deck(props: DeckProps) {
                   frontCardProps={{
                     authorID: cardData.authorID,
                     text: cardData.card?.text,
-                    image: cardPics[cardData.cardID], //cardData?.card.image,
+                    image: cardData.card?.image,
                     authorText: cardData.card.authorText,
                     isAuthorBold: cardData.card.isAuthorBold,
                     hasAuthorImage: cardData.card.hasAuthorImage,
@@ -307,7 +301,7 @@ export default function Deck(props: DeckProps) {
                 authorID={cardData.authorID}
                 backgroundColor={cardData.card?.backgroundColor}
                 text={cardData.card.text}
-                image={cardPics[cardData.cardID]}
+                image={cardData.card?.image}
                 authorText={cardData.card.authorText}
                 hasAuthorImage={cardData.card.hasAuthorImage}
                 isAuthorBold={cardData.card.isAuthorBold}
@@ -351,7 +345,7 @@ export default function Deck(props: DeckProps) {
       >
         <View
           style={{
-            bottom: -525, // TODO: make this dynamice depending on card height
+            bottom: -525, // TODO: make this dynamic depending on card height
             justifyContent: "center",
             alignItems: "center",
             flexDirection: "row",
