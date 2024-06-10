@@ -13,6 +13,10 @@ import { useEffect } from "react";
 import { ProfileRouteParams, EditProfileProps } from "@_types/NavigationTypes";
 import { DARK_BG_COLOR } from "@assets/styles/colors";
 import { supabase } from "supabase";
+import { Pressable } from "react-native";
+import { Image } from "expo-image";
+import { useSelector } from "react-redux";
+import { selectUsername } from "@redux/userSlice";
 
 const ProfileDrawer = createDrawerNavigator<ProfileRouteParams>();
 
@@ -64,8 +68,39 @@ export default function ProfileNavigation() {
         component={ProfileScreen}
         options={{
           drawerItemStyle: { display: "none" },
-          headerStyle: { backgroundColor: DARK_BG_COLOR },
+          headerStyle: {
+            backgroundColor: DARK_BG_COLOR,
+          },
           headerTitleAlign: "center",
+          headerTitle: useSelector(selectUsername),
+          headerTitleStyle: {
+            fontSize: 18,
+            fontFamily: "Inter-Regular",
+            color: "#FFFFFF",
+          },
+          headerLeft: () => (
+            <Pressable style={{ paddingHorizontal: 25 }}>
+              <Image
+                source={require("@assets/icons/add-friend-icon.png")}
+                style={{ width: 25, height: 20 }}
+                cachePolicy={"disk"}
+              />
+            </Pressable>
+          ),
+          headerRight: () => (
+            <Pressable
+              style={{ paddingHorizontal: 25 }}
+              onPress={() =>
+                profileNavigation.dispatch(DrawerActions.openDrawer())
+              }
+            >
+              <Image
+                source={require("@assets/icons/settings-icon.png")}
+                style={{ width: 25, height: 25 }}
+                cachePolicy={"disk"}
+              />
+            </Pressable>
+          ),
         }}
       />
       <ProfileDrawer.Screen
