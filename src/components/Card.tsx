@@ -134,8 +134,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 100,
-    borderColor: AUTHOR_IMAGE_BORDER_COLOR,
-    borderWidth: 1,
   },
   authorText: {
     fontSize: CARD_AUTHOR_FONT_SIZE,
@@ -266,6 +264,7 @@ function Card(props: CardProps) {
           <View
             style={[
               styles.semiTransparentDarkTintView,
+              text == "" ? { backgroundColor: "transparent" } : {},
               {
                 paddingHorizontal: paddingHorizontalNumber,
                 paddingTop: paddingTopNumber,
@@ -296,7 +295,13 @@ function Card(props: CardProps) {
                 {profilePic != undefined && hasAuthorImage ? (
                   <Image
                     source={profilePic}
-                    style={styles.authorImage}
+                    style={[
+                      styles.authorImage,
+                      {
+                        borderColor: AUTHOR_IMAGE_BORDER_COLOR,
+                        borderWidth: 0.5,
+                      },
+                    ]}
                     cachePolicy={"memory"}
                   />
                 ) : (

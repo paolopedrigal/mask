@@ -1,7 +1,7 @@
 export const DARK_BG_COLOR: string = "#030313"; // "#050522";
 export const QUESTION_CARD_BG_COLOR: string = "#000000"; // black
 export const BOTTOM_TAB_BG_COLOR: string = "#000000"; // black
-export const AUTHOR_IMAGE_BORDER_COLOR: string = "#FFFFFF"; // white
+export const AUTHOR_IMAGE_BORDER_COLOR: string = "#A9A9A9";
 export const COMMENT_SHADED_COLOR: string = "#FFFFFF";
 export const LOW_LUMINANCE_FADED_TEXT_COMMENT_COLOR: string = "#C0C0C0";
 export const LOW_LUMINANCE_FADED_TEXT_COLOR: string = "#636363";
