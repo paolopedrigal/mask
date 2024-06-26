@@ -13,6 +13,7 @@ const BottomTab = createMaterialTopTabNavigator<MainRouteParams>();
 export default function MainNavigation() {
   const insets = useSafeAreaInsets();
   const screenOptions = ({ route }: any) => ({
+    swipeEnabled: false,
     tabBarIndicatorStyle: {
       backgroundColor: "transparent",
     },
@@ -79,13 +80,7 @@ export default function MainNavigation() {
           },
         }}
       />
-      <BottomTab.Screen
-        name="HomeNavigation"
-        component={HomeNavigation}
-        options={{
-          swipeEnabled: false,
-        }}
-      />
+      <BottomTab.Screen name="HomeNavigation" component={HomeNavigation} />
       <BottomTab.Screen
         name="ProfileNavigation"
         component={ProfileNavigation}

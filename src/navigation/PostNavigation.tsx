@@ -25,6 +25,7 @@ export default function PostNavigation({
     const routeName = getFocusedRouteNameFromRoute(route) ?? "Camera";
     if (routeName === "Camera") {
       navigation.setOptions({
+        swipeEnabled: true,
         tabBarStyle: { height: 0 },
         tabBarIndicatorStyle: {
           backgroundColor: "transparent",
@@ -32,6 +33,7 @@ export default function PostNavigation({
       });
     } else {
       navigation.setOptions({
+        swipeEnabled: false,
         tabBarStyle: {
           backgroundColor: BOTTOM_TAB_BG_COLOR,
           borderTopWidth: 0,
