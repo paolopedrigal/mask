@@ -3,85 +3,100 @@ import {
   CARD_HEIGHT,
   CARD_WIDTH,
 } from "@assets/styles/card";
-import { Text, View } from "react-native";
-import { Image } from "expo-image";
-import { BlurView } from "expo-blur";
+import { Pressable, Text, View } from "react-native";
+import { Image, ImageSource } from "expo-image";
+
+interface HandPreviewProps {
+  handImages: ImageSource[];
+  showHandCallback: () => void;
+}
 
 // TODO: dynamically receive 5 cards from database
-export default function HandPreview() {
+export default function HandPreview(props: HandPreviewProps) {
+  const { handImages, showHandCallback }: HandPreviewProps = props;
+
   return (
     <View
       style={{
         justifyContent: "center",
         alignItems: "center",
-        marginVertical: 30,
+        marginVertical: 25,
       }}
     >
-      <Image
-        style={{
-          height: 100,
-          width: CARD_WIDTH * 0.95,
-          borderRadius: CARD_BORDER_RADIUS,
-          backgroundColor: "pink",
-          position: "absolute",
-          top: 0,
-          transform: [{ rotate: "10deg" }],
-        }}
-        source={require("@assets/images/test-2.jpg")}
-        contentPosition={{ top: 0, right: "50%" }}
-        blurRadius={25}
-      />
-      <Image
-        style={{
-          height: 100,
-          width: CARD_WIDTH * 0.98,
-          borderRadius: CARD_BORDER_RADIUS,
-          backgroundColor: "purple",
-          position: "absolute",
-          top: 15,
-          transform: [{ rotate: "5deg" }],
-        }}
-        source={require("@assets/images/test.jpg")}
-        contentPosition={{ top: 0, right: "50%" }}
-        blurRadius={10}
-      />
-      <Image
-        style={{
-          height: CARD_HEIGHT,
-          width: CARD_WIDTH,
-          borderRadius: CARD_BORDER_RADIUS,
-          position: "absolute",
-          top: 30,
-          justifyContent: "flex-end",
-          alignItems: "center",
-        }}
-        blurRadius={0}
-        source={require("@assets/images/test-1.jpg")}
-      >
-        <BlurView
+      {handImages.length >= 3 && (
+        <Image
           style={{
-            width: "100%",
-            padding: 30,
-            shadowColor: "#000000",
-            shadowOpacity: 1,
-            shadowRadius: 30,
-            elevation: 30,
+            height: 100,
+            width: CARD_WIDTH * 0.95,
+            borderRadius: CARD_BORDER_RADIUS,
+            position: "absolute",
+            top: 0,
+            transform: [{ rotate: "8deg" }],
           }}
-          intensity={10}
-          tint="systemThickMaterialDark"
+          source={handImages[2]}
+          contentPosition={{ top: 0, right: "50%" }}
+          blurRadius={40} //{25}
+        />
+      )}
+      {handImages.length >= 2 && (
+        <Image
+          style={{
+            height: 100,
+            width: CARD_WIDTH * 0.98,
+            borderRadius: CARD_BORDER_RADIUS,
+            position: "absolute",
+            top: handImages.length >= 3 ? 10 : 0,
+            transform: [{ rotate: "4deg" }],
+          }}
+          source={handImages[1]}
+          contentPosition={{ top: 0, right: "50%" }}
+          blurRadius={40} //{10}
+        />
+      )}
+      <Pressable
+        onPress={showHandCallback}
+        style={{
+          position: "absolute",
+          top: handImages.length >= 3 ? 20 : handImages.length == 2 ? 10 : 0,
+        }}
+      >
+        <Image
+          style={{
+            height: CARD_HEIGHT,
+            width: CARD_WIDTH,
+            borderRadius: CARD_BORDER_RADIUS,
+            // position: "absolute",
+            // top: handImages.length >= 3 ? 20 : handImages.length == 2 ? 10 : 0,
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+          blurRadius={40}
+          source={handImages[0]}
         >
+          <Image
+            style={{
+              height: CARD_HEIGHT,
+              width: CARD_WIDTH,
+              borderRadius: CARD_BORDER_RADIUS,
+              position: "absolute",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+            source={require("@assets/images/preview-card-cover.png")}
+          />
           <Text
             style={{
               color: "white",
               fontFamily: "Inter-Bold",
               fontSize: 14,
+              padding: 30,
               textAlign: "center",
             }}
           >
             View Hand
           </Text>
-        </BlurView>
-      </Image>
+        </Image>
+      </Pressable>
     </View>
   );
 }

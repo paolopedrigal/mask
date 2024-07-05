@@ -1,46 +1,45 @@
-import { ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image, ImageSource } from "expo-image";
-import { DARK_BG_COLOR } from "@assets/styles/colors";
+import { DARK_BG_COLOR, DARK_BORDER_COLOR } from "@assets/styles/colors";
 import { CARD_HEIGHT } from "@assets/styles/card";
 import { useEffect, useState } from "react";
 import { fetchFileFromStorage } from "@utils/supabase-utils";
 import { ProfileScreenProps } from "@_types/NavigationTypes";
 import { supabase } from "supabase";
 import { useSelector } from "react-redux";
-import { selectUserID } from "@redux/userSlice";
+import { selectUserID, selectUserProfilePic } from "@redux/userSlice";
 import HandPreview from "@components/HandPreview";
+import { DrawerActions } from "@react-navigation/native";
 
-export default function ProfileScreen({ route }: ProfileScreenProps) {
-  const userID = useSelector(selectUserID);
-  const [profilePic, setProfilePic] = useState<string | ArrayBuffer | null>("");
-  const [username, setUsername] = useState<string>("");
-  const [favColor, setFavColor] = useState<string>("#000000");
+export default function ProfileScreen({ navigation }: ProfileScreenProps) {
+  const userID: string = useSelector(selectUserID);
+  const [profilePic, setProfilePic] = useState<ImageSource>(
+    useSelector(selectUserProfilePic)
+  );
+  // Not commiting these temp pictures
+  const [handImages, setHandImages] = useState<ImageSource[]>([
+    // require("@assets/images/test.jpg"),
+    // require("@assets/images/test-1.jpg"),
+    // require("@assets/images/test-2.jpg"),
+  ]);
+
+  const navigateToHand = () => {
+    if (handImages != undefined) {
+      navigation.dispatch(
+        DrawerActions.jumpTo("Hand", { handImages: handImages })
+      );
+    }
+  };
 
   useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("users")
-          .select("username, fav_color, profile_pic")
-          .eq("user_id", userID);
-        if (error) throw error;
-        setUsername(data[0].username);
-        setFavColor(data[0].fav_color);
-      } catch (error: any) {
-        console.error("Error from fetching profile data:", error.message);
-      }
-    };
     if (userID) {
-      fetchProfileData();
       fetchFileFromStorage(userID + "/profile.jpg", "profile_pics").then(
         (profilePic) => {
-          setProfilePic(profilePic);
+          setProfilePic(profilePic as ImageSource);
         }
       );
     }
   }, [userID]);
-
-  const source: ImageSource = profilePic as ImageSource;
 
   return (
     <ScrollView
@@ -57,7 +56,7 @@ export default function ProfileScreen({ route }: ProfileScreenProps) {
         }}
       >
         <Image
-          source={source}
+          source={profilePic}
           style={{
             width: 100,
             height: 100,
@@ -66,20 +65,31 @@ export default function ProfileScreen({ route }: ProfileScreenProps) {
           }}
           cachePolicy={"disk"}
         />
-        <Text
-          style={{
-            color: "#FFFFFF",
-            fontFamily: "Inter-Regular",
-            paddingVertical: 5,
-            paddingHorizontal: 15,
-            borderWidth: 1,
-            borderColor: "#24245E",
-            borderRadius: 2,
-          }}
-        >
-          Edit Profile
-        </Text>
-        <HandPreview />
+        <Pressable onPress={() => navigation.navigate("EditProfile")}>
+          <Text
+            style={{
+              color: "#FFFFFF",
+              fontFamily: "Inter-Regular",
+              paddingVertical: 5,
+              paddingHorizontal: 15,
+              borderWidth: 1,
+              borderColor: DARK_BORDER_COLOR,
+              borderRadius: 2,
+            }}
+          >
+            Edit Profile
+          </Text>
+        </Pressable>
+        {handImages.length >= 1 ? (
+          <HandPreview
+            handImages={handImages}
+            showHandCallback={navigateToHand}
+          />
+        ) : (
+          <Text style={{ color: "#FFFFFF", margin: 30 }}>
+            No cards in their hand yet!
+          </Text>
+        )}
       </View>
     </ScrollView>
   );

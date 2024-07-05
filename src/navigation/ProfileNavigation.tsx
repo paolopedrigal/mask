@@ -17,15 +17,16 @@ import { Pressable } from "react-native";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { selectUsername } from "@redux/userSlice";
+import Hand from "@components/Hand";
 
 const ProfileDrawer = createDrawerNavigator<ProfileRouteParams>();
 
 export default function ProfileNavigation() {
   const profileNavigation = useNavigation<EditProfileProps["navigation"]>();
 
-  const navigateBackToProfile = () => {
+  const navigateBackToProfile = (preOpen: boolean) => {
     profileNavigation.dispatch(DrawerActions.jumpTo("Profile"));
-    profileNavigation.dispatch(DrawerActions.openDrawer());
+    if (preOpen) profileNavigation.dispatch(DrawerActions.openDrawer());
   };
 
   // Ensure drawer is closed when rendered for first time
@@ -104,11 +105,53 @@ export default function ProfileNavigation() {
         }}
       />
       <ProfileDrawer.Screen
+        name="Hand"
+        component={Hand}
+        options={{
+          swipeEnabled: false,
+          drawerItemStyle: { display: "none" },
+          headerStyle: {
+            backgroundColor: DARK_BG_COLOR,
+          },
+          headerTitleAlign: "center",
+          headerTitle: useSelector(selectUsername),
+          headerTitleStyle: {
+            fontSize: 18,
+            fontFamily: "Inter-Regular",
+            color: "#FFFFFF",
+          },
+          headerLeft: () => (
+            <HeaderBackButton
+              onPress={() => navigateBackToProfile(false)}
+              labelVisible={false}
+              tintColor="#A9A9A9"
+              style={{
+                padding: 20,
+              }}
+            />
+          ),
+          headerRight: () => <></>,
+        }}
+      />
+
+      <ProfileDrawer.Screen
         name="EditProfile"
         component={EditProfileScreen}
         options={{
+          swipeEnabled: false,
+          headerStyle: {
+            backgroundColor: DARK_BG_COLOR,
+          },
+          headerTitle: "",
           headerLeft: () => (
-            <HeaderBackButton onPress={navigateBackToProfile} />
+            <HeaderBackButton
+              onPress={() => navigateBackToProfile(true)}
+              labelVisible={false}
+              tintColor="#A9A9A9"
+              style={{
+                padding: 20,
+              }}
+            />
           ),
           headerRight: () => <></>,
         }}

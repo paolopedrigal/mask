@@ -1,6 +1,7 @@
 import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { ImageSource } from "expo-image";
 import { KeyboardTypeOptions } from "react-native";
 
 ////////////////////////////////// React Navigation Type checking /////////////////////////
@@ -53,6 +54,7 @@ export type PostRouteParams = {
 // Route names for Profile Navigator
 export type ProfileRouteParams = {
   Profile: undefined;
+  Hand: { handImages?: ImageSource[] };
   EditProfile: undefined;
 };
 
@@ -75,6 +77,10 @@ export type HomeProps = NativeStackScreenProps<HomeRouteParams, "Home">;
 export type ProfileScreenProps = NativeStackScreenProps<
   ProfileRouteParams,
   "Profile"
+>;
+export type HandScreenProps = NativeStackScreenProps<
+  ProfileRouteParams,
+  "Hand"
 >;
 export type ViewProfileScreenProps = NativeStackScreenProps<
   HomeRouteParams,
