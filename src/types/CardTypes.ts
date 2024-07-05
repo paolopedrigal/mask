@@ -17,6 +17,7 @@ export interface CardProps {
   paddingHorizontal?: number;
   paddingTop?: number;
   paddingBottom?: number;
+  borderRadius?: number;
   scalar?: number;
 }
 

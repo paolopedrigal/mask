@@ -166,6 +166,7 @@ function Card(props: CardProps) {
     paddingTop, // has default value of 40
     paddingBottom, // has default value of 30
     paddingHorizontal, // has default value of 25
+    borderRadius, // has default value of 15
   }: CardProps = props;
 
   const viewProfileNavigation = useNavigation<HomeProps["navigation"]>(); // TODO: make this a prop?
@@ -195,6 +196,10 @@ function Card(props: CardProps) {
 
   const fontSizeNumber: number = useMemo(() => {
     return fontSize ? fontSize * scalingFactor : CARD_FONT_SIZE;
+  }, [fontSize, scalingFactor]);
+
+  const borderRadiusNumber: number = useMemo(() => {
+    return borderRadius ? borderRadius * scalingFactor : CARD_BORDER_RADIUS;
   }, [fontSize, scalingFactor]);
 
   const authorFontSizeNumber: number = useMemo(() => {
@@ -252,11 +257,25 @@ function Card(props: CardProps) {
   if (image)
     return (
       <View
-        style={[styles.imageView, { width: widthNumber, height: heightNumber }]}
+        style={[
+          styles.imageView,
+          {
+            width: widthNumber,
+            height: heightNumber,
+            borderRadius: borderRadiusNumber,
+          },
+        ]}
       >
         <Image
           contentFit="cover"
-          style={[styles.image, { width: widthNumber, height: heightNumber }]}
+          style={[
+            styles.image,
+            {
+              width: widthNumber,
+              height: heightNumber,
+              borderRadius: borderRadiusNumber,
+            },
+          ]}
           blurRadius={isHidden ? 90 : 0}
           source={image}
           cachePolicy={"memory"}
@@ -336,6 +355,7 @@ function Card(props: CardProps) {
             paddingHorizontal: paddingHorizontalNumber,
             paddingTop: paddingTopNumber,
             paddingBottom: paddingBottomNumber,
+            borderRadius: borderRadiusNumber,
           },
         ]}
       >
@@ -410,6 +430,7 @@ Card.defaultProps = {
   paddingHorizontal: CARD_PADDING_HORIZONTAL,
   paddingTop: CARD_PADDING_TOP,
   paddingBottom: CARD_PADDING_BOTTOM,
+  borderRadius: CARD_BORDER_RADIUS,
   isHidden: false,
   scalar: 1,
 };
