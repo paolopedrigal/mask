@@ -21,6 +21,8 @@ export const HIGH_LUMINCANCE_FADED_TEXT_COLOR: string = "#D7D7D7";
 export const HIGH_LUMINANCE_TEXT_COLOR: string = "#636363";
 export const LOW_LUMINANCE_TEXT_COLOR: string = "#FFFFFF";
 export const POST_CARD_VISIBILITY_TEXT_COLOR: string = "#7A7ACA";
+export const HIGH_PRIORITY_TEXT_COLOR: string = "#F26B6B";
+export const LOW_PRIORITY_TEXT_COLOR: string = "#7A7ACA";
 
 /* auth screen specific colors */
 export const AUTH_PLACEHOLDER_TEXT_COLOR: string = "#24245E";

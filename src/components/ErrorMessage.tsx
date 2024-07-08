@@ -1,3 +1,4 @@
+import { HIGH_PRIORITY_TEXT_COLOR } from "@assets/styles/colors";
 import { StyleSheet, Text, View } from "react-native";
 
 interface ErrorMessageProps {
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   errorMessageText: {
-    color: "#F26B6B",
+    color: HIGH_PRIORITY_TEXT_COLOR,
     fontFamily: "Inter-Regular",
     fontSize: 16,
     textAlign: "center",
