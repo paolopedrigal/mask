@@ -2,20 +2,16 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image, ImageSource } from "expo-image";
 import { DARK_BG_COLOR, DARK_BORDER_COLOR } from "@assets/styles/colors";
 import { CARD_HEIGHT } from "@assets/styles/card";
-import { useEffect, useState } from "react";
-import { fetchFileFromStorage } from "@utils/supabase-utils";
+import { useState } from "react";
 import { ProfileScreenProps } from "@_types/NavigationTypes";
-import { supabase } from "supabase";
 import { useSelector } from "react-redux";
-import { selectUserID, selectUserProfilePic } from "@redux/userSlice";
+import { selectUserProfilePic } from "@redux/userSlice";
 import HandPreview from "@components/HandPreview";
 import { DrawerActions } from "@react-navigation/native";
 
 export default function ProfileScreen({ navigation }: ProfileScreenProps) {
-  const userID: string = useSelector(selectUserID);
-  const [profilePic, setProfilePic] = useState<ImageSource>(
-    useSelector(selectUserProfilePic)
-  );
+  const profilePic = useSelector(selectUserProfilePic);
+
   // Not commiting these temp pictures
   const [handImages, setHandImages] = useState<ImageSource[]>([
     // require("@assets/images/test.jpg"),
@@ -30,16 +26,6 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
       );
     }
   };
-
-  useEffect(() => {
-    if (userID) {
-      fetchFileFromStorage(userID + "/profile.jpg", "profile_pics").then(
-        (profilePic) => {
-          setProfilePic(profilePic as ImageSource);
-        }
-      );
-    }
-  }, [userID]);
 
   return (
     <ScrollView
