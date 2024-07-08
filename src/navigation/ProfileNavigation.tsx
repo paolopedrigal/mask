@@ -143,17 +143,6 @@ export default function ProfileNavigation() {
             backgroundColor: DARK_BG_COLOR,
           },
           headerTitle: "",
-          headerLeft: () => (
-            <HeaderBackButton
-              onPress={() => navigateBackToProfile(true)}
-              labelVisible={false}
-              tintColor="#A9A9A9"
-              style={{
-                padding: 20,
-              }}
-            />
-          ),
-          headerRight: () => <></>,
         }}
       />
     </ProfileDrawer.Navigator>
