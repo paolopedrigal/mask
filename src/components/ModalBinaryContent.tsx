@@ -3,7 +3,7 @@ import {
   INNER_VIEW_DARK_BG_COLOR,
   LOW_PRIORITY_TEXT_COLOR,
 } from "@assets/styles/colors";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, TouchableOpacity, View } from "react-native";
 
 interface ModalContentProps {
   title: string;
@@ -49,7 +49,7 @@ export default function ModalBinaryContent(props: ModalContentProps) {
           paddingBottom: 25,
         }}
       >
-        <Pressable
+        <TouchableOpacity
           style={{
             flex: 1,
             justifyContent: "center",
@@ -66,8 +66,8 @@ export default function ModalBinaryContent(props: ModalContentProps) {
           >
             {leftText}
           </Text>
-        </Pressable>
-        <Pressable
+        </TouchableOpacity>
+        <TouchableOpacity
           style={{
             flex: 1,
             justifyContent: "center",
@@ -84,7 +84,7 @@ export default function ModalBinaryContent(props: ModalContentProps) {
           >
             {rightText}
           </Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </View>
   );
