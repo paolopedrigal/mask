@@ -13,7 +13,7 @@ interface ModalContentProps {
   rightCallback: () => void;
 }
 
-export default function ModalContent(props: ModalContentProps) {
+export default function ModalBinaryContent(props: ModalContentProps) {
   const {
     title,
     leftText,
