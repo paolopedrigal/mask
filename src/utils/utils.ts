@@ -55,3 +55,6 @@ export const hasHighLuminance = (
   // Check if the calculated luminance is considered high based on the threshold
   return luminance >= threshold;
 };
+
+export const sleep = async (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));

@@ -16,10 +16,18 @@ import {
   selectUserProfilePic,
   selectUsername,
   setUserProfilePic,
+  setUsername,
 } from "@redux/userSlice";
 import { ImageSource } from "expo-image";
-import React, { useEffect, useMemo, useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  Keyboard,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import Modal from "react-native-modal";
 import { useDispatch, useSelector } from "react-redux";
 import { Image } from "expo-image";
@@ -30,9 +38,11 @@ import DraggableGrid from "react-native-draggable-grid";
 import { EditProfileProps } from "@_types/NavigationTypes";
 import * as ExpoImagePicker from "expo-image-picker";
 import { TouchableOpacity } from "react-native";
-import ModalContent from "@components/ModalContent";
+import ModalBinaryContent from "@components/ModalBinaryContent";
 import { supabase } from "supabase";
 import { decode } from "base64-arraybuffer";
+import ErrorMessage from "@components/ErrorMessage";
+import { sleep } from "@utils/utils";
 
 interface HandData extends CardProps {
   key: string;
@@ -49,11 +59,10 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   const MAX_HAND_CARDS = useMemo<number>(() => 7, []);
   const userID = useSelector(selectUserID);
   const dispatch = useDispatch();
+  const regexUsername = useMemo(() => /^[a-zA-Z._]+$/, []);
 
   /*********************** States ***********************/
-  const [profilePic, setProfilePic] = useState<ImageSource>(
-    useSelector(selectUserProfilePic)
-  );
+  const profilePic = useSelector(selectUserProfilePic);
   const [newProfilePic, setNewProfilePic] = useState<{
     base64: string;
     uri: string;
@@ -74,8 +83,17 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   ]);
   const [allowSave, setAllowSave] = useState<boolean>(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-
+  const [isInvalidUsernameErrorVisible, setIsInvalidUsernameErrorVisible] =
+    useState<boolean>(false);
+  const [isUsernameTakenErrorVisible, setIsUsernameTakenErrorVisible] =
+    useState<boolean>(false);
   /*********************** States END ***********************/
+
+  /*********************** Refs ***********************/
+
+  const newUsernameRef = useRef<string>("");
+
+  /*********************** Refs END ***********************/
 
   /*********************** Callbacks ***********************/
 
@@ -94,7 +112,6 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
         base64: result.assets[0].base64,
         uri: result.assets[0].uri,
       });
-      setProfilePic(result.assets[0].uri as ImageSource);
     }
   };
 
@@ -157,10 +174,33 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
     setHandData(newHandData.filter((handCard) => handCard.key != key));
   };
 
-  const uploadProfileChanges = async () => {
+  const updateProfileChanges = async () => {
     let isSuccessfulUpload = true;
     try {
       if (allowSave) {
+        // Update new username if desired (Note: If invalid new username, update doesn't continue)
+        if (newUsernameRef.current != "") {
+          if (!regexUsername.test(newUsernameRef.current)) {
+            setIsInvalidUsernameErrorVisible(true);
+            await sleep(2000);
+            setIsInvalidUsernameErrorVisible(false);
+            throw new Error();
+          }
+          const newUserNameUpdateResponse = await supabase
+            .from("users")
+            .update({ username: newUsernameRef.current })
+            .eq("user_id", userID)
+            .select();
+
+          if (newUserNameUpdateResponse.error) {
+            setIsUsernameTakenErrorVisible(true);
+            await sleep(2000);
+            setIsUsernameTakenErrorVisible(false);
+            throw newUserNameUpdateResponse.error;
+          }
+        }
+
+        // Upload profile picture
         if (newProfilePic != undefined) {
           const imageURL = userID + "/" + "profile.jpg";
           const profilePicInsertResponse = await supabase.storage
@@ -175,7 +215,7 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
       }
     } catch (error: any) {
       isSuccessfulUpload = false;
-      console.error("Error upon uploading changes:", error);
+      // console.error("Error upon uploading changes:", error);
       // TODO: Show UI error message
     } finally {
       return isSuccessfulUpload;
@@ -183,13 +223,32 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   };
 
   const save = async () => {
-    const isSuccessfulUpload = await uploadProfileChanges();
+    console.log("saving...");
+
+    // Dismiss keyboard if open
+    Keyboard.dismiss();
+
+    // Upload profile changes to Supabase
+    const isSuccessfulUpload = await updateProfileChanges();
+
     if (isSuccessfulUpload) {
       if (newProfilePic != undefined) {
         dispatch(setUserProfilePic(newProfilePic.uri as ImageSource));
       }
-      navigation.navigate("Profile");
+      if (newUsernameRef.current != "") {
+        console.log("dispatching newUsername:", newUsernameRef.current);
+        dispatch(setUsername(newUsernameRef.current));
+      }
+      reset();
+      navigation.navigate("Profile"); // Included within `save` function because dependent on successful upload
     }
+  };
+
+  const reset = () => {
+    setNewUsername("");
+    setNewProfilePic(undefined);
+    setAllowSave(false);
+    Keyboard.dismiss();
   };
 
   /*********************** Callbacks END ***********************/
@@ -246,6 +305,8 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   }, [allowSave]);
 
   useEffect(() => {
+    newUsernameRef.current = newUsername;
+
     if (newProfilePic != undefined || newUsername != "") {
       setAllowSave(true);
     } else if (newProfilePic == undefined && newUsername == "") {
@@ -272,17 +333,28 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
           isVisible={isModalVisible}
           style={{ justifyContent: "center", alignItems: "center" }}
         >
-          <ModalContent
+          <ModalBinaryContent
             title={"Unsaved changes"}
             leftText={"Keep editing"}
             leftCallback={() => setIsModalVisible(false)}
             rightText={"Leave"}
-            rightCallback={() => console.log("testing")}
+            rightCallback={() => {
+              reset();
+              setIsModalVisible(false);
+              navigation.navigate("Profile");
+            }}
           />
         </Modal>
+        <Modal isVisible={isInvalidUsernameErrorVisible} hasBackdrop={false}>
+          <ErrorMessage message={"Invalid username."} />
+        </Modal>
+        <Modal isVisible={isUsernameTakenErrorVisible} hasBackdrop={false}>
+          <ErrorMessage message={"Username taken."} />
+        </Modal>
+
         <View>
           <Image
-            source={profilePic}
+            source={newProfilePic != undefined ? newProfilePic.uri : profilePic}
             style={{
               width: 100,
               height: 100,
