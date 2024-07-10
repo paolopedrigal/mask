@@ -65,11 +65,11 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   const profilePic = useSelector(selectUserProfilePic);
   const [newProfilePic, setNewProfilePic] = useState<{
     base64: string;
-    uri: string;
   }>();
   const username: string = useSelector(selectUsername);
   const [newUsername, setNewUsername] = useState<string>("");
   const favColor: string = useSelector(selectFavColor);
+  const [handDataKeys, setHandDataKeys] = useState<string[]>(["0"]);
   const [handData, setHandData] = useState<HandData[]>([
     {
       key: "0",
@@ -110,9 +110,17 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
     if (!result.canceled && result.assets[0].base64 != null) {
       setNewProfilePic({
         base64: result.assets[0].base64,
-        uri: result.assets[0].uri,
       });
     }
+  };
+
+  const isNewHand = () => {
+    let i: number = 0;
+    while (i < handData.length && i < handDataKeys.length) {
+      if (handData[i].key != handDataKeys[i]) return true;
+      i += 1;
+    }
+    return handData.length != handDataKeys.length;
   };
 
   const pickHandImage = async () => {
@@ -125,7 +133,7 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.canceled && result.assets[0].base64 != null) {
       // Recreate hand data cards state
       const prevHandData: HandData[] = handData;
       const newHandData: HandData[] = [];
@@ -139,7 +147,7 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
             authorText: "",
             isAuthorBold: false,
             hasAuthorImage: false,
-            image: result.assets[0].uri as ImageSource,
+            image: result.assets[0].base64 as ImageSource,
           });
         } else if (i > 1) {
           newHandData.push({
@@ -154,6 +162,8 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
       }
       setHandData(newHandData);
       setAllowSave(true);
+    } else if (!result.canceled && result.assets[0].base64 == null) {
+      console.error("Unable to get image");
     }
   };
 
@@ -233,7 +243,11 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
 
     if (isSuccessfulUpload) {
       if (newProfilePic != undefined) {
-        dispatch(setUserProfilePic(newProfilePic.uri as ImageSource));
+        dispatch(
+          setUserProfilePic(
+            ("data:image/jpeg;base64," + newProfilePic.base64) as ImageSource
+          )
+        );
       }
       if (newUsernameRef.current != "") {
         console.log("dispatching newUsername:", newUsernameRef.current);
@@ -260,6 +274,10 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
       console.log(handData[i].key);
     }
     console.log("--------");
+    console.log("Is a new hand:", isNewHand());
+
+    if (isNewHand()) setAllowSave(true);
+    else setAllowSave(false);
   }, [handData]);
 
   useEffect(() => {
@@ -354,7 +372,11 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
 
         <View>
           <Image
-            source={newProfilePic != undefined ? newProfilePic.uri : profilePic}
+            source={
+              newProfilePic != undefined
+                ? "data:image/jpeg;base64," + newProfilePic.base64
+                : profilePic
+            }
             style={{
               width: 100,
               height: 100,
@@ -491,7 +513,9 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
                   authorText={""}
                   isAuthorBold={false}
                   hasAuthorImage={false}
-                  image={item.image}
+                  image={
+                    ("data:image/jpeg;base64," + item.image) as ImageSource
+                  }
                   scalar={0.5}
                 />
               </View>
@@ -500,7 +524,6 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
         }}
         onDragRelease={(handData) => {
           setHandData(handData); // need reset the props data sort after drag release
-          setAllowSave(true);
         }}
       />
     </ScrollView>
