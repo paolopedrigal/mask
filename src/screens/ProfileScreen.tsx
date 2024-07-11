@@ -2,22 +2,23 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import { Image, ImageSource } from "expo-image";
 import { DARK_BG_COLOR, DARK_BORDER_COLOR } from "@assets/styles/colors";
 import { CARD_HEIGHT } from "@assets/styles/card";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ProfileScreenProps } from "@_types/NavigationTypes";
 import { useSelector } from "react-redux";
-import { selectUserProfilePic } from "@redux/userSlice";
+import { selectUserID, selectUserProfilePic } from "@redux/userSlice";
 import HandPreview from "@components/HandPreview";
 import { DrawerActions } from "@react-navigation/native";
+import { supabase } from "supabase";
+import { fetchFileFromStorage } from "@utils/supabase-utils";
 
 export default function ProfileScreen({ navigation }: ProfileScreenProps) {
+  const userID = useSelector(selectUserID);
+  const MAX_HAND_CARDS = useMemo<number>(() => 7, []);
+  const ADD_CARD_KEY = useMemo<string>(() => "+", []);
   const profilePic = useSelector(selectUserProfilePic);
 
-  // Not commiting these temp pictures
-  const [handImages, setHandImages] = useState<ImageSource[]>([
-    // require("@assets/images/test.jpg"),
-    // require("@assets/images/test-1.jpg"),
-    // require("@assets/images/test-2.jpg"),
-  ]);
+  const [handImages, setHandImages] = useState<ImageSource[]>([]);
+  const [handDataKeys, setHandDataKeys] = useState<string[]>([]);
 
   const navigateToHand = () => {
     if (handImages != undefined) {
@@ -26,6 +27,44 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
       );
     }
   };
+
+  useEffect(() => {
+    const getHandImages = async () => {
+      try {
+        const numHandsResponse = await supabase
+          .from("hands")
+          .select()
+          .eq("user_id", userID);
+
+        if (numHandsResponse.error) throw numHandsResponse.error;
+        else if (numHandsResponse.data.length > 0) {
+          let newHandImages: ImageSource[] = [];
+          let newHandDataKeys: string[] = [];
+          for (let i = 1; i < MAX_HAND_CARDS + 1; i++) {
+            console.log("i:", i);
+            if (numHandsResponse.data[0][i.toString()] != null) {
+              // `fetchFileFromStorage` has its own try-catch block
+              const handImage = await fetchFileFromStorage(
+                userID + "/" + numHandsResponse.data[0][i.toString()],
+                "hands"
+              );
+              console.log("handImage != null:", handImage != null);
+              if (handImage != null) {
+                newHandImages.push(handImage as ImageSource);
+                newHandDataKeys.push(numHandsResponse.data[0][i.toString()]);
+              }
+            }
+          }
+          setHandImages(newHandImages);
+          setHandDataKeys(newHandDataKeys);
+        }
+      } catch (error: any) {
+        console.error(error);
+      }
+    };
+
+    if (userID != "") getHandImages();
+  }, [userID]);
 
   return (
     <ScrollView
@@ -51,7 +90,14 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           }}
           cachePolicy={"disk"}
         />
-        <Pressable onPress={() => navigation.navigate("EditProfile")}>
+        <Pressable
+          onPress={() =>
+            navigation.navigate("EditProfile", {
+              handImages: handImages,
+              handDataKeys: ["+"].concat(handDataKeys),
+            })
+          }
+        >
           <Text
             style={{
               color: "#FFFFFF",

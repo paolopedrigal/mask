@@ -55,7 +55,7 @@ export type PostRouteParams = {
 export type ProfileRouteParams = {
   Profile: undefined;
   Hand: { handImages?: ImageSource[] };
-  EditProfile: undefined;
+  EditProfile: { handImages?: ImageSource[]; handDataKeys?: string[] };
 };
 
 // Contains ["navigation", "route"] props for specified screens

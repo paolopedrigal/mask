@@ -19,7 +19,13 @@ import {
   setUsername,
 } from "@redux/userSlice";
 import { ImageSource } from "expo-image";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   Keyboard,
   Pressable,
@@ -40,23 +46,25 @@ import * as ExpoImagePicker from "expo-image-picker";
 import { TouchableOpacity } from "react-native";
 import ModalBinaryContent from "@components/ModalBinaryContent";
 import { supabase } from "supabase";
+import { v4 as uuid } from "uuid";
 import { decode } from "base64-arraybuffer";
 import ErrorMessage from "@components/ErrorMessage";
 import { sleep } from "@utils/utils";
 
+// TODO: Get typing for key, disabledDrag, and disabledReSorted from "react-native-draggable-grid"
 interface HandData extends CardProps {
   key: string;
   disabledDrag?: boolean;
   disabledReSorted?: boolean;
 }
 
-// Not commiting these temp pictures
-// require("@assets/images/test.jpg"),
-// require("@assets/images/test-1.jpg"),
-// require("@assets/images/test-2.jpg"),
-
-export default function EditProfileScreen({ navigation }: EditProfileProps) {
+export default function EditProfileScreen({
+  route,
+  navigation,
+}: EditProfileProps) {
+  const { handImages, handDataKeys } = route.params;
   const MAX_HAND_CARDS = useMemo<number>(() => 7, []);
+  const ADD_CARD_KEY = useMemo<string>(() => "+", []);
   const userID = useSelector(selectUserID);
   const dispatch = useDispatch();
   const regexUsername = useMemo(() => /^[a-zA-Z._]+$/, []);
@@ -69,16 +77,13 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   const username: string = useSelector(selectUsername);
   const [newUsername, setNewUsername] = useState<string>("");
   const favColor: string = useSelector(selectFavColor);
-  const [handDataKeys, setHandDataKeys] = useState<string[]>(["0"]);
+  // const [handDataKeys, setHandDataKeys] = useState<string[]>(["+"]);
   const [handData, setHandData] = useState<HandData[]>([
     {
-      key: "0",
+      key: ADD_CARD_KEY,
       disabledDrag: true,
       disabledReSorted: true,
-      authorID: "1",
-      authorText: "",
-      isAuthorBold: false,
-      hasAuthorImage: false,
+      authorID: userID,
     },
   ]);
   const [allowSave, setAllowSave] = useState<boolean>(false);
@@ -92,10 +97,22 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   /*********************** Refs ***********************/
 
   const newUsernameRef = useRef<string>("");
+  const handDataRef = useRef<HandData[]>(handData);
 
   /*********************** Refs END ***********************/
 
   /*********************** Callbacks ***********************/
+
+  const removeBase64ImagePrefix = useCallback((base64Str: string) => {
+    // Check if the string starts with a valid Base64 image data URL prefix
+    const prefixRegex = /^data:image\/(png|jpeg|jpg|gif|bmp|webp);base64,/;
+    if (prefixRegex.test(base64Str)) {
+      // Remove the prefix part
+      return base64Str.replace(prefixRegex, "");
+    }
+    // If no prefix is found, return the original string
+    return base64Str;
+  }, []);
 
   const pickProfilePic = async () => {
     // No permissions request is necessary for launching the image library
@@ -115,12 +132,16 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   };
 
   const isNewHand = () => {
-    let i: number = 0;
-    while (i < handData.length && i < handDataKeys.length) {
-      if (handData[i].key != handDataKeys[i]) return true;
-      i += 1;
+    if (handData != undefined && handDataKeys != undefined) {
+      let i: number = 0;
+      while (i < handData.length && i < handDataKeys.length) {
+        if (handData[i].key != handDataKeys[i]) return true;
+        i += 1;
+      }
+      return handData.length != handDataKeys.length;
+    } else {
+      return null;
     }
-    return handData.length != handDataKeys.length;
   };
 
   const pickHandImage = async () => {
@@ -134,33 +155,17 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
     });
 
     if (!result.canceled && result.assets[0].base64 != null) {
-      // Recreate hand data cards state
-      const prevHandData: HandData[] = handData;
-      const newHandData: HandData[] = [];
-      for (let i = 0; i < prevHandData.length + 1; i++) {
-        if (i == 0 && prevHandData.length != MAX_HAND_CARDS) {
-          newHandData.push(prevHandData[i]); // Pushing "+" card
-        } else if (i == 1) {
-          newHandData.push({
-            key: "1",
-            authorID: "1",
-            authorText: "",
-            isAuthorBold: false,
-            hasAuthorImage: false,
-            image: result.assets[0].base64 as ImageSource,
-          });
-        } else if (i > 1) {
-          newHandData.push({
-            key: i.toString(),
-            authorID: "1",
-            authorText: "",
-            isAuthorBold: false,
-            hasAuthorImage: false,
-            image: prevHandData[i - 1].image,
-          });
-        }
-      }
-      setHandData(newHandData);
+      const key = uuid();
+      setHandData((prev) => {
+        const newHandData = prev.slice();
+        newHandData.splice(1, 0, {
+          key: key,
+          authorID: userID,
+          image: ("data:image/jpeg;base64," +
+            result.assets[0].base64) as ImageSource,
+        });
+        return newHandData;
+      });
       setAllowSave(true);
     } else if (!result.canceled && result.assets[0].base64 == null) {
       console.error("Unable to get image");
@@ -170,15 +175,12 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   const deleteHandCard = (key: string) => {
     let newHandData: HandData[] = handData;
     // Add "+" card back to grid
-    if (handData.length == MAX_HAND_CARDS && handData[0].key != "0") {
+    if (handData.length == MAX_HAND_CARDS && handData[0].key != "+") {
       newHandData.unshift({
-        key: "0",
+        key: ADD_CARD_KEY,
         disabledDrag: true,
         disabledReSorted: true,
-        authorID: "1",
-        authorText: "",
-        isAuthorBold: false,
-        hasAuthorImage: false,
+        authorID: userID,
       });
     }
     setHandData(newHandData.filter((handCard) => handCard.key != key));
@@ -221,6 +223,54 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
             });
           if (profilePicInsertResponse.error)
             throw profilePicInsertResponse.error;
+        }
+
+        // Upload new hand cards to storage and database
+        if (isNewHand()) {
+          let handKeysUpsertData: { [key: number]: string | null } = {};
+          for (let i = 1; i < MAX_HAND_CARDS + 1; i++) {
+            console.log(i);
+            if (i < handDataRef.current.length) {
+              const handPictureUploadResponse = await supabase.storage
+                .from("hands")
+                .upload(
+                  userID + "/" + handDataRef.current[i].key,
+                  decode(
+                    removeBase64ImagePrefix(
+                      handDataRef.current[i].image as string
+                    )
+                  ),
+                  {
+                    contentType: "image/jpeg",
+                    upsert: true, // Overwrite previous profile pic if exists
+                  }
+                );
+              if (handPictureUploadResponse.error)
+                throw handPictureUploadResponse.error;
+
+              handKeysUpsertData[i] = handDataRef.current[i].key;
+            } else {
+              handKeysUpsertData[i] = null;
+            }
+          }
+          const handKeysInsertResponse = await supabase
+            .from("hands")
+            .upsert({
+              user_id: userID,
+              1: handKeysUpsertData[1],
+              2: handKeysUpsertData[2],
+              3: handKeysUpsertData[3],
+              4: handKeysUpsertData[4],
+              5: handKeysUpsertData[5],
+              6: handKeysUpsertData[6],
+              7: handKeysUpsertData[7],
+            })
+            .select();
+
+          if (handKeysInsertResponse.error) throw handKeysInsertResponse.error;
+          else {
+            console.log("Uploaded pictures.");
+          }
         }
       }
     } catch (error: any) {
@@ -268,17 +318,45 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
   /*********************** Callbacks END ***********************/
 
   /*********************** useEffect hook calls ***********************/
-
   useEffect(() => {
     for (let i = 0; i < handData.length; i++) {
       console.log(handData[i].key);
     }
     console.log("--------");
-    console.log("Is a new hand:", isNewHand());
-
-    if (isNewHand()) setAllowSave(true);
-    else setAllowSave(false);
+    handDataRef.current = handData;
   }, [handData]);
+
+  useEffect(() => {
+    if (handImages != undefined && handDataKeys != undefined) {
+      const newHandData: HandData[] = [];
+      for (let i = 0; i < handImages.length + 1; i++) {
+        if (i == 0 && handImages.length != MAX_HAND_CARDS) {
+          newHandData.push(handData[0]); // Pushing "+" card
+        } else {
+          newHandData.push({
+            key: handDataKeys[i],
+            authorID: userID,
+            image: handImages[i - 1],
+          });
+        }
+      }
+      setHandData(newHandData);
+    }
+  }, []);
+
+  useEffect(() => {
+    newUsernameRef.current = newUsername;
+
+    if (newProfilePic != undefined || newUsername != "" || isNewHand()) {
+      setAllowSave(true);
+    } else if (
+      newProfilePic == undefined &&
+      newUsername == "" &&
+      !isNewHand()
+    ) {
+      setAllowSave(false);
+    }
+  }, [newProfilePic, newUsername, handData]);
 
   useEffect(() => {
     // Dynamically change header of screen to include `postDeck` callback function
@@ -321,16 +399,6 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
       ),
     });
   }, [allowSave]);
-
-  useEffect(() => {
-    newUsernameRef.current = newUsername;
-
-    if (newProfilePic != undefined || newUsername != "") {
-      setAllowSave(true);
-    } else if (newProfilePic == undefined && newUsername == "") {
-      setAllowSave(false);
-    }
-  }, [newProfilePic, newUsername]);
 
   /******************** useEffect hook calls END *************************/
 
@@ -458,7 +526,7 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
         itemHeight={260}
         data={handData}
         renderItem={(item) => {
-          if (item.key == "0") {
+          if (item.key == ADD_CARD_KEY) {
             return (
               <TouchableOpacity
                 key={item.key}
@@ -509,15 +577,7 @@ export default function EditProfileScreen({ navigation }: EditProfileProps) {
                     }}
                   />
                 </Pressable>
-                <Card
-                  authorText={""}
-                  isAuthorBold={false}
-                  hasAuthorImage={false}
-                  image={
-                    ("data:image/jpeg;base64," + item.image) as ImageSource
-                  }
-                  scalar={0.5}
-                />
+                <Card image={item.image as ImageSource} scalar={0.5} />
               </View>
             );
           }
