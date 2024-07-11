@@ -155,9 +155,9 @@ function Card(props: CardProps) {
     backgroundColor, // dynamically determine background color of card
     width, // has default value of 350 (CARD_WIDTH)
     height, // has default value of 500 (CARD_HEIGHT)
-    text, // (Optional)
+    text,
     fontSize, // has default value of 32
-    image, // (Optional) background image of card
+    image, //  background image of card
     isAuthorBold, // dynamically determine if authorText will be bolded
     hasAuthorImage, // determines if card has profile picture
     authorFontSize, // has default value of 16
@@ -249,9 +249,10 @@ function Card(props: CardProps) {
         return null;
       }
     };
-    fetchProfilePicFromStorage().then((profilePic) => {
-      if (profilePic != null) setProfilePic(profilePic as ImageSource);
-    });
+    if (authorID != "")
+      fetchProfilePicFromStorage().then((profilePic) => {
+        if (profilePic != null) setProfilePic(profilePic as ImageSource);
+      });
   }, []);
 
   if (image)
@@ -419,12 +420,15 @@ function Card(props: CardProps) {
 
 Card.defaultProps = {
   authorID: "",
+  authorText: "",
   backgroundColor: "#000000",
   width: CARD_WIDTH,
   height: CARD_HEIGHT,
   text: "",
   fontSize: CARD_FONT_SIZE,
   image: undefined,
+  isAuthorBold: false,
+  hasAuthorImage: false,
   authorImage: undefined,
   authorFontSize: CARD_AUTHOR_FONT_SIZE,
   paddingHorizontal: CARD_PADDING_HORIZONTAL,

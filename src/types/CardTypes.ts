@@ -3,15 +3,15 @@ import { DimensionValue } from "react-native";
 
 export interface CardProps {
   authorID: string;
-  authorText: string;
+  authorText?: string;
   backgroundColor?: string;
   width?: DimensionValue;
   height?: DimensionValue;
   text?: string | null;
   fontSize?: number;
   image?: ImageSource;
-  isAuthorBold: boolean;
-  hasAuthorImage: boolean;
+  isAuthorBold?: boolean;
+  hasAuthorImage?: boolean;
   authorFontSize?: number;
   isHidden?: boolean;
   paddingHorizontal?: number;
