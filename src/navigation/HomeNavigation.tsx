@@ -30,6 +30,7 @@ export default function HomeNavigation() {
       <HomeStack.Screen
         name="ViewProfile"
         component={ViewProfileScreen}
+        initialParams={{ userID: "" }} // TODO later
         options={{
           headerTitle: "View Profile",
           headerTitleAlign: "center",

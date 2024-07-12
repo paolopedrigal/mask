@@ -1,27 +1,33 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import {
+  BottomTabNavigationOptions,
+  BottomTabScreenProps,
+  createBottomTabNavigator,
+} from "@react-navigation/bottom-tabs";
 import ProfileNavigation from "./ProfileNavigation";
 import { MainRouteParams } from "@_types/NavigationTypes";
 import TabIcon from "@components/TabIcon";
 import { BOTTOM_TAB_BG_COLOR } from "@assets/styles/colors";
 import HomeNavigation from "./HomeNavigation";
 import PostNavigation from "./PostNavigation";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+// import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { RouteProp } from "@react-navigation/native";
 
-const BottomTab = createMaterialTopTabNavigator<MainRouteParams>();
+const BottomTab = createBottomTabNavigator<MainRouteParams>(); // createMaterialTopTabNavigator<MainRouteParams>();
 
 export default function MainNavigation() {
   const insets = useSafeAreaInsets();
-  const screenOptions = ({ route }: any) => ({
-    swipeEnabled: false,
-    tabBarIndicatorStyle: {
-      backgroundColor: "transparent",
-    },
+  const screenOptions = ({
+    route,
+  }: {
+    route: RouteProp<MainRouteParams, keyof MainRouteParams>;
+  }): BottomTabNavigationOptions => ({
+    headerShown: false,
     tabBarShowLabel: false,
     tabBarStyle: {
       backgroundColor: BOTTOM_TAB_BG_COLOR,
       borderTopWidth: 0,
-      paddingBottom: insets.bottom,
+      // paddingBottom: insets.bottom,
     },
     tabBarIconStyle: {
       width: 35,
@@ -67,7 +73,6 @@ export default function MainNavigation() {
   return (
     <BottomTab.Navigator
       initialRouteName="HomeNavigation"
-      tabBarPosition="bottom"
       screenOptions={screenOptions}
     >
       <BottomTab.Screen
@@ -75,9 +80,6 @@ export default function MainNavigation() {
         component={PostNavigation}
         options={{
           title: "Post",
-          tabBarIndicatorStyle: {
-            backgroundColor: "transparent",
-          },
         }}
       />
       <BottomTab.Screen name="HomeNavigation" component={HomeNavigation} />

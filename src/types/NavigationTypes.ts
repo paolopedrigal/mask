@@ -1,4 +1,5 @@
-import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
+// import { MaterialTopTabScreenProps } from "@react-navigation/material-top-tabs";
+import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ImageSource } from "expo-image";
@@ -68,8 +69,8 @@ export type AuthenticationNavigationProps = NativeStackScreenProps<
   "AuthenticationNavigation"
 >;
 export type SignInUpProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">;
-export type PostNavigationProps = MaterialTopTabScreenProps<
-  //BottomTabScreenProps<
+export type PostNavigationProps = BottomTabScreenProps<
+  //MaterialTopTabScreenProps<
   MainRouteParams,
   "PostNavigation"
 >;

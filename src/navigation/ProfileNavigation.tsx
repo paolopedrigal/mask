@@ -17,7 +17,7 @@ import { Pressable } from "react-native";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { selectUsername } from "@redux/userSlice";
-import Hand from "@components/Hand";
+import HandScreen from "@screens/HandScreen";
 
 const ProfileDrawer = createDrawerNavigator<ProfileRouteParams>();
 
@@ -106,8 +106,9 @@ export default function ProfileNavigation() {
       />
       <ProfileDrawer.Screen
         name="Hand"
-        component={Hand}
+        component={HandScreen}
         options={{
+          unmountOnBlur: true,
           swipeEnabled: false,
           drawerItemStyle: { display: "none" },
           headerStyle: {
