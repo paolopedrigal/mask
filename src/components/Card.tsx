@@ -249,7 +249,7 @@ function Card(props: CardProps) {
         return null;
       }
     };
-    if (authorID != "")
+    if (authorID != "" && hasAuthorImage)
       fetchProfilePicFromStorage().then((profilePic) => {
         if (profilePic != null) setProfilePic(profilePic as ImageSource);
       });
