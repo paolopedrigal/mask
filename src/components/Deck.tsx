@@ -335,7 +335,7 @@ export default function Deck(props: DeckProps) {
         disableBottomSwipe
         disableRightSwipe={!allowedSwiping}
         disableLeftSwipe={!allowedSwiping}
-        verticalSwipe={false}
+        verticalSwipe
         showSecondCard={true}
         infinite={deck?.isLooping}
         childrenOnTop
