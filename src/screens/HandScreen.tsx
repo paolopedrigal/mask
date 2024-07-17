@@ -1,7 +1,7 @@
 import { Image, ImageSource } from "expo-image";
 import { Text, TouchableOpacity, View } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import Card from "./Card";
+import Card from "../components/Card";
 import { HandScreenProps } from "@_types/NavigationTypes";
 import { DARK_BG_COLOR } from "@assets/styles/colors";
 import { useRef } from "react";
@@ -9,7 +9,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useSelector } from "react-redux";
 import { selectUserID } from "@redux/userSlice";
 
-export default function Hand({ route }: HandScreenProps) {
+export default function HandScreen({ route }: HandScreenProps) {
   const { handImages } = route.params;
   const swiperRef = useRef<Swiper<ImageSource>>(null);
   const authorID: string = useSelector(selectUserID);
@@ -47,14 +47,16 @@ export default function Hand({ route }: HandScreenProps) {
       cardIndex={0}
       disableTopSwipe
       disableBottomSwipe
+      // verticalSwipe={false}
       infinite
       swipeBackCard
-      // showSecondCard={false}
+      // showSecondCard
       stackSize={handImages.length}
-      stackSeparation={15}
-      stackAnimationTension={80}
-      stackAnimationFriction={10}
+      stackSeparation={0}
+      stackAnimationTension={100}
+      stackAnimationFriction={100}
       childrenOnTop
+      onSwiped={(cardIndex) => console.log("Finish swiping", cardIndex)}
     >
       <View
         style={{
