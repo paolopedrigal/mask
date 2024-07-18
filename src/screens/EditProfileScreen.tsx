@@ -121,7 +121,7 @@ export default function EditProfileScreen({
       allowsEditing: true,
       base64: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.2,
     });
 
     if (!result.canceled && result.assets[0].base64 != null) {
@@ -151,7 +151,7 @@ export default function EditProfileScreen({
       allowsEditing: true,
       base64: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.2,
     });
 
     if (!result.canceled && result.assets[0].base64 != null) {
