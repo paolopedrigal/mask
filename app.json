@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/mask-splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#050522"
+      "backgroundColor": "#030313"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
