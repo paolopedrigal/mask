@@ -5,13 +5,20 @@ import React, {
   useState,
   useEffect,
 } from "react";
-import { StyleSheet, View, Pressable } from "react-native";
-import BottomSheet, { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import { StyleSheet, Text, View, Pressable } from "react-native";
+import BottomSheet, {
+  BottomSheetFlatList,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import Deck from "@components/Deck";
 import {
   BOTTOM_SHEET_BG_COLOR,
   BOTTOM_SHEET_HANDLE_INDICATOR_COLOR,
   DARK_BG_COLOR,
+  LOW_LUMINANCE_FADED_TEXT_COLOR,
+  LOW_LUMINANCE_TEXT_COLOR,
+  NOT_SELECTION_COLOR,
+  SELECTION_COLOR,
 } from "@assets/styles/colors";
 import { CARD_BORDER_RADIUS } from "@assets/styles/card";
 import Card from "@components/Card";
@@ -29,6 +36,7 @@ interface InboxInterface {
 
 export default function HomeScreen() {
   const sheetRef = useRef<BottomSheet>(null);
+  const [isInbox, setIsInbox] = useState<boolean>(true);
   const [deckID, setDeckID] = useState<string>("");
   const snapPoints = useMemo(() => ["5%", "100%"], []);
   const userID = useSelector(selectUserID);
@@ -124,36 +132,98 @@ export default function HomeScreen() {
           backgroundColor: BOTTOM_SHEET_BG_COLOR,
         }}
       >
-        <BottomSheetFlatList
-          data={inbox}
-          // keyExtractor={(i) => i}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => {
-                setDeckID(item.id);
-                handleClosePress();
+        <BottomSheetView
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-around",
+            alignItems: "center",
+            paddingTop: 10,
+            paddingBottom: 20,
+          }}
+        >
+          <Pressable
+            style={{
+              flex: 1,
+              borderBottomWidth: 1,
+              borderBottomColor: isInbox
+                ? SELECTION_COLOR
+                : NOT_SELECTION_COLOR,
+            }}
+            onPress={() => setIsInbox(true)}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                padding: 10,
+                color: isInbox
+                  ? LOW_LUMINANCE_TEXT_COLOR
+                  : LOW_LUMINANCE_FADED_TEXT_COLOR,
+                fontFamily: isInbox ? "Inter-Bold" : "Inter-Regular",
               }}
-              style={{ margin: 5 }}
             >
-              <Card
-                image={item.card.image}
-                authorID={item.card.authorID}
-                text={item.card.text}
-                authorText={""}
-                isAuthorBold={item.card.isAuthorBold}
-                hasAuthorImage={item.card.hasAuthorImage}
-                backgroundColor={item.card.backgroundColor}
-                paddingBottom={15}
-                scalar={0.5}
-                isHidden={item.card.isHidden}
-              />
-            </Pressable>
-          )}
-          contentContainerStyle={styles.contentContainer}
-          horizontal={false}
-          key={"_"}
-          numColumns={2}
-        />
+              Inbox
+            </Text>
+          </Pressable>
+          <Pressable
+            style={{
+              flex: 1,
+              borderBottomWidth: 1,
+              borderBottomColor: isInbox
+                ? NOT_SELECTION_COLOR
+                : SELECTION_COLOR,
+            }}
+            onPress={() => setIsInbox(false)}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                padding: 10,
+                color: isInbox
+                  ? LOW_LUMINANCE_FADED_TEXT_COLOR
+                  : LOW_LUMINANCE_TEXT_COLOR,
+                fontFamily: isInbox ? "Inter-Regular" : "Inter-Bold",
+              }}
+            >
+              Outbox
+            </Text>
+          </Pressable>
+        </BottomSheetView>
+        {isInbox ? (
+          <BottomSheetFlatList
+            data={inbox}
+            // keyExtractor={(i) => i}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => {
+                  setDeckID(item.id);
+                  handleClosePress();
+                }}
+                style={{ margin: 5 }}
+              >
+                <Card
+                  image={item.card.image}
+                  authorID={item.card.authorID}
+                  text={item.card.text}
+                  authorText={""}
+                  isAuthorBold={item.card.isAuthorBold}
+                  hasAuthorImage={item.card.hasAuthorImage}
+                  backgroundColor={item.card.backgroundColor}
+                  paddingBottom={15}
+                  scalar={0.5}
+                  isHidden={item.card.isHidden}
+                />
+              </Pressable>
+            )}
+            contentContainerStyle={styles.contentContainer}
+            horizontal={false}
+            key={"_"}
+            numColumns={2}
+          />
+        ) : (
+          <BottomSheetView>
+            <Text>Outbox</Text>
+          </BottomSheetView>
+        )}
       </BottomSheet>
     </View>
   );

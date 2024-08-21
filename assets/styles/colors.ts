@@ -8,6 +8,7 @@ export const PRESSABLE_FADED_BG_COLOR: string = "#636363";
 
 /* global miscellaneous colors */
 export const SELECTION_COLOR: string = "#6767D9";
+export const NOT_SELECTION_COLOR: string = "#404051";
 export const AUTHOR_IMAGE_BORDER_COLOR: string = "#A9A9A9";
 export const DARK_BORDER_COLOR: string = "#24245E";
 
