@@ -38,7 +38,7 @@ export default function HomeScreen() {
   const sheetRef = useRef<BottomSheet>(null);
   const [isInbox, setIsInbox] = useState<boolean>(true);
   const [deckID, setDeckID] = useState<string>("");
-  const snapPoints = useMemo(() => ["5%", "100%"], []);
+  const snapPoints = useMemo(() => ["5%", "98%"], []);
   const userID = useSelector(selectUserID);
   const [inbox, setInbox] = useState<InboxInterface[]>([]);
 
@@ -137,7 +137,6 @@ export default function HomeScreen() {
             flexDirection: "row",
             justifyContent: "space-around",
             alignItems: "center",
-            paddingTop: 10,
             paddingBottom: 20,
           }}
         >
