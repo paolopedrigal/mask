@@ -1,9 +1,9 @@
-import { HomeRouteParams } from "@_types/NavigationTypes";
-import { DARK_BG_COLOR } from "@assets/styles/colors";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CreateScreen from "@screens/CreateScreen";
 import HomeScreen from "@screens/HomeScreen";
 import ViewProfileScreen from "@screens/ViewProfileScreen";
+import { DARK_BG_COLOR } from "@theme/colors";
+import { HomeRouteParams } from "@ts/types/navigation";
 import { Image } from "expo-image";
 
 const HomeStack = createNativeStackNavigator<HomeRouteParams>();

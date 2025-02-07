@@ -14,16 +14,16 @@
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "firebaseConfig": ["./firebaseConfig.js"],
-      "@navigation/*": ["./src/navigation/*"],
-      "@components/*": ["./src/components/*"],
-      "@screens/*": ["./src/screens/*"],
       "@assets/*": ["./assets/*"],
-      "@redux/*": ["./src/redux/*"],
+      "@components/*": ["./src/components/*"],
       "@contexts/*": ["./src/contexts/*"],
-      "@_types/*": ["./src/types/*"], // added the underscore to differntiate from @types in node_modules
-      "@utils/*": ["./src/utils/*"],
-      "supabase": ["./supabase.ts"]
+      "@navigation/*": ["./src/navigation/*"],
+      "@store/*": ["src/store/*"],
+      "@screens/*": ["./src/screens/*"],
+      "@services/*": ["./src/services/*"],
+      "@theme/*": ["./src/theme/*"],
+      "@ts/*": ["./src/ts/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   },
   "exclude": ["node_modules"],

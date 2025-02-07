@@ -1,4 +1,5 @@
-import { supabase } from "supabase";
+import { ImageSource } from "expo-image";
+import { supabase } from "@services/supabase/client";
 
 export const fetchFileFromStorage = async (
   filePath: string,
@@ -25,6 +26,29 @@ export const fetchFileFromStorage = async (
     });
   } catch (error) {
     console.error("Error downloading file");
+    return null;
+  }
+};
+
+export const fetchProfilePicFromStorage = async (
+  authorID: string
+): Promise<string | ArrayBuffer | null> => {
+  try {
+    const { data, error } = await supabase.storage
+      .from("profile_pics")
+      .download(authorID + "/profile.jpg");
+    if (error) throw error;
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(data);
+      fileReader.onloadend = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (err) => {
+        reject(err);
+      };
+    });
+  } catch (error: any) {
     return null;
   }
 };

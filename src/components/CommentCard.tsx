@@ -1,50 +1,16 @@
-import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 import Comment from "@components/Comment";
-import { useState } from "react";
-import { CommentCardProps } from "@_types/CardTypes";
+import { CARD_BORDER_RADIUS, CARD_HEIGHT, CARD_WIDTH } from "@theme/card";
 import {
   COMMENT_SHADED_COLOR,
   HIGH_LUMINANCE_TEXT_COLOR,
   HIGH_LUMINCANCE_FADED_TEXT_COLOR,
   LOW_LUMINANCE_FADED_TEXT_COLOR,
   LOW_LUMINANCE_TEXT_COLOR,
-} from "@assets/styles/colors";
-import { applyShading, hasHighLuminance } from "@utils/utils";
-import {
-  CARD_BORDER_RADIUS,
-  CARD_HEIGHT,
-  CARD_WIDTH,
-} from "@assets/styles/card";
-
-const styles = StyleSheet.create({
-  commentCard: {
-    width: CARD_WIDTH,
-    height: CARD_HEIGHT,
-    borderRadius: CARD_BORDER_RADIUS,
-    paddingTop: 25,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  commentSectionView: {
-    justifyContent: "center",
-    // alignItems: "stretch",
-    height: 375,
-    marginVertical: 20,
-    width: "100%",
-  },
-  emptyCommentSectionText: {
-    fontFamily: "Inter-Regular",
-    fontSize: 14,
-    textAlign: "center",
-  },
-  commentTextInput: {
-    borderRadius: 25,
-    width: 275,
-    height: 30,
-    paddingLeft: 10,
-    color: "white",
-  },
-});
+} from "@theme/colors";
+import { CommentCardProps } from "@ts/interfaces/card";
+import { applyShading, hasHighLuminance } from "@utils/styling";
+import { useState } from "react";
+import { FlatList, StyleSheet, Text, TextInput, View } from "react-native";
 
 function CommentCard(props: CommentCardProps) {
   const [commentText, setCommentText] = useState<string>("");
@@ -117,6 +83,36 @@ function CommentCard(props: CommentCardProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  commentCard: {
+    width: CARD_WIDTH,
+    height: CARD_HEIGHT,
+    borderRadius: CARD_BORDER_RADIUS,
+    paddingTop: 25,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  commentSectionView: {
+    justifyContent: "center",
+    // alignItems: "stretch",
+    height: 375,
+    marginVertical: 20,
+    width: "100%",
+  },
+  emptyCommentSectionText: {
+    fontFamily: "Inter-Regular",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  commentTextInput: {
+    borderRadius: 25,
+    width: 275,
+    height: 30,
+    paddingLeft: 10,
+    color: "white",
+  },
+});
 
 CommentCard.defaultProps = {
   backgroundColor: "#000000",

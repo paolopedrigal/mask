@@ -1,12 +1,8 @@
-import { View, ImageSourcePropType } from "react-native";
+import { TabIconProps } from "@ts/interfaces/tab-icon";
 import { Image } from "expo-image";
+import { View } from "react-native";
 
-export default function TabIcon(props: {
-  isFocused: boolean;
-  focusedIcon: ImageSourcePropType;
-  notFocusedIcon: ImageSourcePropType;
-  iconStyle: { [index: string]: string | number };
-}) {
+export default function TabIcon(props: TabIconProps) {
   return (
     <View>
       {props.isFocused ? (

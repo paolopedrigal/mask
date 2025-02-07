@@ -6,18 +6,18 @@ import {
   createDrawerNavigator,
 } from "@react-navigation/drawer";
 import { HeaderBackButton } from "@react-navigation/elements";
-import ProfileScreen from "@screens/ProfileScreen";
-import EditProfileScreen from "@screens/EditProfileScreen";
 import { DrawerActions, useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
-import { ProfileRouteParams, EditProfileProps } from "@_types/NavigationTypes";
-import { DARK_BG_COLOR } from "@assets/styles/colors";
-import { supabase } from "supabase";
-import { Pressable } from "react-native";
-import { Image } from "expo-image";
-import { useSelector } from "react-redux";
-import { selectUsername } from "@redux/userSlice";
+import EditProfileScreen from "@screens/EditProfileScreen";
 import HandScreen from "@screens/HandScreen";
+import ProfileScreen from "@screens/ProfileScreen";
+import { supabase } from "@services/supabase/client";
+import { selectUsername } from "@store/slices/user";
+import { DARK_BG_COLOR } from "@theme/colors";
+import { ProfileRouteParams, EditProfileProps } from "@ts/types/navigation";
+import { Image } from "expo-image";
+import React, { useEffect } from "react";
+import { Pressable } from "react-native";
+import { useSelector } from "react-redux";
 
 const ProfileDrawer = createDrawerNavigator<ProfileRouteParams>();
 

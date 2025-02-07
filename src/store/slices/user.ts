@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "./store";
+import { RootState } from "@store/index";
 import { ImageSource } from "expo-image";
 
 export interface FriendsInterface {
@@ -18,7 +18,7 @@ interface UserState {
 
 const initialState: UserState = {
   userID: "",
-  userProfilePic: require("@assets/images/default-profile-pic.png"),
+  userProfilePic: require("@assets/images/default-profile-pic.jpg"),
   username: "",
   favColor: "",
   secondaryColor: "",

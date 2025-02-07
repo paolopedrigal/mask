@@ -1,52 +1,23 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { Image, ImageSource } from "expo-image";
 import Card from "@components/Card";
-import Swiper from "react-native-deck-swiper";
-import { useEffect, useRef, useState } from "react";
-import FlippingCard from "@components/FlippingCard";
 import CommentCard from "@components/CommentCard";
-import { DARK_BG_COLOR } from "@assets/styles/colors";
-import { DeckCardData, DeckData, DeckProps } from "@_types/DeckTypes";
-import { LinearGradient } from "expo-linear-gradient";
-import { supabase } from "supabase";
-import { useSelector } from "react-redux";
+import FlippingCard from "@components/FlippingCard";
+import { useNavigation } from "@react-navigation/native";
+import { supabase } from "@services/supabase/client";
+import { fetchFileFromStorage } from "@services/supabase/storage";
 import {
   FriendsInterface,
   selectFriendsData,
   selectUserID,
-} from "@redux/userSlice";
-import { fetchFileFromStorage } from "@utils/supabase-utils";
-import { useNavigation } from "@react-navigation/native";
-import { HomeProps } from "@_types/NavigationTypes";
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5FCFF",
-  },
-  card: {
-    flex: 1,
-    width: "100%",
-    height: 500,
-    borderRadius: 4,
-    borderWidth: 2,
-    borderColor: "#E8E8E8",
-    justifyContent: "center",
-    backgroundColor: "white",
-    alignItems: "center",
-  },
-  text: {
-    textAlign: "center",
-    fontSize: 50,
-    backgroundColor: "transparent",
-  },
-  smallerTouchablePadding: {
-    paddingHorizontal: 5,
-  },
-  biggerTouchablePadding: {
-    paddingHorizontal: 10,
-  },
-});
+} from "@store/slices/user";
+import { DARK_BG_COLOR } from "@theme/colors";
+import { DeckCardData, DeckData, DeckProps } from "@ts/interfaces/deck";
+import { HomeProps } from "@ts/types/navigation";
+import { Image, ImageSource } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useEffect, useRef, useState } from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import Swiper from "react-native-deck-swiper";
+import { useSelector } from "react-redux";
 
 export default function Deck(props: DeckProps) {
   const { deckID }: DeckProps = props;
@@ -437,3 +408,32 @@ export default function Deck(props: DeckProps) {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F5FCFF",
+  },
+  card: {
+    flex: 1,
+    width: "100%",
+    height: 500,
+    borderRadius: 4,
+    borderWidth: 2,
+    borderColor: "#E8E8E8",
+    justifyContent: "center",
+    backgroundColor: "white",
+    alignItems: "center",
+  },
+  text: {
+    textAlign: "center",
+    fontSize: 50,
+    backgroundColor: "transparent",
+  },
+  smallerTouchablePadding: {
+    paddingHorizontal: 5,
+  },
+  biggerTouchablePadding: {
+    paddingHorizontal: 10,
+  },
+});

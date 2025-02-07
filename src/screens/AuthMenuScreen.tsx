@@ -1,7 +1,13 @@
 import {
+  AUTH_MENU_LOG_IN_TEXT_COLOR,
+  AUTH_MENU_SIGN_UP_PRESSABLE_COLOR,
+  DARK_BG_COLOR,
+} from "@theme/colors";
+import { AuthMenuScreenProps } from "@ts/types/navigation";
+import { Image } from "expo-image";
+import {
   Keyboard,
   KeyboardAvoidingView,
-  KeyboardTypeOptions,
   Pressable,
   StyleSheet,
   Text,
@@ -9,28 +15,68 @@ import {
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Image } from "expo-image";
-import {
-  AUTH_MENU_LOG_IN_TEXT_COLOR,
-  AUTH_MENU_SIGN_UP_PRESSABLE_COLOR,
-  DARK_BG_COLOR,
-} from "@assets/styles/colors";
 
-// Route names for the stack navigator
-type AuthRouteParams = {
-  Menu: undefined; // No parameters signed to SignInUp route
-  SignInUp: {
-    isSignUp: boolean;
-    question: string;
-    textInputPlaceholderText: string;
-    textInputKeyboardType: KeyboardTypeOptions;
-  };
-};
+export default function AuthMenuScreen({ navigation }: AuthMenuScreenProps) {
+  const insets = useSafeAreaInsets();
 
-type Props = NativeStackScreenProps<AuthRouteParams, "Menu">; // Get props from "SignInUp" route
-// Props["navigation"] and Props["route"] also yields types for `navigation` and `route` for React Navigation
-// Docs: https://reactnavigation.org/docs/typescript/#type-checking-screens
+  return (
+    <View
+      style={[
+        {
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+          backgroundColor: "#0C0B44",
+        },
+        styles.signInContainer,
+      ]}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+        <KeyboardAvoidingView behavior="position">
+          <View style={styles.logoContainer}>
+            <Image
+              source={require("@assets/images/mask-logo.png")}
+              style={styles.maskLogo}
+            />
+          </View>
+          <View style={styles.credentialsContainer}>
+            <View style={styles.logInSignUpView}>
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("SignInUp", {
+                    isSignUp: true,
+                    question: "When is your brithday?",
+                    textInputPlaceholderText: "MM DD YYYY",
+                    textInputKeyboardType: "numeric",
+                  })
+                }
+                style={styles.signUpPressable}
+              >
+                <Text style={styles.signUpText}>Sign up</Text>
+              </Pressable>
+              <View style={styles.logInView}>
+                <Text style={styles.haveAnAccountText}>Have an account?</Text>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("SignInUp", {
+                      isSignUp: false,
+                      question: "What's your email?",
+                      textInputPlaceholderText: "Your email",
+                      textInputKeyboardType: "email-address",
+                    })
+                  }
+                >
+                  <Text style={styles.logInText}>Log in</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   signInContainer: {
@@ -101,65 +147,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default function AuthMenuScreen({ navigation }: Props) {
-  const insets = useSafeAreaInsets();
-
-  return (
-    <View
-      style={[
-        {
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-          paddingLeft: insets.left,
-          paddingRight: insets.right,
-          backgroundColor: "#0C0B44",
-        },
-        styles.signInContainer,
-      ]}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-        <KeyboardAvoidingView behavior="position">
-          <View style={styles.logoContainer}>
-            <Image
-              source={require("@assets/images/mask-logo.png")}
-              style={styles.maskLogo}
-            />
-          </View>
-          <View style={styles.credentialsContainer}>
-            <View style={styles.logInSignUpView}>
-              <Pressable
-                onPress={() =>
-                  navigation.navigate("SignInUp", {
-                    isSignUp: true,
-                    question: "When is your brithday?",
-                    textInputPlaceholderText: "MM DD YYYY",
-                    textInputKeyboardType: "numeric",
-                  })
-                }
-                style={styles.signUpPressable}
-              >
-                <Text style={styles.signUpText}>Sign up</Text>
-              </Pressable>
-              <View style={styles.logInView}>
-                <Text style={styles.haveAnAccountText}>Have an account?</Text>
-                <Pressable
-                  onPress={() =>
-                    navigation.navigate("SignInUp", {
-                      isSignUp: false,
-                      question: "What's your email?",
-                      textInputPlaceholderText: "Your email",
-                      textInputKeyboardType: "email-address",
-                    })
-                  }
-                >
-                  <Text style={styles.logInText}>Log in</Text>
-                </Pressable>
-              </View>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </TouchableWithoutFeedback>
-    </View>
-  );
-}

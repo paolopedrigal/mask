@@ -1,4 +1,10 @@
-import { PostCardScreenProps } from "@_types/NavigationTypes";
+import PostCardFriendListItem from "@components/PostCardFriendListItem";
+import { supabase } from "@services/supabase/client";
+import {
+  FriendsInterface,
+  selectFriendsData,
+  selectUserID,
+} from "@store/slices/user";
 import {
   DARK_BG_COLOR,
   DARK_BORDER_COLOR,
@@ -7,26 +13,17 @@ import {
   LOW_LUMINANCE_TEXT_COLOR,
   POST_CARD_VISIBILITY_TEXT_COLOR,
   SELECTION_COLOR,
-} from "@assets/styles/colors";
-import { Pressable, Switch, Text, TextInput, View } from "react-native";
-import { Image } from "expo-image";
-import { FlatList } from "react-native-gesture-handler";
-import PostCardFriendListItem from "@components/PostCardFriendListItem";
-import { useEffect, useRef, useState } from "react";
-import {
-  FriendsInterface,
-  selectFriendsData,
-  selectUserID,
-} from "@redux/userSlice";
-import { useSelector } from "react-redux";
-import { supabase } from "supabase";
-import "react-native-get-random-values";
-import { v4 as uuid } from "uuid";
+} from "@theme/colors";
+import { SelectedFriendsInterface } from "@ts/interfaces/selected-friends";
+import { PostCardScreenProps } from "@ts/types/navigation";
 import { decode } from "base64-arraybuffer";
-
-interface SelectedFriendsInterface {
-  [key: string]: boolean;
-}
+import "react-native-get-random-values";
+import { Image } from "expo-image";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { FlatList } from "react-native-gesture-handler";
+import { Pressable, Switch, Text, TextInput, View } from "react-native";
+import { v4 as uuid } from "uuid";
 
 export default function PostCardScreen({
   navigation,

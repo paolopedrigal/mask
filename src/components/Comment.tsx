@@ -3,46 +3,10 @@ import {
   COMMENT_SHADED_COLOR,
   HIGH_LUMINANCE_TEXT_COLOR,
   LOW_LUMINANCE_TEXT_COLOR,
-} from "@assets/styles/colors";
-import { StyleSheet, Text, View } from "react-native";
-import { CommentProps } from "@_types/CardTypes";
+} from "@theme/colors";
+import { CommentProps } from "@ts/interfaces/comment";
 import { Image } from "expo-image";
-
-const styles = StyleSheet.create({
-  comment: {
-    flexDirection: "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    borderBottomWidth: 0.2,
-    paddingLeft: 15,
-    paddingRight: 55,
-    paddingVertical: 15,
-    gap: 10,
-  },
-  authorImage: {
-    width: 30,
-    height: 30,
-    borderRadius: 100,
-    borderColor: AUTHOR_IMAGE_BORDER_COLOR,
-    borderWidth: 0.5,
-  },
-  authorText: {
-    color: LOW_LUMINANCE_TEXT_COLOR,
-    fontFamily: "Inter-Bold",
-    fontSize: 12,
-  },
-  commentText: {
-    color: LOW_LUMINANCE_TEXT_COLOR,
-    fontFamily: "Inter-Regular",
-    fontSize: 12,
-  },
-  textColorHighLuminance: {
-    color: HIGH_LUMINANCE_TEXT_COLOR,
-  },
-  textColorLowLuminance: {
-    color: LOW_LUMINANCE_TEXT_COLOR,
-  },
-});
+import { StyleSheet, Text, View } from "react-native";
 
 function Comment(props: CommentProps) {
   const {
@@ -81,6 +45,42 @@ function Comment(props: CommentProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  comment: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    borderBottomWidth: 0.2,
+    paddingLeft: 15,
+    paddingRight: 55,
+    paddingVertical: 15,
+    gap: 10,
+  },
+  authorImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 100,
+    borderColor: AUTHOR_IMAGE_BORDER_COLOR,
+    borderWidth: 0.5,
+  },
+  authorText: {
+    color: LOW_LUMINANCE_TEXT_COLOR,
+    fontFamily: "Inter-Bold",
+    fontSize: 12,
+  },
+  commentText: {
+    color: LOW_LUMINANCE_TEXT_COLOR,
+    fontFamily: "Inter-Regular",
+    fontSize: 12,
+  },
+  textColorHighLuminance: {
+    color: HIGH_LUMINANCE_TEXT_COLOR,
+  },
+  textColorLowLuminance: {
+    color: LOW_LUMINANCE_TEXT_COLOR,
+  },
+});
 
 Comment.defaultProps = {
   secondaryBackgroundColor: COMMENT_SHADED_COLOR,

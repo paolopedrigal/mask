@@ -1,4 +1,5 @@
-import { CardProps, CommentProps } from "./CardTypes";
+import { CardProps } from "./card";
+import { CommentProps } from "./comment";
 
 export interface DeckCardData {
   cardID: string;

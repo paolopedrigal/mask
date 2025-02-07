@@ -1,13 +1,13 @@
+import Card from "@components/Card";
+import { selectUserID } from "@store/slices/user";
+import { DARK_BG_COLOR } from "@theme/colors";
+import { HandScreenProps } from "@ts/types/navigation";
 import { Image, ImageSource } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRef } from "react";
+import { useSelector } from "react-redux";
 import { Text, TouchableOpacity, View } from "react-native";
 import Swiper from "react-native-deck-swiper";
-import Card from "../components/Card";
-import { HandScreenProps } from "@_types/NavigationTypes";
-import { DARK_BG_COLOR } from "@assets/styles/colors";
-import { useRef } from "react";
-import { LinearGradient } from "expo-linear-gradient";
-import { useSelector } from "react-redux";
-import { selectUserID } from "@redux/userSlice";
 
 export default function HandScreen({ route }: HandScreenProps) {
   const { handImages } = route.params;
@@ -32,7 +32,7 @@ export default function HandScreen({ route }: HandScreenProps) {
     <Swiper
       ref={swiperRef}
       cards={handImages}
-      renderCard={(cardImage) => (
+      renderCard={(cardImage, cardIndex) => (
         <Card
           authorID={authorID}
           authorText={"boombampao"}
@@ -50,7 +50,7 @@ export default function HandScreen({ route }: HandScreenProps) {
       // verticalSwipe={false}
       infinite
       swipeBackCard
-      // showSecondCard
+      showSecondCard
       stackSize={handImages.length}
       stackSeparation={0}
       stackAnimationTension={100}

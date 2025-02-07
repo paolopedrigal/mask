@@ -1,40 +1,19 @@
-import { useContext, useEffect, useState } from "react";
-import {
-  KeyboardTypeOptions,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-} from "react-native";
-import MaskInput from "react-native-mask-input";
-import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
+import { AuthContext } from "@contexts/AuthProvider";
 import { StackActions, useNavigation } from "@react-navigation/native";
+import { supabase } from "@services/supabase/client";
+import { CARD_FONT_SIZE } from "@theme/card";
+import { AUTH_PLACEHOLDER_TEXT_COLOR, SELECTION_COLOR } from "@theme/colors";
+import { AuthContextStates } from "@ts/interfaces/auth-context";
+import { SignInUpTextInputProps } from "@ts/interfaces/text-input";
 import {
   MainNavigationProps,
   SignInUpProps,
   SignInUpJSONType,
   SignInUpValues,
-} from "@_types/NavigationTypes";
-import {
-  AUTH_PLACEHOLDER_TEXT_COLOR,
-  SELECTION_COLOR,
-} from "@assets/styles/colors";
-import { supabase } from "supabase";
-import { CARD_FONT_SIZE } from "@assets/styles/card";
-
-const styles = StyleSheet.create({
-  scrollView: {
-    flexDirection: "row",
-    width: "90%",
-  },
-  textInput: {
-    fontFamily: "Inter-Bold",
-    fontSize: CARD_FONT_SIZE,
-    color: "white",
-    width: "100%",
-    height: 50,
-    textAlign: "center",
-  },
-});
+} from "@ts/types/navigation";
+import { useContext, useEffect, useState } from "react";
+import { ScrollView, StyleSheet, TextInput } from "react-native";
+import MaskInput from "react-native-mask-input";
 
 // Get JSON data from "@assets/json/sign-in-up.json"
 const signInUpJSON: SignInUpJSONType = require("@assets/json/sign-in-up.json");
@@ -44,12 +23,6 @@ const signUpPlaceholderTexts: SignInUpValues =
   signInUpJSON["sign-up-place-holder-texts"];
 const signInPlaceholderTexts: SignInUpValues =
   signInUpJSON["sign-in-place-holder-texts"];
-
-interface SignInUpTextInputProps {
-  keyboardType: KeyboardTypeOptions;
-  placeholderText?: string;
-  isSignUp: boolean;
-}
 
 export default function SignInUpTextInput(props: SignInUpTextInputProps) {
   const [text, setText] = useState<string>("");
@@ -204,3 +177,18 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flexDirection: "row",
+    width: "90%",
+  },
+  textInput: {
+    fontFamily: "Inter-Bold",
+    fontSize: CARD_FONT_SIZE,
+    color: "white",
+    width: "100%",
+    height: 50,
+    textAlign: "center",
+  },
+});

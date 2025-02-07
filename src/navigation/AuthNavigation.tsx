@@ -1,14 +1,15 @@
+import SignInUpBackButton from "@components/SignInUpBackButton";
+import { AuthContext } from "@contexts/AuthProvider";
 import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from "@react-navigation/native-stack";
 import AuthMenuScreen from "@screens/AuthMenuScreen";
 import SignInUpScreen from "@screens/SignInUpScreen";
-import SignInUpBackButton from "@components/SignInUpBackButton";
+import { DARK_BG_COLOR } from "@theme/colors";
+import { AuthContextStates } from "@ts/interfaces/auth-context";
+import { AuthRouteParams } from "@ts/types/navigation";
 import { useContext } from "react";
-import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
-import { AuthRouteParams } from "@_types/NavigationTypes";
-import { DARK_BG_COLOR } from "@assets/styles/colors";
 
 const AuthStack = createNativeStackNavigator<AuthRouteParams>(); // Stack Navigator just for the Sign In/Up Screens
 
@@ -16,7 +17,6 @@ export default function AuthNavigation() {
   const { isPush }: AuthContextStates = useContext(
     AuthContext
   ) as AuthContextStates;
-
   const options = {
     headerShown: true,
     title: "Mask",

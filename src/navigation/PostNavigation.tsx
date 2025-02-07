@@ -1,15 +1,15 @@
-import { PostNavigationProps, PostRouteParams } from "@_types/NavigationTypes";
-import { BOTTOM_TAB_BG_COLOR, DARK_BG_COLOR } from "@assets/styles/colors";
+import { HeaderBackButton } from "@react-navigation/elements";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Image } from "expo-image";
 import CameraScreen from "@screens/CameraScreen";
 import EditCardScreen from "@screens/EditCardScreen";
-import { useLayoutEffect } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Pressable } from "react-native";
-import { HeaderBackButton } from "@react-navigation/elements";
 import PostCardScreen from "@screens/PostCardScreen";
+import { BOTTOM_TAB_BG_COLOR, DARK_BG_COLOR } from "@theme/colors";
+import { PostNavigationProps, PostRouteParams } from "@ts/types/navigation";
+import { Image } from "expo-image";
+import React, { useLayoutEffect } from "react";
+import { Pressable } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const PostStack = createNativeStackNavigator<PostRouteParams>();
 

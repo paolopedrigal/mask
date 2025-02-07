@@ -1,4 +1,9 @@
 import {
+  selectFavColor,
+  selectUserProfilePic,
+  selectUsername,
+} from "@store/slices/user";
+import {
   CARD_BORDER_RADIUS,
   CARD_FONT_SIZE,
   CARD_HEIGHT,
@@ -6,27 +11,17 @@ import {
   CARD_PADDING_HORIZONTAL,
   CARD_PADDING_TOP,
   CARD_WIDTH,
-} from "@assets/styles/card";
-import {
-  selectFavColor,
-  selectUserProfilePic,
-  selectUsername,
-} from "@redux/userSlice";
-import { applyShading } from "@utils/utils";
-import { Keyboard, TextInput, Text, View } from "react-native";
-import { Image } from "expo-image";
-import { useSelector } from "react-redux";
+} from "@theme/card";
 import {
   AUTHOR_IMAGE_BORDER_COLOR,
   LOW_LUMINANCE_FADED_TEXT_COLOR,
-} from "@assets/styles/colors";
+} from "@theme/colors";
+import { EditCardProps } from "@ts/interfaces/card";
+import { applyShading } from "@utils/styling";
+import { Image } from "expo-image";
 import { useMemo } from "react";
-
-interface EditCardProps {
-  cardText: string;
-  setCardText: (text: string) => void;
-  image?: string;
-}
+import { Keyboard, TextInput, Text, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function EditCard(props: EditCardProps) {
   const { cardText, setCardText, image }: EditCardProps = props;

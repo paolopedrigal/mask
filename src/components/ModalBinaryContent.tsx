@@ -2,16 +2,9 @@ import {
   HIGH_PRIORITY_TEXT_COLOR,
   INNER_VIEW_DARK_BG_COLOR,
   LOW_PRIORITY_TEXT_COLOR,
-} from "@assets/styles/colors";
-import { Pressable, Text, TouchableOpacity, View } from "react-native";
-
-interface ModalContentProps {
-  title: string;
-  leftText: string;
-  rightText: string;
-  leftCallback: () => void;
-  rightCallback: () => void;
-}
+} from "@theme/colors";
+import { ModalContentProps } from "@ts/interfaces/modal";
+import { Text, TouchableOpacity, View } from "react-native";
 
 export default function ModalBinaryContent(props: ModalContentProps) {
   const {

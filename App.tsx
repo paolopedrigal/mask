@@ -1,12 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import Navigation from "@navigation/Navigation";
+import { store } from "@store/index";
+import { registerRootComponent } from "expo";
 import { StatusBar } from "expo-status-bar";
 import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { useState, useEffect, useCallback } from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
-import * as SplashScreen from "expo-splash-screen";
-import Navigation from "@navigation/Navigation";
-import { store } from "@redux/store";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync(); // Show splash scren while fetching resources
 
@@ -63,3 +65,5 @@ export default function App() {
     </GestureHandlerRootView>
   );
 }
+
+registerRootComponent(App);

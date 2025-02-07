@@ -1,4 +1,8 @@
-import { EditCardScreenProps } from "@_types/NavigationTypes";
+import EditCard from "@components/EditCard";
+import { DARK_BG_COLOR } from "@theme/colors";
+import { EditCardScreenProps } from "@ts/types/navigation";
+import { Image } from "expo-image";
+import { useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -7,10 +11,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import EditCard from "@components/EditCard";
-import { DARK_BG_COLOR } from "@assets/styles/colors";
-import { Image } from "expo-image";
-import { useState } from "react";
 
 export default function EditCardScreen({
   navigation,

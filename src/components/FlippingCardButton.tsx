@@ -1,17 +1,8 @@
-import { Pressable } from "react-native";
+import { FlippingCardButtonProps } from "@ts/interfaces/card";
 import { Image } from "expo-image";
+import { Pressable } from "react-native";
 
-interface FlippingCardProps {
-  flippingCardCallback: () => void;
-  isFrontCard: boolean;
-  top?: number;
-  bottom?: number;
-  right?: number;
-  left?: number;
-  hasHighLuminance?: boolean;
-}
-
-function FlippingCardButton(props: FlippingCardProps) {
+function FlippingCardButton(props: FlippingCardButtonProps) {
   const {
     flippingCardCallback,
     isFrontCard,
@@ -20,7 +11,7 @@ function FlippingCardButton(props: FlippingCardProps) {
     right,
     left,
     hasHighLuminance,
-  }: FlippingCardProps = props;
+  }: FlippingCardButtonProps = props;
 
   return (
     <Pressable onPress={flippingCardCallback}>

@@ -1,3 +1,12 @@
+import { AuthContext } from "@contexts/AuthProvider";
+import { DARK_BG_COLOR, QUESTION_CARD_BG_COLOR } from "@theme/colors";
+import Card from "@components/Card";
+import ErrorMessage from "@components/ErrorMessage";
+import SignInUpTextInput from "@components/SignInUpTextInput";
+import { AuthContextStates } from "@ts/interfaces/auth-context";
+import { SignInUpProps } from "@ts/types/navigation";
+import React, { useContext, useEffect, useState } from "react";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -8,49 +17,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { useContext, useEffect, useState } from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
-import { SignInUpProps } from "@_types/NavigationTypes";
-import Card from "@components/Card";
-import SignInUpTextInput from "@components/SignInUpTextInput";
-import ErrorMessage from "@components/ErrorMessage";
-import { DARK_BG_COLOR, QUESTION_CARD_BG_COLOR } from "@assets/styles/colors";
-
-const styles = StyleSheet.create({
-  signUpContainer: {
-    flex: 1,
-    backgroundColor: DARK_BG_COLOR, // "#0C0B44",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  textInputView: {
-    justifyContent: "center",
-    alignItems: "center",
-    borderBottomWidth: 1,
-    borderBottomColor: "#24245E",
-    padding: 10,
-    width: "100%",
-  },
-  signUpPressable: {
-    backgroundColor: "#404051",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 50,
-    width: 250,
-    borderRadius: 25,
-  },
-  signUpText: {
-    color: "black",
-    fontFamily: "Inter-Regular",
-    fontSize: 16,
-  },
-  pressableView: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 15,
-  },
-});
 
 export default function SignInUpScreen({ route }: SignInUpProps) {
   const insets = useSafeAreaInsets();
@@ -164,3 +130,38 @@ export default function SignInUpScreen({ route }: SignInUpProps) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  signUpContainer: {
+    flex: 1,
+    backgroundColor: DARK_BG_COLOR, // "#0C0B44",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textInputView: {
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: "#24245E",
+    padding: 10,
+    width: "100%",
+  },
+  signUpPressable: {
+    backgroundColor: "#404051",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 50,
+    width: 250,
+    borderRadius: 25,
+  },
+  signUpText: {
+    color: "black",
+    fontFamily: "Inter-Regular",
+    fontSize: 16,
+  },
+  pressableView: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 15,
+  },
+});

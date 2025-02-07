@@ -1,33 +1,25 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { View, Text, Pressable } from "react-native";
-import { Camera, CameraType, FlashMode } from "expo-camera";
-import { Image } from "expo-image";
-import * as MediaLibrary from "expo-media-library";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { CameraScreenProps, HomeProps } from "@_types/NavigationTypes";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
+import { CARD_BORDER_RADIUS, CARD_HEIGHT } from "@theme/card";
+import { CameraScreenProps, HomeProps } from "@ts/types/navigation";
+import { CameraView, CameraType, FlashMode } from "expo-camera";
+import { Image } from "expo-image";
 import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
-import { CARD_BORDER_RADIUS, CARD_HEIGHT } from "@assets/styles/card";
+import { useCameraPermissions } from "expo-image-picker";
+import { useCallback, useRef, useState } from "react";
+import { Button, Pressable, Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function CameraScreen({ route, navigation }: CameraScreenProps) {
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean>();
   const [image, setImage] = useState<{ uri: string; base64: string }>();
-  const [facing, setFacing] = useState<CameraType>(CameraType.front);
-  const [flash, setFlash] = useState<FlashMode>(FlashMode.off);
-  const cameraRef = useRef<Camera>(null);
+  const [facing, setFacing] = useState<CameraType>("front");
+  const [flash, setFlash] = useState<FlashMode>("off");
+  const [permission, requestPermission] = useCameraPermissions();
+  const cameraRef = useRef<CameraView>(null);
   const insets = useSafeAreaInsets();
 
   const homeNavigation = useNavigation<HomeProps["navigation"]>();
-
-  useEffect(() => {
-    (async () => {
-      MediaLibrary.requestPermissionsAsync();
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status == "granted");
-    })();
-  });
 
   const takePicture = async () => {
     if (cameraRef && cameraRef.current) {
@@ -39,17 +31,19 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
 
         let photo = await cameraRef.current.takePictureAsync({ base64: true });
 
-        if (facing === CameraType.front) {
-          photo = await manipulateAsync(
-            photo.uri,
-            [{ rotate: 180 }, { flip: FlipType.Vertical }],
-            { compress: 1, format: SaveFormat.JPEG, base64: true }
-          );
+        if (photo) {
+          if (facing === "front") {
+            photo = await manipulateAsync(
+              photo.uri,
+              [{ rotate: 180 }, { flip: FlipType.Vertical }],
+              { compress: 1, format: SaveFormat.JPEG, base64: true }
+            );
+          }
+          setImage({ uri: photo.uri, base64: photo.base64 as string });
+          navigation.replace("EditCard", {
+            image: { uri: photo.uri, base64: photo.base64 as string },
+          });
         }
-        setImage({ uri: photo.uri, base64: photo.base64 as string });
-        navigation.replace("EditCard", {
-          image: { uri: photo.uri, base64: photo.base64 as string },
-        });
       } catch (error: any) {
         console.error("Error with CameraScreen.tsx:", error.message);
       }
@@ -57,13 +51,22 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
   };
 
   const flipCamera = useCallback(() => {
-    return facing == CameraType.front
-      ? setFacing(CameraType.back)
-      : setFacing(CameraType.front);
+    return facing == "front" ? setFacing("back") : setFacing("front");
   }, [facing]);
 
-  if (hasCameraPermission === false) {
-    return <Text>Has no camera permissions</Text>;
+  if (!permission) {
+    // Camera permissions are still loading.
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet.
+    return (
+      <View>
+        <Text>We need your permission to show the camera</Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
   }
 
   if (image)
@@ -169,11 +172,10 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
     );
   else
     return (
-      <Camera
+      <CameraView
         ref={cameraRef}
-        type={facing}
-        flashMode={flash}
-        autoFocus={true}
+        facing={facing}
+        flash={flash}
         style={{
           paddingLeft: insets.left,
           paddingRight: insets.right,
@@ -297,6 +299,6 @@ export default function CameraScreen({ route, navigation }: CameraScreenProps) {
             />
           </Pressable>
         </View>
-      </Camera>
+      </CameraView>
     );
 }

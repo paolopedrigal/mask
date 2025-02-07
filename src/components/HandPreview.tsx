@@ -1,15 +1,7 @@
-import {
-  CARD_BORDER_RADIUS,
-  CARD_HEIGHT,
-  CARD_WIDTH,
-} from "@assets/styles/card";
+import { CARD_BORDER_RADIUS, CARD_HEIGHT, CARD_WIDTH } from "@theme/card";
+import { HandPreviewProps } from "@ts/interfaces/hand";
+import { Image } from "expo-image";
 import { Pressable, Text, View } from "react-native";
-import { Image, ImageSource } from "expo-image";
-
-interface HandPreviewProps {
-  handImages: ImageSource[];
-  showHandCallback: () => void;
-}
 
 // TODO: dynamically receive 5 cards from database
 export default function HandPreview(props: HandPreviewProps) {

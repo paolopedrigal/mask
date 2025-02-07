@@ -1,24 +1,14 @@
+import { supabase } from "@services/supabase/client";
 import {
   AUTHOR_IMAGE_BORDER_COLOR,
   DARK_BORDER_COLOR,
   HIGH_LUMINANCE_TEXT_COLOR,
   LOW_LUMINANCE_TEXT_COLOR,
-} from "@assets/styles/colors";
+} from "@theme/colors";
+import { PostCardFriendListItemProps } from "@ts/interfaces/card";
 import { Image, ImageSource } from "expo-image";
 import { useEffect, useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import { supabase } from "supabase";
-
-interface SelectedFriendsInterface {
-  [key: string]: boolean;
-}
-
-interface PostCardFriendListItemProps {
-  friendID: string;
-  friendUsername: string;
-  selectedFriends: SelectedFriendsInterface;
-  selectItemCallback: (friendID: string) => void;
-}
 
 export default function PostCardFriendListItem(
   props: PostCardFriendListItemProps
@@ -55,7 +45,7 @@ export default function PostCardFriendListItem(
           };
         });
       } catch (error: any) {
-        const defaultProfilePic: ImageSource = require("@assets/images/default-profile-pic.png");
+        const defaultProfilePic: ImageSource = require("@assets/images/default-profile-pic.jpg");
         setProfilePic(defaultProfilePic);
         return null;
       }
@@ -101,7 +91,7 @@ export default function PostCardFriendListItem(
             source={
               profilePic != undefined
                 ? profilePic
-                : require("@assets/images/default-profile-pic.png")
+                : require("@assets/images/default-profile-pic.jpg")
             }
             style={{
               width: 30,

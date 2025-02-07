@@ -1,14 +1,13 @@
+import MainNavigation from "./MainNavigation";
+import AuthProvider from "@contexts/AuthProvider";
+import AuthNavigation from "@navigation/AuthNavigation";
 import { NavigationContainer } from "@react-navigation/native";
 import {
   NativeStackNavigationOptions,
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
-import AuthNavigation from "@navigation/AuthNavigation";
-import MainNavigation from "./MainNavigation";
-import AuthProvider from "@contexts/AuthProvider";
-import { useEffect, useState } from "react";
-import { AppRouteParams } from "@_types/NavigationTypes";
-import { supabase } from "supabase";
+import { supabase } from "@services/supabase/client";
+import { fetchFileFromStorage } from "@services/supabase/storage";
 import {
   FriendsInterface,
   setFavColor,
@@ -17,9 +16,10 @@ import {
   setUserID,
   setUserProfilePic,
   setUsername,
-} from "@redux/userSlice";
+} from "@store/slices/user";
+import { AppRouteParams } from "@ts/types/navigation";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { fetchFileFromStorage } from "@utils/supabase-utils";
 import { ImageSource } from "expo-image";
 
 // Create stack for navigation

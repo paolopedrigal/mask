@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { ImageSource } from "expo-image";
 import { KeyboardTypeOptions } from "react-native";
 
-////////////////////////////////// React Navigation Type checking /////////////////////////
+////////////////////////////////// React Navigation Parameters //////////////////////////////////
 
 // Route names for Parent Native Stack Navigator
 export type AppRouteParams = {
@@ -24,13 +24,6 @@ export type AuthRouteParams = {
   };
 };
 
-// Route params for bottom tab navigator
-export type MainRouteParams = {
-  HomeNavigation: NavigatorScreenParams<HomeRouteParams>;
-  PostNavigation: NavigatorScreenParams<PostRouteParams>;
-  ProfileNavigation: NavigatorScreenParams<ProfileRouteParams>;
-};
-
 // Route names for Home Navigator
 export type HomeRouteParams = {
   Home: undefined;
@@ -38,6 +31,13 @@ export type HomeRouteParams = {
     userID: string;
   };
   Answer: undefined;
+};
+
+// Route params for bottom tab navigator
+export type MainRouteParams = {
+  HomeNavigation: NavigatorScreenParams<HomeRouteParams>;
+  PostNavigation: NavigatorScreenParams<PostRouteParams>;
+  ProfileNavigation: NavigatorScreenParams<ProfileRouteParams>;
 };
 
 // Route names for Post Navigator
@@ -59,50 +59,70 @@ export type ProfileRouteParams = {
   EditProfile: { handImages?: ImageSource[]; handDataKeys?: string[] };
 };
 
-// Contains ["navigation", "route"] props for specified screens
+////////////////////////////////// React Navigation Props //////////////////////////////////
+
+// Note: Contains ["navigation", "route"] props
+
 export type MainNavigationProps = NativeStackScreenProps<
   AppRouteParams,
   "MainNavigation"
 >;
+
 export type AuthenticationNavigationProps = NativeStackScreenProps<
   AppRouteParams,
   "AuthenticationNavigation"
 >;
+
 export type SignInUpProps = NativeStackScreenProps<AuthRouteParams, "SignInUp">;
+
 export type PostNavigationProps = BottomTabScreenProps<
   //MaterialTopTabScreenProps<
   MainRouteParams,
   "PostNavigation"
 >;
+
 export type HomeProps = NativeStackScreenProps<HomeRouteParams, "Home">;
+
+export type AuthMenuScreenProps = NativeStackScreenProps<
+  AuthRouteParams,
+  "Menu"
+>;
+
 export type ProfileScreenProps = NativeStackScreenProps<
   ProfileRouteParams,
   "Profile"
 >;
+
 export type HandScreenProps = NativeStackScreenProps<
   ProfileRouteParams,
   "Hand"
 >;
+
 export type ViewProfileScreenProps = NativeStackScreenProps<
   HomeRouteParams,
   "ViewProfile"
 >;
+
 export type EditProfileProps = NativeStackScreenProps<
   ProfileRouteParams,
   "EditProfile"
 >;
+
 export type CameraScreenProps = NativeStackScreenProps<
   PostRouteParams,
   "Camera"
 >;
+
 export type EditCardScreenProps = NativeStackScreenProps<
   PostRouteParams,
   "EditCard"
 >;
+
 export type PostCardScreenProps = NativeStackScreenProps<
   PostRouteParams,
   "PostCard"
 >;
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////// Refers to @assets/json/sign-in-up.json //////////////////////

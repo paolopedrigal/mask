@@ -1,15 +1,15 @@
-import { Pressable, ScrollView, Text, View } from "react-native";
-import { Image, ImageSource } from "expo-image";
-import { DARK_BG_COLOR, DARK_BORDER_COLOR } from "@assets/styles/colors";
-import { CARD_HEIGHT } from "@assets/styles/card";
-import { useEffect, useMemo, useState } from "react";
-import { ProfileScreenProps } from "@_types/NavigationTypes";
-import { useSelector } from "react-redux";
-import { selectUserID, selectUserProfilePic } from "@redux/userSlice";
 import HandPreview from "@components/HandPreview";
+import { supabase } from "@services/supabase/client";
+import { fetchFileFromStorage } from "@services/supabase/storage";
+import { selectUserID, selectUserProfilePic } from "@store/slices/user";
+import { DARK_BG_COLOR, DARK_BORDER_COLOR } from "@theme/colors";
+import { CARD_HEIGHT } from "@theme/card";
+import { ProfileScreenProps } from "@ts/types/navigation";
 import { DrawerActions } from "@react-navigation/native";
-import { supabase } from "supabase";
-import { fetchFileFromStorage } from "@utils/supabase-utils";
+import { Image, ImageSource } from "expo-image";
+import { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { Pressable, ScrollView, Text, View } from "react-native";
 
 export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   const userID = useSelector(selectUserID);

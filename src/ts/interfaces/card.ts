@@ -1,5 +1,6 @@
 import { ImageSource } from "expo-image";
 import { DimensionValue } from "react-native";
+import { CommentProps } from "./comment";
 
 export interface CardProps {
   authorID: string;
@@ -11,6 +12,7 @@ export interface CardProps {
   fontSize?: number;
   image?: ImageSource;
   isAuthorBold?: boolean;
+  authorImage?: ImageSource;
   hasAuthorImage?: boolean;
   authorFontSize?: number;
   isHidden?: boolean;
@@ -26,12 +28,10 @@ export interface CommentCardProps {
   comments: CommentProps[];
 }
 
-export interface CommentProps {
-  authorImage: ImageSource;
-  authorText: string;
-  comment: string;
-  secondaryBackgroundColor?: string;
-  hasHighLuminance?: boolean;
+export interface EditCardProps {
+  cardText: string;
+  setCardText: (text: string) => void;
+  image?: string;
 }
 
 export interface FlippingCardProps {
@@ -42,4 +42,25 @@ export interface FlippingCardProps {
   width?: number;
   height?: number;
   backgroundColor?: string;
+}
+
+export interface FlippingCardButtonProps {
+  flippingCardCallback: () => void;
+  isFrontCard: boolean;
+  top?: number;
+  bottom?: number;
+  right?: number;
+  left?: number;
+  hasHighLuminance?: boolean;
+}
+
+interface SelectedFriendsInterface {
+  [key: string]: boolean;
+}
+
+export interface PostCardFriendListItemProps {
+  friendID: string;
+  friendUsername: string;
+  selectedFriends: SelectedFriendsInterface;
+  selectItemCallback: (friendID: string) => void;
 }

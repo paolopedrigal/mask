@@ -1,35 +1,9 @@
+import { AuthContextStates } from "@ts/interfaces/auth-context";
 import { createContext, ReactNode, useState } from "react";
 
 export const AuthContext = createContext<AuthContextStates | null>(null);
 
-type AuthProviderChildren = {
-  children: ReactNode;
-};
-
-export interface AuthContextStates {
-  signInUpScreen: number;
-  isSignUpState: boolean;
-  email: string;
-  name: string;
-  birthday: string;
-  isTyped: boolean;
-  isSubmitted: boolean;
-  isCreateUserError: boolean;
-  isPush: boolean;
-
-  incrementSignInUpScreen: () => void;
-  decrementSignInUpScreen: () => void;
-  setIsSignUpState: (booleanValue: boolean) => void;
-  setEmail: (text: string) => void;
-  setName: (text: string) => void;
-  setBirthday: (text: string) => void;
-  setIsTyped: (booleanValue: boolean) => void;
-  setIsSubmitted: (booleanValue: boolean) => void;
-  setIsCreateUserError: (booleanValue: boolean) => void;
-  setIsPush: (booleanValue: boolean) => void;
-}
-
-export default function AuthProvider({ children }: AuthProviderChildren) {
+export default function AuthProvider({ children }: { children: ReactNode }) {
   const [signInUpScreen, setSignInUpScreen] = useState<number>(1);
   const [isSignUpState, setIsSignUpState] = useState<boolean>(true);
   const [email, setEmail] = useState<string>("");

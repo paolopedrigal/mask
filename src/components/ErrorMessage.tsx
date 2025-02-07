@@ -1,8 +1,15 @@
-import { HIGH_PRIORITY_TEXT_COLOR } from "@assets/styles/colors";
+import { HIGH_PRIORITY_TEXT_COLOR } from "@theme/colors";
+import { ErrorMessageProps } from "@ts/interfaces/error-message";
 import { StyleSheet, Text, View } from "react-native";
 
-interface ErrorMessageProps {
-  message: string;
+export default function ErrorMessage(props: ErrorMessageProps) {
+  return (
+    <View style={styles.errorMessageContainer}>
+      <View style={styles.errorMessageView}>
+        <Text style={styles.errorMessageText}>{props.message}</Text>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -28,13 +35,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-
-export default function ErrorMessage(props: ErrorMessageProps) {
-  return (
-    <View style={styles.errorMessageContainer}>
-      <View style={styles.errorMessageView}>
-        <Text style={styles.errorMessageText}>{props.message}</Text>
-      </View>
-    </View>
-  );
-}

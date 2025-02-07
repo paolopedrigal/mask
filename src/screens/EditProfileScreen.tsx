@@ -1,15 +1,16 @@
-import {
-  CARD_BORDER_RADIUS,
-  CARD_HEIGHT,
-  CARD_WIDTH,
-} from "@assets/styles/card";
+import Card from "@components/Card";
+import ErrorMessage from "@components/ErrorMessage";
+import ModalBinaryContent from "@components/ModalBinaryContent";
+import { HeaderBackButton } from "@react-navigation/elements";
+import { supabase } from "@services/supabase/client";
+import { CARD_BORDER_RADIUS, CARD_HEIGHT, CARD_WIDTH } from "@theme/card";
 import {
   DARK_BG_COLOR,
   DARK_BORDER_COLOR,
   ICON_GRAY_OUTLINE_COLOR,
   LOW_LUMINANCE_FADED_TEXT_COLOR,
   PRESSABLE_FADED_BG_COLOR,
-} from "@assets/styles/colors";
+} from "@theme/colors";
 import {
   selectFavColor,
   selectUserID,
@@ -17,7 +18,13 @@ import {
   selectUsername,
   setUserProfilePic,
   setUsername,
-} from "@redux/userSlice";
+} from "@store/slices/user";
+import { HandData } from "@ts/interfaces/hand";
+import { EditProfileProps } from "@ts/types/navigation";
+import { sleep } from "@utils/styling";
+import { decode } from "base64-arraybuffer";
+import { Image } from "expo-image";
+import * as ExpoImagePicker from "expo-image-picker";
 import { ImageSource } from "expo-image";
 import React, {
   useCallback,
@@ -32,31 +39,13 @@ import {
   ScrollView,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import Modal from "react-native-modal";
 import { useDispatch, useSelector } from "react-redux";
-import { Image } from "expo-image";
-import { HeaderBackButton } from "@react-navigation/elements";
-import { CardProps } from "@_types/CardTypes";
-import Card from "@components/Card";
 import DraggableGrid from "react-native-draggable-grid";
-import { EditProfileProps } from "@_types/NavigationTypes";
-import * as ExpoImagePicker from "expo-image-picker";
-import { TouchableOpacity } from "react-native";
-import ModalBinaryContent from "@components/ModalBinaryContent";
-import { supabase } from "supabase";
 import { v4 as uuid } from "uuid";
-import { decode } from "base64-arraybuffer";
-import ErrorMessage from "@components/ErrorMessage";
-import { sleep } from "@utils/utils";
-
-// TODO: Get typing for key, disabledDrag, and disabledReSorted from "react-native-draggable-grid"
-interface HandData extends CardProps {
-  key: string;
-  disabledDrag?: boolean;
-  disabledReSorted?: boolean;
-}
 
 export default function EditProfileScreen({
   route,
@@ -164,7 +153,9 @@ export default function EditProfileScreen({
           image: ("data:image/jpeg;base64," +
             result.assets[0].base64) as ImageSource,
         });
-        return newHandData;
+        if (newHandData.length == MAX_HAND_CARDS + 1)
+          return newHandData.slice(1);
+        else return newHandData;
       });
       setAllowSave(true);
     } else if (!result.canceled && result.assets[0].base64 == null) {

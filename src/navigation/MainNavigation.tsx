@@ -1,17 +1,15 @@
 import {
   BottomTabNavigationOptions,
-  BottomTabScreenProps,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import ProfileNavigation from "./ProfileNavigation";
-import { MainRouteParams } from "@_types/NavigationTypes";
-import TabIcon from "@components/TabIcon";
-import { BOTTOM_TAB_BG_COLOR } from "@assets/styles/colors";
-import HomeNavigation from "./HomeNavigation";
-import PostNavigation from "./PostNavigation";
-// import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { RouteProp } from "@react-navigation/native";
+import TabIcon from "@components/TabIcon";
+import { MainRouteParams } from "@ts/types/navigation";
+import { BOTTOM_TAB_BG_COLOR } from "@theme/colors";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import HomeNavigation from "./HomeNavigation";
+import ProfileNavigation from "./ProfileNavigation";
+import PostNavigation from "./PostNavigation";
 
 const BottomTab = createBottomTabNavigator<MainRouteParams>(); // createMaterialTopTabNavigator<MainRouteParams>();
 

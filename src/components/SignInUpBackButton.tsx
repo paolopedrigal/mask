@@ -1,12 +1,13 @@
-import { AuthContext, AuthContextStates } from "@contexts/AuthProvider";
+import { AuthContext } from "@contexts/AuthProvider";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { StackActions, useNavigation } from "@react-navigation/native";
-import { useContext } from "react";
+import { AuthContextStates } from "@ts/interfaces/auth-context";
 import {
   SignInUpJSONType,
   SignInUpValues,
   SignInUpProps,
-} from "@_types/NavigationTypes";
+} from "@ts/types/navigation";
+import { useContext } from "react";
 
 // Get JSON data from "@assets/json/sign-in-up.json"
 const signInUpJSON: SignInUpJSONType = require("@assets/json/sign-in-up.json");

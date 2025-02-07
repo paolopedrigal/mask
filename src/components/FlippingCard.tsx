@@ -1,3 +1,7 @@
+import FlippingCardButton from "@components/FlippingCardButton";
+import { CARD_HEIGHT, CARD_WIDTH } from "@theme/card";
+import { FlippingCardProps } from "@ts/interfaces/card";
+import { hasHighLuminance } from "@utils/styling";
 import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import Animated, {
   interpolate,
@@ -5,22 +9,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import { FlippingCardProps } from "@_types/CardTypes";
-import FlippingCardButton from "./FlippingCardButton";
-import { hasHighLuminance } from "@utils/utils";
-import { CARD_HEIGHT, CARD_WIDTH } from "@assets/styles/card";
-
-const styles = StyleSheet.create({
-  flippingCard: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  animatedView: {
-    backfaceVisibility: "hidden",
-    position: "absolute",
-    top: 0,
-  },
-});
 
 function FlippingCard(props: FlippingCardProps) {
   const {
@@ -129,5 +117,17 @@ FlippingCard.defaultProps = {
   height: CARD_HEIGHT,
   backgroundColor: "#000000",
 };
+
+const styles = StyleSheet.create({
+  flippingCard: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  animatedView: {
+    backfaceVisibility: "hidden",
+    position: "absolute",
+    top: 0,
+  },
+});
 
 export default FlippingCard;

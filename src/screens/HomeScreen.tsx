@@ -1,16 +1,12 @@
-import React, {
-  useCallback,
-  useRef,
-  useMemo,
-  useState,
-  useEffect,
-} from "react";
-import { StyleSheet, Text, View, Pressable } from "react-native";
-import BottomSheet, {
-  BottomSheetFlatList,
-  BottomSheetView,
-} from "@gorhom/bottom-sheet";
+import Card from "@components/Card";
 import Deck from "@components/Deck";
+import { supabase } from "@services/supabase/client";
+import {
+  fetchFileFromStorage,
+  fetchProfilePicFromStorage,
+} from "@services/supabase/storage";
+import { selectUserID } from "@store/slices/user";
+import { CARD_BORDER_RADIUS } from "@theme/card";
 import {
   BOTTOM_SHEET_BG_COLOR,
   BOTTOM_SHEET_HANDLE_INDICATOR_COLOR,
@@ -19,20 +15,22 @@ import {
   LOW_LUMINANCE_TEXT_COLOR,
   NOT_SELECTION_COLOR,
   SELECTION_COLOR,
-} from "@assets/styles/colors";
-import { CARD_BORDER_RADIUS } from "@assets/styles/card";
-import Card from "@components/Card";
-import { CardProps } from "@_types/CardTypes";
-import { supabase } from "supabase";
-import { useSelector } from "react-redux";
-import { selectUserID } from "@redux/userSlice";
-import { fetchFileFromStorage } from "@utils/supabase-utils";
+} from "@theme/colors";
+import { InboxInterface } from "@ts/interfaces/inbox";
+import BottomSheet, {
+  BottomSheetFlatList,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import { ImageSource } from "expo-image";
-
-interface InboxInterface {
-  id: string;
-  card: CardProps;
-}
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useSelector } from "react-redux";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function HomeScreen() {
   const sheetRef = useRef<BottomSheet>(null);
@@ -81,7 +79,9 @@ export default function HomeScreen() {
         else {
           let inboxArray: InboxInterface[] = [];
           for (let i: number = 0; i < data.length; i++) {
-            let cardPic = undefined;
+            let cardPic: string | ArrayBuffer | null = null;
+            let authorPic: string | ArrayBuffer | null =
+              await fetchProfilePicFromStorage(data[i].sender_id.user_id);
 
             if (data[i].main_card_id.image_url != undefined) {
               cardPic = await fetchFileFromStorage(
@@ -96,8 +96,9 @@ export default function HomeScreen() {
                 authorID: data[i].sender_id.user_id,
                 text: data[i].main_card_id?.text,
                 image: cardPic as ImageSource,
-                authorText: data[i]?.sender_id.username,
+                authorText: data[i].sender_id.username,
                 isHidden: false, //!data[0]["viewed"],
+                authorImage: authorPic as ImageSource,
                 hasAuthorImage: true,
                 backgroundColor: data[i].sender_id.fav_color,
                 isAuthorBold: false,
@@ -205,6 +206,7 @@ export default function HomeScreen() {
                   text={item.card.text}
                   authorText={""}
                   isAuthorBold={item.card.isAuthorBold}
+                  authorImage={item.card.authorImage}
                   hasAuthorImage={item.card.hasAuthorImage}
                   backgroundColor={item.card.backgroundColor}
                   paddingBottom={15}
