@@ -3,7 +3,7 @@ import { RootState } from "@store/index";
 import { ImageSource } from "expo-image";
 
 export interface FriendsInterface {
-  [key: string]: { username: string };
+  [key: string]: { username: string }; // Note: the string key is the user ID
 }
 
 interface UserState {
