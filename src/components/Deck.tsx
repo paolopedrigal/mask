@@ -2,8 +2,8 @@ import Card from "@components/Card";
 import CommentCard from "@components/CommentCard";
 import FlippingCard from "@components/FlippingCard";
 import { useNavigation } from "@react-navigation/native";
-import { supabase } from "@services/supabase/client";
-import { fetchFileFromStorage } from "@services/supabase/storage";
+import { fetchDeckFromDatabase } from "@services/supabase/database/fetch";
+import { fetchFileFromStorage } from "@services/supabase/storage/fetch";
 import {
   FriendsInterface,
   selectFriendsData,
@@ -58,51 +58,11 @@ export default function Deck(props: DeckProps) {
 
     const fetchDeck = async () => {
       try {
-        interface FetchDeck {
-          is_main: boolean;
-          card_id: {
-            card_id: string;
-            author_id: {
-              user_id: string;
-              username: string;
-              fav_color: string;
-            };
-            text: string | null;
-            image_url: string | null;
-          };
-          deck_id: {
-            view_mutuals: boolean;
-            is_looping: boolean;
-          };
-        }
+        const { data, error } = await fetchDeckFromDatabase(deckID);
 
-        console.log("deckID in fetchDeck:", deckID);
+        console.log(data);
 
-        const { data, error } = await supabase
-          .from("replies")
-          .select(
-            `
-              is_main,
-              card_id (
-                card_id,
-                author_id (
-                  user_id,
-                  username,
-                  fav_color
-                ),
-                text,
-                image_url
-              ),
-              deck_id (
-                view_mutuals,
-                is_looping
-              )
-            `
-          )
-          .eq("deck_id", deckID)
-          .returns<FetchDeck[]>();
-
-        if (error) throw error;
+        if (error || data == null) throw error;
         let deckCardsData: DeckCardData[] = [...Array(data.length)];
         let cardIndex: number = 1; // To let main card to be first index in array
 

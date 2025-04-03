@@ -1,5 +1,11 @@
 import PostCardFriendListItem from "@components/PostCardFriendListItem";
-import { supabase } from "@services/supabase/client";
+import {
+  insertCard,
+  insertDeck,
+  insertInbox,
+  insertReply,
+} from "@services/supabase/database/insert";
+import { uploadPicture } from "@services/supabase/storage/upload";
 import {
   FriendsInterface,
   selectFriendsData,
@@ -16,7 +22,6 @@ import {
 } from "@theme/colors";
 import { SelectedFriendsInterface } from "@ts/interfaces/selected-friends";
 import { PostCardScreenProps } from "@ts/types/navigation";
-import { decode } from "base64-arraybuffer";
 import "react-native-get-random-values";
 import { Image } from "expo-image";
 import { useEffect, useRef, useState } from "react";
@@ -119,35 +124,37 @@ export default function PostCardScreen({
   const postDeck = async () => {
     try {
       // Insert into decks table
-      const decksInsertResponse = await supabase
-        .from("decks")
-        .insert({
-          view_mutuals: visibility == "mutuals" ? true : false,
-          is_looping: isCardsBurned,
-        })
-        .select("deck_id");
+      const decksInsertResponse = await insertDeck({
+        view_mutuals: visibility == "mutuals" ? true : false,
+        is_looping: isCardsBurned,
+      });
 
-      if (decksInsertResponse.error) throw decksInsertResponse.error;
+      if (decksInsertResponse.error || decksInsertResponse.data == null)
+        throw decksInsertResponse.error;
 
       // Upload image to storage
       const imageURL = decksInsertResponse.data[0].deck_id + "/" + uuid();
       if (base64Image != undefined) {
-        const picUploadResponse = await supabase.storage
-          .from("card_pics")
-          .upload(imageURL, decode(base64Image), { contentType: "image/jpeg" });
+        const picUploadResponse = await uploadPicture(
+          imageURL,
+          "card_pics",
+          base64Image
+        );
         if (picUploadResponse.error) throw picUploadResponse.error;
       }
 
       // Insert into cards table
-      const cardsInsertResponse = await supabase
-        .from("cards")
-        .insert({ author_id: userID, text: cardText, image_url: imageURL })
-        .select("card_id");
+      const cardsInsertResponse = await insertCard({
+        author_id: userID,
+        text: cardText,
+        image_url: imageURL,
+      });
 
-      if (cardsInsertResponse.error) throw cardsInsertResponse.error;
+      if (cardsInsertResponse.error || cardsInsertResponse.data == null)
+        throw cardsInsertResponse.error;
 
       // Insert into replies table
-      const repliesInsertResponse = await supabase.from("replies").insert({
+      const repliesInsertResponse = await insertReply({
         card_id: cardsInsertResponse.data[0].card_id,
         deck_id: decksInsertResponse.data[0].deck_id,
         is_main: true,
@@ -163,13 +170,15 @@ export default function PostCardScreen({
             return {
               recipient_id: friendID,
               sender_id: userID,
-              main_card_id: cardsInsertResponse.data[0].card_id,
-              deck_id: decksInsertResponse.data[0].deck_id,
+              main_card_id: cardsInsertResponse.data
+                ? cardsInsertResponse.data[0].card_id
+                : null,
+              deck_id: decksInsertResponse.data
+                ? decksInsertResponse.data[0].deck_id
+                : null,
             };
         });
-      const inboxInsertResponse = await supabase
-        .from("inbox")
-        .insert(inboxInsertData);
+      const inboxInsertResponse = await insertInbox(inboxInsertData);
 
       if (inboxInsertResponse.error) throw inboxInsertResponse.error;
     } catch (error: any) {

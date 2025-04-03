@@ -1,4 +1,3 @@
-import { ImageSource } from "expo-image";
 import { supabase } from "@services/supabase/client";
 
 export const fetchFileFromStorage = async (

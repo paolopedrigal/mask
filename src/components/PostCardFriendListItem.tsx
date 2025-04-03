@@ -1,4 +1,4 @@
-import { supabase } from "@services/supabase/client";
+import { fetchProfilePicFromStorage } from "@services/supabase/storage/fetch";
 import {
   AUTHOR_IMAGE_BORDER_COLOR,
   DARK_BORDER_COLOR,
@@ -26,31 +26,7 @@ export default function PostCardFriendListItem(
   }, [selectedFriends]);
 
   useEffect(() => {
-    const fetchProfilePicFromStorage = async (): Promise<
-      string | ArrayBuffer | null
-    > => {
-      try {
-        const { data, error } = await supabase.storage
-          .from("profile_pics")
-          .download(friendID + "/profile.jpg");
-        if (error) throw error;
-        return new Promise((resolve, reject) => {
-          const fileReader = new FileReader();
-          fileReader.readAsDataURL(data);
-          fileReader.onloadend = () => {
-            resolve(fileReader.result);
-          };
-          fileReader.onerror = (err) => {
-            reject(err);
-          };
-        });
-      } catch (error: any) {
-        const defaultProfilePic: ImageSource = require("@assets/images/default-profile-pic.jpg");
-        setProfilePic(defaultProfilePic);
-        return null;
-      }
-    };
-    fetchProfilePicFromStorage().then((profilePic) => {
+    fetchProfilePicFromStorage(friendID).then((profilePic) => {
       if (profilePic != null) setProfilePic(profilePic as ImageSource);
     });
   }, []);

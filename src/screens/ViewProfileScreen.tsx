@@ -1,5 +1,5 @@
 import HandPreview from "@components/HandPreview";
-import { fetchFileFromStorage } from "@services/supabase/storage";
+import { fetchFileFromStorage } from "@services/supabase/storage/fetch";
 import { selectUserID } from "@store/slices/user";
 import { DARK_BG_COLOR } from "@theme/colors";
 import { CARD_HEIGHT } from "@theme/card";

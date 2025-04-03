@@ -10,7 +10,7 @@ import { DrawerActions, useNavigation } from "@react-navigation/native";
 import EditProfileScreen from "@screens/EditProfileScreen";
 import HandScreen from "@screens/HandScreen";
 import ProfileScreen from "@screens/ProfileScreen";
-import { supabase } from "@services/supabase/client";
+import { signOut } from "@services/supabase/auth";
 import { selectUsername } from "@store/slices/user";
 import { DARK_BG_COLOR } from "@theme/colors";
 import { ProfileRouteParams, EditProfileProps } from "@ts/types/navigation";
@@ -34,12 +34,6 @@ export default function ProfileNavigation() {
     profileNavigation.dispatch(DrawerActions.closeDrawer());
   }, []);
 
-  async function signOut() {
-    const { error } = await supabase.auth.signOut();
-    console.log("signing out");
-    if (error) console.log("error in signing out");
-  }
-
   return (
     <ProfileDrawer.Navigator
       initialRouteName="Profile"
@@ -59,7 +53,12 @@ export default function ProfileNavigation() {
         return (
           <DrawerContentScrollView {...props}>
             <DrawerItemList {...props} />
-            <DrawerItem label="Logout" onPress={() => signOut()} />
+            <DrawerItem
+              label="Logout"
+              onPress={() =>
+                signOut().catch(() => console.log("Error in signing out."))
+              }
+            />
           </DrawerContentScrollView>
         );
       }}

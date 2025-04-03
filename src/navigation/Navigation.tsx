@@ -7,7 +7,11 @@ import {
   createNativeStackNavigator,
 } from "@react-navigation/native-stack";
 import { supabase } from "@services/supabase/client";
-import { fetchFileFromStorage } from "@services/supabase/storage";
+import {
+  fetchMainUserData,
+  fetchMainUserFriendsData,
+} from "@services/supabase/database/fetch";
+import { fetchFileFromStorage } from "@services/supabase/storage/fetch";
 import {
   FriendsInterface,
   setFavColor,
@@ -35,16 +39,18 @@ function AuthenticationNavigation() {
 
 export default function Navigation() {
   const options = { headerShown: false } as NativeStackNavigationOptions;
-  const [currentUser, setCurrentUser] = useState<boolean>(true);
+  const [existsCurrentUser, setExistsCurrentUser] = useState<boolean>(true);
   const dispatch = useDispatch();
 
-  async function fetchUserData(userID: string) {
+  /**
+   * Fetches information on user signed in and stores it in global state
+   *
+   * @param userID id stored at database (i.e. Supabase)
+   */
+  const updateMainUserState = async (userID: string) => {
     try {
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("user_id", userID);
-      if (error) return null;
+      const { data, error } = await fetchMainUserData(userID);
+      if (error || data == null) return null;
       else {
         dispatch(setUserID(userID));
         dispatch(setUsername(data[0]["username"]));
@@ -60,22 +66,18 @@ export default function Navigation() {
     } catch (error: any) {
       console.error(error.message);
     }
-  }
+  };
 
-  async function fetchFriendsData(userID: string) {
-    interface FriendsDataInterface {
-      friend_id: { user_id: string; username: string };
-      is_friends: boolean;
-      requested: boolean;
-    }
-
+  /**
+   * Fetches friends information from database then updates global state on current main user's
+   * (potential) friends.
+   *
+   * @param userID id stored at database (i.e. Supabase)
+   */
+  const updateMainUserFriendsState = async (userID: string) => {
     try {
-      const { data, error } = await supabase
-        .from("friends")
-        .select("friend_id (user_id, username), is_friends, requested")
-        .eq("user_id", userID)
-        .returns<FriendsDataInterface[]>();
-      if (error) throw error;
+      const { data, error } = await fetchMainUserFriendsData(userID);
+      if (error || data == null) throw error;
       let friendIDs: FriendsInterface = {};
       let requestedFriendIDs: FriendsInterface = {};
       for (let i: number = 0; i < data.length; i++) {
@@ -93,24 +95,24 @@ export default function Navigation() {
     } catch (error: any) {
       console.error(error.message);
     }
-  }
+  };
 
   useEffect(() => {
     // Supabase Auth
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       if (session) {
-        setCurrentUser(true);
+        setExistsCurrentUser(true);
         const userID: string = session.user.id;
-        fetchUserData(userID);
-        fetchFriendsData(userID);
-      } else setCurrentUser(false);
+        updateMainUserState(userID);
+        updateMainUserFriendsState(userID);
+      } else setExistsCurrentUser(false);
     });
   }, []);
 
   return (
     <NavigationContainer>
       <AppStack.Navigator screenOptions={options}>
-        {currentUser ? (
+        {existsCurrentUser ? (
           <AppStack.Screen name="MainNavigation" component={MainNavigation} />
         ) : (
           <AppStack.Screen

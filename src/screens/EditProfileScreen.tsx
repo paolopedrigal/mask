@@ -2,7 +2,11 @@ import Card from "@components/Card";
 import ErrorMessage from "@components/ErrorMessage";
 import ModalBinaryContent from "@components/ModalBinaryContent";
 import { HeaderBackButton } from "@react-navigation/elements";
-import { supabase } from "@services/supabase/client";
+import {
+  updateUsername,
+  upsertHandsData,
+} from "@services/supabase/database/update";
+import { uploadPicture } from "@services/supabase/storage/upload";
 import { CARD_BORDER_RADIUS, CARD_HEIGHT, CARD_WIDTH } from "@theme/card";
 import {
   DARK_BG_COLOR,
@@ -22,7 +26,6 @@ import {
 import { HandData } from "@ts/interfaces/hand";
 import { EditProfileProps } from "@ts/types/navigation";
 import { sleep } from "@utils/styling";
-import { decode } from "base64-arraybuffer";
 import { Image } from "expo-image";
 import * as ExpoImagePicker from "expo-image-picker";
 import { ImageSource } from "expo-image";
@@ -189,11 +192,11 @@ export default function EditProfileScreen({
             setIsInvalidUsernameErrorVisible(false);
             throw new Error();
           }
-          const newUserNameUpdateResponse = await supabase
-            .from("users")
-            .update({ username: newUsernameRef.current })
-            .eq("user_id", userID)
-            .select();
+
+          const newUserNameUpdateResponse = await updateUsername(
+            userID,
+            newUsernameRef.current
+          );
 
           if (newUserNameUpdateResponse.error) {
             setIsUsernameTakenErrorVisible(true);
@@ -206,12 +209,11 @@ export default function EditProfileScreen({
         // Upload profile picture
         if (newProfilePic != undefined) {
           const imageURL = userID + "/" + "profile.jpg";
-          const profilePicInsertResponse = await supabase.storage
-            .from("profile_pics")
-            .upload(imageURL, decode(newProfilePic.base64), {
-              contentType: "image/jpeg",
-              upsert: true, // Overwrite previous profile pic if exists
-            });
+          const profilePicInsertResponse = await uploadPicture(
+            imageURL,
+            "profile_pics",
+            newProfilePic.base64
+          );
           if (profilePicInsertResponse.error)
             throw profilePicInsertResponse.error;
         }
@@ -222,20 +224,11 @@ export default function EditProfileScreen({
           for (let i = 1; i < MAX_HAND_CARDS + 1; i++) {
             console.log(i);
             if (i < handDataRef.current.length) {
-              const handPictureUploadResponse = await supabase.storage
-                .from("hands")
-                .upload(
-                  userID + "/" + handDataRef.current[i].key,
-                  decode(
-                    removeBase64ImagePrefix(
-                      handDataRef.current[i].image as string
-                    )
-                  ),
-                  {
-                    contentType: "image/jpeg",
-                    upsert: true, // Overwrite previous profile pic if exists
-                  }
-                );
+              const handPictureUploadResponse = await uploadPicture(
+                userID + "/" + handDataRef.current[i].key,
+                "hands",
+                removeBase64ImagePrefix(handDataRef.current[i].image as string)
+              );
               if (handPictureUploadResponse.error)
                 throw handPictureUploadResponse.error;
 
@@ -244,20 +237,17 @@ export default function EditProfileScreen({
               handKeysUpsertData[i] = null;
             }
           }
-          const handKeysInsertResponse = await supabase
-            .from("hands")
-            .upsert({
-              user_id: userID,
-              1: handKeysUpsertData[1],
-              2: handKeysUpsertData[2],
-              3: handKeysUpsertData[3],
-              4: handKeysUpsertData[4],
-              5: handKeysUpsertData[5],
-              6: handKeysUpsertData[6],
-              7: handKeysUpsertData[7],
-            })
-            .select();
-
+          const handsData = {
+            user_id: userID,
+            1: handKeysUpsertData[1],
+            2: handKeysUpsertData[2],
+            3: handKeysUpsertData[3],
+            4: handKeysUpsertData[4],
+            5: handKeysUpsertData[5],
+            6: handKeysUpsertData[6],
+            7: handKeysUpsertData[7],
+          };
+          const handKeysInsertResponse = await upsertHandsData(handsData);
           if (handKeysInsertResponse.error) throw handKeysInsertResponse.error;
           else {
             console.log("Uploaded pictures.");

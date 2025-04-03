@@ -1,6 +1,6 @@
 import HandPreview from "@components/HandPreview";
-import { supabase } from "@services/supabase/client";
-import { fetchFileFromStorage } from "@services/supabase/storage";
+import { fetchHands } from "@services/supabase/database/fetch";
+import { fetchFileFromStorage } from "@services/supabase/storage/fetch";
 import { selectUserID, selectUserProfilePic } from "@store/slices/user";
 import { DARK_BG_COLOR, DARK_BORDER_COLOR } from "@theme/colors";
 import { CARD_HEIGHT } from "@theme/card";
@@ -31,12 +31,9 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   useEffect(() => {
     const getHandImages = async () => {
       try {
-        const numHandsResponse = await supabase
-          .from("hands")
-          .select()
-          .eq("user_id", userID);
-
-        if (numHandsResponse.error) throw numHandsResponse.error;
+        const numHandsResponse = await fetchHands(userID);
+        if (numHandsResponse.error || numHandsResponse.data == null)
+          throw numHandsResponse.error;
         else if (numHandsResponse.data.length > 0) {
           let newHandImages: ImageSource[] = [];
           let newHandDataKeys: string[] = [];

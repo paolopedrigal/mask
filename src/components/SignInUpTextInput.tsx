@@ -1,6 +1,6 @@
 import { AuthContext } from "@contexts/AuthProvider";
 import { StackActions, useNavigation } from "@react-navigation/native";
-import { supabase } from "@services/supabase/client";
+import { signInWithEmail, signUpNewUser } from "@services/supabase/auth";
 import { CARD_FONT_SIZE } from "@theme/card";
 import { AUTH_PLACEHOLDER_TEXT_COLOR, SELECTION_COLOR } from "@theme/colors";
 import { AuthContextStates } from "@ts/interfaces/auth-context";
@@ -44,23 +44,6 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
     setIsTyped,
     setName,
   }: AuthContextStates = useContext(AuthContext) as AuthContextStates;
-
-  async function signUpNewUser(password: string) {
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
-    if (error) setIsCreateUserError(true);
-  }
-
-  async function signInWithEmail(password: string) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
-
-    if (error) setIsCreateUserError(true);
-  }
 
   const navigateToNextSignInUpScreen = () => {
     if (
@@ -113,17 +96,19 @@ export default function SignInUpTextInput(props: SignInUpTextInputProps) {
         setEmail(text);
         navigateToNextSignInUpScreen();
       } else if (signInUpScreen == 2 && !isSignUp) {
-        // Supabase Auth
-        signInWithEmail(text).then(() => {
-          navigateToNextSignInUpScreen();
-          console.log("Finish signing in");
-        });
+        signInWithEmail(email, text)
+          .then(() => {
+            navigateToNextSignInUpScreen();
+            console.log("Finish signing in");
+          })
+          .catch(() => setIsCreateUserError(true));
       } else if (signInUpScreen == 4 && isSignUp) {
-        // Supabase sign up
-        signUpNewUser(text).then(() => {
-          navigateToNextSignInUpScreen();
-          console.log("Finish signing up");
-        });
+        signUpNewUser(email, text)
+          .then(() => {
+            navigateToNextSignInUpScreen();
+            console.log("Finish signing up");
+          })
+          .catch(() => setIsCreateUserError(true));
       } else {
         // Would be (isSignUp && signInUpScreen == 2)
         setName(text);

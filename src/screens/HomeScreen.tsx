@@ -1,10 +1,10 @@
 import Card from "@components/Card";
 import Deck from "@components/Deck";
-import { supabase } from "@services/supabase/client";
+import { fetchInboxData } from "@services/supabase/database/fetch";
 import {
   fetchFileFromStorage,
   fetchProfilePicFromStorage,
-} from "@services/supabase/storage";
+} from "@services/supabase/storage/fetch";
 import { selectUserID } from "@store/slices/user";
 import { CARD_BORDER_RADIUS } from "@theme/card";
 import {
@@ -47,35 +47,10 @@ export default function HomeScreen() {
 
   useEffect(() => {
     async function fetchInbox() {
-      interface InboxQuery {
-        deck_id: string;
-        viewed: boolean;
-        main_card_id: { text: string | null; image_url: string | null };
-        sender_id: { user_id: string; username: string; fav_color: string };
-      }
-
       try {
-        const { data, error } = await supabase
-          .from("inbox")
-          .select(
-            `
-            deck_id,
-            viewed,
-            main_card_id (
-              text,
-              image_url
-            ),
-            sender_id (
-              user_id,
-              username,
-              fav_color
-            )
-          `
-          )
-          .eq("recipient_id", userID)
-          .returns<InboxQuery[]>();
+        const { data, error } = await fetchInboxData(userID);
 
-        if (error) throw error;
+        if (error || data == null) throw error;
         else {
           let inboxArray: InboxInterface[] = [];
           for (let i: number = 0; i < data.length; i++) {
