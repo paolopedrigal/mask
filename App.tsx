@@ -12,6 +12,14 @@ import "react-native-reanimated";
 
 SplashScreen.preventAutoHideAsync(); // Show splash scren while fetching resources
 
+// https://docs.expo.dev/develop/user-interface/splash-screen-and-app-icon/
+
+// Set the animation options. This is optional.
+SplashScreen.setOptions({
+  duration: 1000,
+  fade: true,
+});
+
 export default function App() {
   const [isAppReady, setIsAppReady] = useState(false);
 
@@ -39,14 +47,14 @@ export default function App() {
   }, []);
 
   // Memoize asynchronous function for hiding splash screen
-  const onLayoutRootView = useCallback(async () => {
+  const onLayoutRootView = useCallback(() => {
     if (isAppReady || fontsLoaded || fontError) {
       // This tells the splash screen to hide immediately! If we call this after
       // `setAppIsReady`, then we may see a blank screen while the app is
       // loading its initial state and rendering its first pixels. So instead,
       // we hide the splash screen once we know the root view has already
       // performed layout.
-      await SplashScreen.hideAsync();
+      SplashScreen.hide();
     }
   }, [isAppReady, fontsLoaded, fontError]);
 
