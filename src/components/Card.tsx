@@ -28,28 +28,26 @@ import {
   View,
 } from "react-native";
 
-function Card(props: CardProps) {
-  const {
-    authorID, // id of author
-    authorText, // text at bottom of card; Typically the creator
-    backgroundColor, // dynamically determine background color of card
-    width, // has default value of 350 (CARD_WIDTH)
-    height, // has default value of 500 (CARD_HEIGHT)
-    text,
-    fontSize, // has default value of 32
-    image, //  background image of card
-    isAuthorBold, // dynamically determine if authorText will be bolded
-    authorImage,
-    hasAuthorImage, // determines if card has profile picture
-    authorFontSize, // has default value of 16
-    isHidden, // has default value of `false` if not specified
-    scalar, // Scaling factor of shrinking or enlargening card. Default value of 1
-    paddingTop, // has default value of 40
-    paddingBottom, // has default value of 30
-    paddingHorizontal, // has default value of 25
-    borderRadius, // has default value of 15
-  }: CardProps = props;
-
+function Card({
+  authorID = "", // id of author
+  authorText = "", // text at bottom of card; Typically the creator
+  backgroundColor = "#000000", // dynamically determine background color of card
+  width = CARD_WIDTH, // has default value of 350 (CARD_WIDTH)
+  height = CARD_HEIGHT, // has default value of 500 (CARD_HEIGHT)
+  text = "",
+  fontSize = CARD_FONT_SIZE, // has default value of 32
+  image, //  background image of card
+  isAuthorBold = false, // dynamically determine if authorText will be bolded
+  authorImage, // determines if card has profile picture
+  hasAuthorImage = false,
+  authorFontSize = CARD_AUTHOR_FONT_SIZE, // has default value of 16
+  paddingHorizontal = CARD_PADDING_HORIZONTAL, // has default value of 25
+  paddingTop = CARD_PADDING_TOP, // has default value of 40
+  paddingBottom = CARD_PADDING_BOTTOM, // has default value of 30
+  borderRadius = CARD_BORDER_RADIUS, // has default value of 15
+  isHidden = false, // has default value of `false` if not specified
+  scalar = 1, // Scaling factor of shrinking or enlargening card. Default value of 1
+}: CardProps) {
   const viewProfileNavigation = useNavigation<HomeProps["navigation"]>(); // TODO: make this a prop?
   const [profilePic, setProfilePic] = useState<ImageSource>(
     authorImage != null
@@ -165,68 +163,65 @@ function Card(props: CardProps) {
           blurRadius={isHidden ? 90 : 0}
           source={image}
           cachePolicy={"memory"}
+        />
+        <View
+          style={[
+            styles.semiTransparentDarkTintView,
+            text == "" ? { backgroundColor: "transparent" } : {},
+            {
+              paddingHorizontal: paddingHorizontalNumber,
+              paddingTop: paddingTopNumber,
+              paddingBottom: paddingBottomNumber,
+            },
+          ]}
         >
-          <View
+          <Text
             style={[
-              styles.semiTransparentDarkTintView,
-              text == "" ? { backgroundColor: "transparent" } : {},
-              {
-                paddingHorizontal: paddingHorizontalNumber,
-                paddingTop: paddingTopNumber,
-                paddingBottom: paddingBottomNumber,
-              },
+              isHidden
+                ? Platform.OS == "ios" // blurring text differs by OS
+                  ? styles.iOSLowLuminanceTextBlur
+                  : styles.androidLowLuminanceTextBlur
+                : styles.text,
+              { fontSize: fontSizeNumber },
             ]}
           >
-            <Text
-              style={[
-                isHidden
-                  ? Platform.OS == "ios" // blurring text differs by OS
-                    ? styles.iOSLowLuminanceTextBlur
-                    : styles.androidLowLuminanceTextBlur
-                  : styles.text,
-                { fontSize: fontSizeNumber },
-              ]}
-            >
-              {text}
-            </Text>
-            <Pressable
-              onPress={() => {
-                viewProfileNavigation.navigate("ViewProfile", {
-                  userID: authorID,
-                });
-              }}
-            >
-              <View style={styles.authorView}>
-                {hasAuthorImage ? (
-                  <Image
-                    source={profilePic}
-                    style={[
-                      styles.authorImage,
-                      {
-                        borderColor: AUTHOR_IMAGE_BORDER_COLOR,
-                        borderWidth: 0.5,
-                      },
-                    ]}
-                    cachePolicy={"memory"}
-                  />
-                ) : (
-                  <></> // If no author image at bottom of card
-                )}
-                <Text
+            {text}
+          </Text>
+          <Pressable
+            onPress={() => {
+              viewProfileNavigation.navigate("ViewProfile", {
+                userID: authorID,
+              });
+            }}
+          >
+            <View style={styles.authorView}>
+              {hasAuthorImage ? (
+                <Image
+                  source={profilePic}
                   style={[
-                    isAuthorBold
-                      ? styles.boldInterText
-                      : styles.regularInterText,
-                    styles.authorText,
-                    { fontSize: authorFontSizeNumber },
+                    styles.authorImage,
+                    {
+                      borderColor: AUTHOR_IMAGE_BORDER_COLOR,
+                      borderWidth: 0.5,
+                    },
                   ]}
-                >
-                  {authorText}
-                </Text>
-              </View>
-            </Pressable>
-          </View>
-        </Image>
+                  cachePolicy={"memory"}
+                />
+              ) : (
+                <></> // If no author image at bottom of card
+              )}
+              <Text
+                style={[
+                  isAuthorBold ? styles.boldInterText : styles.regularInterText,
+                  styles.authorText,
+                  { fontSize: authorFontSizeNumber },
+                ]}
+              >
+                {authorText}
+              </Text>
+            </View>
+          </Pressable>
+        </View>
       </View>
     );
   else
@@ -302,27 +297,6 @@ function Card(props: CardProps) {
       </View>
     );
 }
-
-Card.defaultProps = {
-  authorID: "",
-  authorText: "",
-  backgroundColor: "#000000",
-  width: CARD_WIDTH,
-  height: CARD_HEIGHT,
-  text: "",
-  fontSize: CARD_FONT_SIZE,
-  image: undefined,
-  isAuthorBold: false,
-  authorImage: undefined,
-  hasAuthorImage: false,
-  authorFontSize: CARD_AUTHOR_FONT_SIZE,
-  paddingHorizontal: CARD_PADDING_HORIZONTAL,
-  paddingTop: CARD_PADDING_TOP,
-  paddingBottom: CARD_PADDING_BOTTOM,
-  borderRadius: CARD_BORDER_RADIUS,
-  isHidden: false,
-  scalar: 1,
-};
 
 const styles = StyleSheet.create({
   card: {
